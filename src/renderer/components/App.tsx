@@ -1,9 +1,21 @@
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import React from "react";
+import { ipcRenderer } from "electron";
+import React, { useEffect, useState } from "react";
 import theme from "../theme";
-import Greetings from "./Greetings";
+import { VideoList } from "./VideoList";
 
 export default function App(): JSX.Element {
+  const [videoData, setVideoData] = useState([]);
+
+  useEffect(() => {
+    ipcRenderer.send("get:root-video-data", "D:/Pru videos");
+
+    ipcRenderer.on("video-files-data", (event, data) => {
+      console.log("data ", data);
+      setVideoData(data);
+    });
+  }, []);
+
   return (
     // Setup theme and css baseline for the Material-UI app
     // https://mui.com/customization/theming/
@@ -16,7 +28,8 @@ export default function App(): JSX.Element {
       >
         <main>
           {/* This is where your app content should go */}
-          <Greetings />
+          {/* <Greetings /> */}
+          <VideoList videoData={videoData}></VideoList>
         </main>
       </Box>
     </ThemeProvider>

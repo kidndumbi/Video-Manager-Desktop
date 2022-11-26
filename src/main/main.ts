@@ -1,6 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
+import { readdir } from "fs";
+import { stat } from "fs";
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -53,4 +55,37 @@ app.on("activate", () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+ipcMain.on("get:root-video-data", (event, path) => {
+  console.log("data ", path);
+
+  const videoData: any[] = [];
+
+  readdir(path, (err, files) => {
+    files.forEach((file) => {
+      stat(path + "/" + file, (err, stats) => {
+        if (stats.isDirectory()) {
+          console.log(file + " THIS IS A DIRECTOTY!!!!!!!!!!!!!!!!!!!");
+          videoData.push({
+            name: file,
+            path: path + "/" + file,
+            isDirectory: true,
+          });
+        } else {
+          videoData.push({
+            name: file,
+            path: path + "/" + file,
+            isDirectory: false,
+          });
+        }
+      });
+    });
+
+    console.log("files: ", videoData);
+  });
+
+  setTimeout(() => {
+    mainWindow?.webContents.send("video-files-data", videoData);
+  }, 1000);
 });
