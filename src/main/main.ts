@@ -2,7 +2,8 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
 import { readdir } from "fs";
-import { stat } from "fs";
+import { stat } from "fs/promises";
+import { VideoDataModel } from "../models/videoData.model";
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -15,6 +16,7 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       devTools: process.env.NODE_ENV !== "production",
+      webSecurity: false,
     },
   });
 
@@ -57,35 +59,29 @@ app.on("activate", () => {
   }
 });
 
-ipcMain.on("get:root-video-data", (event, path) => {
-  console.log("data ", path);
+ipcMain.on("get:root-video-data", (event, filePath) => {
+  const videoData: VideoDataModel[] = [];
 
-  const videoData: any[] = [];
+  readdir(filePath, async (err, files) => {
+    for (const file of files) {
+      const stats = await stat(filePath + "/" + file);
 
-  readdir(path, (err, files) => {
-    files.forEach((file) => {
-      stat(path + "/" + file, (err, stats) => {
-        if (stats.isDirectory()) {
-          console.log(file + " THIS IS A DIRECTOTY!!!!!!!!!!!!!!!!!!!");
-          videoData.push({
-            name: file,
-            path: path + "/" + file,
-            isDirectory: true,
-          });
-        } else {
-          videoData.push({
-            name: file,
-            path: path + "/" + file,
-            isDirectory: false,
-          });
-        }
-      });
-    });
+      if (
+        path.extname(file).toLocaleLowerCase() === ".mp4" ||
+        stats.isDirectory()
+      ) {
+        videoData.push({
+          fileName: file,
+          filePath: filePath + "/" + file,
+          isDirectory: stats.isDirectory(),
+        });
+      }
+    }
 
     console.log("files: ", videoData);
+    mainWindow?.webContents.send(
+      "video-files-data",
+      videoData.sort((a, b) => Number(b.isDirectory) - Number(a.isDirectory))
+    );
   });
-
-  setTimeout(() => {
-    mainWindow?.webContents.send("video-files-data", videoData);
-  }, 1000);
 });

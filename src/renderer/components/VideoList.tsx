@@ -1,27 +1,94 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import ListSubheader from "@mui/material/ListSubheader";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+// import Collapse from "@mui/material/Collapse";
+// import InboxIcon from "@mui/icons-material/MoveToInbox";
+// import ExpandLess from "@mui/icons-material/ExpandLess";
+// import ExpandMore from "@mui/icons-material/ExpandMore";
+// import StarBorder from "@mui/icons-material/StarBorder";
+import FolderIcon from "@mui/icons-material/Folder";
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+import { AppVideoPlayer } from "./AppVideoPlayer";
+import { VideoDataModel } from "../../models/videoData.model";
 
 type VideoListProps = {
-  videoData: any[];
+  videoData: VideoDataModel[];
 }; /* use `interface` if exporting so that consumers can extend */
 
 // Easiest way to declare a Function Component; return type is inferred.
 const VideoList = ({ videoData }: VideoListProps) => {
+  //const [open, setOpen] = useState(true);
+
+  const [currentVideo, setCurrentVideo] = useState<VideoDataModel>();
+
+  useEffect(() => {
+    if (videoData && videoData.length > 0) {
+      setCurrentVideo(videoData.find((v) => v.isDirectory !== true));
+    }
+  }, [videoData]);
+
+  const handleVideoSelect = (video: VideoDataModel) => {
+    //setOpen(!open);
+    if (video.isDirectory === false) {
+      setCurrentVideo(video);
+    }
+  };
+
   return (
     <>
-      {videoData && videoData.length > 0 ? (
-        <div>
-          {videoData.map((video: any) => {
-            return (
-              <div
-                style={{ color: video.isDirectory === true ? "green" : "" }}
-                key={video.path}
-              >
-                {video.path}
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
+      <AppVideoPlayer videoData={currentVideo}></AppVideoPlayer>
+      <List
+        sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+        subheader={
+          <ListSubheader component="div" id="nested-list-subheader">
+            Videos
+          </ListSubheader>
+        }
+      >
+        {videoData && videoData.length > 0 ? (
+          <div>
+            {videoData.map((video: VideoDataModel) => {
+              return (
+                <ListItemButton
+                  key={video.filePath}
+                  onClick={() => handleVideoSelect(video)}
+                >
+                  <ListItemIcon>
+                    {video.isDirectory === true ? (
+                      <FolderIcon />
+                    ) : (
+                      <OndemandVideoIcon />
+                    )}
+                  </ListItemIcon>
+                  <ListItemText primary={video.fileName} />
+                </ListItemButton>
+              );
+            })}
+          </div>
+        ) : null}
+        {/* <ListItemButton onClick={handleClick}>
+          <ListItemIcon>
+            <InboxIcon />
+          </ListItemIcon>
+          <ListItemText primary="Inbox" />
+          {open ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton> */}
+        {/* <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton sx={{ pl: 4 }}>
+              <ListItemIcon>
+                <StarBorder />
+              </ListItemIcon>
+              <ListItemText primary="Starred" />
+            </ListItemButton>
+          </List>
+        </Collapse> */}
+      </List>
     </>
   );
 };
