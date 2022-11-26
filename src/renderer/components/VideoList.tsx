@@ -13,7 +13,7 @@ const VideoList = ({ videoData }: VideoListProps) => {
           {videoData.map((video: any) => {
             return (
               <div
-                style={{ color: video.isDirectory === true ? "red" : "" }}
+                style={{ color: video.isDirectory === true ? "green" : "" }}
                 key={video.path}
               >
                 {video.path}
