@@ -6,15 +6,37 @@ import { VideoList } from "./VideoList";
 
 export default function App(): JSX.Element {
   const [videoData, setVideoData] = useState([]);
+  const [rootPath, setRootPath] = useState("D:/Pru videos");
+  const [pathNav, setPathNav] = useState<string[]>([]);
 
   useEffect(() => {
-    ipcRenderer.send("get:root-video-data", "D:/Pru videos");
+    ipcRenderer.send("get:root-video-data", rootPath);
 
     ipcRenderer.on("video-files-data", (event, data) => {
-      console.log("data ", data);
+      console.log("data  ", data);
       setVideoData(data);
     });
   }, []);
+
+  useEffect(() => {
+    console.log("pathnav  ", pathNav);
+  }, [pathNav]);
+
+  const onRootPathChange = (path: string) => {
+    console.log("root path changed to:::  ", path);
+    setRootPath(path);
+    setPathNav((oldArray) => [...oldArray, rootPath]);
+    ipcRenderer.send("get:root-video-data", path);
+  };
+
+  const onBackTriggered = () => {
+    console.log("BACK TRIGGERED new root: ", pathNav[pathNav.length - 1]);
+    if (pathNav.length > 0) {
+      setRootPath(pathNav[pathNav.length - 1]);
+      ipcRenderer.send("get:root-video-data", pathNav[pathNav.length - 1]);
+      setPathNav(pathNav.slice(0, -1));
+    }
+  };
 
   return (
     // Setup theme and css baseline for the Material-UI app
@@ -29,7 +51,12 @@ export default function App(): JSX.Element {
         <main>
           {/* This is where your app content should go */}
           {/* <Greetings /> */}
-          <VideoList videoData={videoData}></VideoList>
+          <VideoList
+            onBackTriggered={onBackTriggered}
+            rootPath={rootPath}
+            onRootPathChange={onRootPathChange}
+            videoData={videoData}
+          ></VideoList>
         </main>
       </Box>
     </ThemeProvider>

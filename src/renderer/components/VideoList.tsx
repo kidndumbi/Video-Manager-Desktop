@@ -4,6 +4,7 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 // import Collapse from "@mui/material/Collapse";
 // import InboxIcon from "@mui/icons-material/MoveToInbox";
 // import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -13,13 +14,22 @@ import FolderIcon from "@mui/icons-material/Folder";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import { AppVideoPlayer } from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
+import Button from "@mui/material/Button";
 
 type VideoListProps = {
   videoData: VideoDataModel[];
+  onRootPathChange: (path: string) => void;
+  rootPath: string;
+  onBackTriggered: () => void;
 }; /* use `interface` if exporting so that consumers can extend */
 
 // Easiest way to declare a Function Component; return type is inferred.
-const VideoList = ({ videoData }: VideoListProps) => {
+const VideoList = ({
+  videoData,
+  onRootPathChange,
+  rootPath,
+  onBackTriggered,
+}: VideoListProps) => {
   //const [open, setOpen] = useState(true);
 
   const [currentVideo, setCurrentVideo] = useState<VideoDataModel>();
@@ -34,6 +44,8 @@ const VideoList = ({ videoData }: VideoListProps) => {
     //setOpen(!open);
     if (video.isDirectory === false) {
       setCurrentVideo(video);
+    } else {
+      onRootPathChange(video.filePath);
     }
   };
 
@@ -46,7 +58,14 @@ const VideoList = ({ videoData }: VideoListProps) => {
         aria-labelledby="nested-list-subheader"
         subheader={
           <ListSubheader component="div" id="nested-list-subheader">
-            Videos
+            <Button
+              variant="outlined"
+              onClick={onBackTriggered}
+              startIcon={<ArrowBackIosNewIcon />}
+            >
+              Back
+            </Button>
+            <div> {rootPath}</div>
           </ListSubheader>
         }
       >
