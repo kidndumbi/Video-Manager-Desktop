@@ -1,16 +1,27 @@
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { ipcRenderer } from "electron";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import theme from "../theme";
 import { VideoList } from "./VideoList";
+import { RootState, useAppDispatch } from "../../store";
+import { currentRootPathActions } from "../../store/currentRootpath.slice";
 
 export default function App(): JSX.Element {
   const [videoData, setVideoData] = useState([]);
-  const [rootPath, setRootPath] = useState("D:/Pru videos");
   const [pathNav, setPathNav] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
+
+  const currentRootPath = useSelector(
+    (state: RootState) => state.currentRootPath.currentRootPath
+  );
 
   useEffect(() => {
-    ipcRenderer.send("get:root-video-data", rootPath);
+    console.log("currentRootPath page change::: ", currentRootPath);
+  }, [currentRootPath]);
+
+  useEffect(() => {
+    ipcRenderer.send("get:root-video-data", currentRootPath);
 
     ipcRenderer.on("video-files-data", (event, data) => {
       setVideoData(data);
@@ -22,14 +33,17 @@ export default function App(): JSX.Element {
   }, [pathNav]);
 
   const onRootPathChange = (path: string) => {
-    setRootPath(path);
-    setPathNav((oldArray) => [...oldArray, rootPath]);
+    console.log("path ", path);
+    dispatch(currentRootPathActions.setCurrentRootPath(path));
+    setPathNav((oldArray) => [...oldArray, currentRootPath]);
     ipcRenderer.send("get:root-video-data", path);
   };
 
   const onBackTriggered = () => {
     if (pathNav.length > 0) {
-      setRootPath(pathNav[pathNav.length - 1]);
+      dispatch(
+        currentRootPathActions.setCurrentRootPath(pathNav[pathNav.length - 1])
+      );
       ipcRenderer.send("get:root-video-data", pathNav[pathNav.length - 1]);
       setPathNav(pathNav.slice(0, -1));
     }
@@ -51,7 +65,7 @@ export default function App(): JSX.Element {
           <VideoList
             showBackBtn={pathNav.length > 0}
             onBackTriggered={onBackTriggered}
-            rootPath={rootPath}
+            rootPath={currentRootPath}
             onRootPathChange={onRootPathChange}
             videoData={videoData}
           ></VideoList>
