@@ -78,7 +78,6 @@ ipcMain.on("get:root-video-data", (event, filePath) => {
       }
     }
 
-    console.log("files: ", videoData);
     mainWindow?.webContents.send(
       "video-files-data",
       videoData.sort((a, b) => Number(b.isDirectory) - Number(a.isDirectory))

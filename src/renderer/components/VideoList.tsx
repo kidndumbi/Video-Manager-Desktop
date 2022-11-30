@@ -5,6 +5,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import Grid from "@mui/material/Grid";
 // import Collapse from "@mui/material/Collapse";
 // import InboxIcon from "@mui/icons-material/MoveToInbox";
 // import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -12,15 +13,17 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 // import StarBorder from "@mui/icons-material/StarBorder";
 import FolderIcon from "@mui/icons-material/Folder";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import { AppVideoPlayer } from "./AppVideoPlayer";
+import AppVideoPlayer from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
 import Button from "@mui/material/Button";
+import { AppTabs } from "./AppTabs";
 
 type VideoListProps = {
   videoData: VideoDataModel[];
   onRootPathChange: (path: string) => void;
   rootPath: string;
   onBackTriggered: () => void;
+  showBackBtn: boolean;
 }; /* use `interface` if exporting so that consumers can extend */
 
 // Easiest way to declare a Function Component; return type is inferred.
@@ -29,8 +32,9 @@ const VideoList = ({
   onRootPathChange,
   rootPath,
   onBackTriggered,
+  showBackBtn,
 }: VideoListProps) => {
-  //const [open, setOpen] = useState(true);
+  const [currentVideoTime, setCurrentVideoTime] = useState(0);
 
   const [currentVideo, setCurrentVideo] = useState<VideoDataModel>();
 
@@ -49,65 +53,70 @@ const VideoList = ({
     }
   };
 
+  const onCurrentTime = (time: number) => {
+    console.log("current time triggered", time);
+    setCurrentVideoTime(time);
+  };
+
   return (
     <>
-      <AppVideoPlayer videoData={currentVideo}></AppVideoPlayer>
-      <List
-        sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-        subheader={
-          <ListSubheader component="div" id="nested-list-subheader">
-            <Button
-              variant="outlined"
-              onClick={onBackTriggered}
-              startIcon={<ArrowBackIosNewIcon />}
-            >
-              Back
-            </Button>
-            <div> {rootPath}</div>
-          </ListSubheader>
-        }
-      >
-        {videoData && videoData.length > 0 ? (
-          <div>
-            {videoData.map((video: VideoDataModel) => {
-              return (
-                <ListItemButton
-                  key={video.filePath}
-                  onClick={() => handleVideoSelect(video)}
-                >
-                  <ListItemIcon>
-                    {video.isDirectory === true ? (
-                      <FolderIcon />
-                    ) : (
-                      <OndemandVideoIcon />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText primary={video.fileName} />
-                </ListItemButton>
-              );
-            })}
-          </div>
-        ) : null}
-        {/* <ListItemButton onClick={handleClick}>
-          <ListItemIcon>
-            <InboxIcon />
-          </ListItemIcon>
-          <ListItemText primary="Inbox" />
-          {open ? <ExpandLess /> : <ExpandMore />}
-        </ListItemButton> */}
-        {/* <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemIcon>
-                <StarBorder />
-              </ListItemIcon>
-              <ListItemText primary="Starred" />
-            </ListItemButton>
+      <Grid container>
+        <Grid xs={3}>
+          <List
+            sx={{ width: "100%", bgcolor: "background.paper" }}
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+            subheader={
+              <ListSubheader component="div" id="nested-list-subheader">
+                {showBackBtn ? (
+                  <Button
+                    variant="outlined"
+                    onClick={onBackTriggered}
+                    startIcon={<ArrowBackIosNewIcon />}
+                  >
+                    Back
+                  </Button>
+                ) : null}
+
+                <div> {rootPath}</div>
+              </ListSubheader>
+            }
+          >
+            {videoData && videoData.length > 0 ? (
+              <div>
+                {videoData.map((video: VideoDataModel) => {
+                  return (
+                    <ListItemButton
+                      key={video.filePath}
+                      onClick={() => handleVideoSelect(video)}
+                    >
+                      <ListItemIcon>
+                        {video.isDirectory === true ? (
+                          <FolderIcon />
+                        ) : (
+                          <OndemandVideoIcon />
+                        )}
+                      </ListItemIcon>
+                      <ListItemText primary={video.fileName} />
+                    </ListItemButton>
+                  );
+                })}
+              </div>
+            ) : null}
           </List>
-        </Collapse> */}
-      </List>
+        </Grid>
+        <Grid xs={9}>
+          <Grid xs={12}>
+            <AppVideoPlayer
+              onCurrentTime={onCurrentTime}
+              videoData={currentVideo}
+            ></AppVideoPlayer>
+          </Grid>
+          <Grid xs={12}>
+            <AppTabs currentVideoTime={currentVideoTime}></AppTabs>
+          </Grid>
+        </Grid>
+      </Grid>
     </>
   );
 };

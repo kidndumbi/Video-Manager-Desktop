@@ -23,14 +23,12 @@ export default function App(): JSX.Element {
   }, [pathNav]);
 
   const onRootPathChange = (path: string) => {
-    console.log("root path changed to:::  ", path);
     setRootPath(path);
     setPathNav((oldArray) => [...oldArray, rootPath]);
     ipcRenderer.send("get:root-video-data", path);
   };
 
   const onBackTriggered = () => {
-    console.log("BACK TRIGGERED new root: ", pathNav[pathNav.length - 1]);
     if (pathNav.length > 0) {
       setRootPath(pathNav[pathNav.length - 1]);
       ipcRenderer.send("get:root-video-data", pathNav[pathNav.length - 1]);
@@ -45,13 +43,14 @@ export default function App(): JSX.Element {
       <CssBaseline />
       <Box
         sx={{
-          backgroundColor: (theme) => theme.palette.background.default,
+          backgroundColor: "white",
         }}
       >
         <main>
           {/* This is where your app content should go */}
           {/* <Greetings /> */}
           <VideoList
+            showBackBtn={pathNav.length > 0}
             onBackTriggered={onBackTriggered}
             rootPath={rootPath}
             onRootPathChange={onRootPathChange}
