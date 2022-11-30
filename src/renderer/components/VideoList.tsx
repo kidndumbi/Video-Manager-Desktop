@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { ipcRenderer } from "electron";
 import { useSelector } from "react-redux";
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
@@ -17,6 +16,7 @@ import { AppTabs } from "./AppTabs";
 import { RootState, useAppDispatch } from "../../store";
 import { currentRootPathActions } from "../../store/currentRootpath.slice";
 import { pathNavActions } from "../../store/pathNav.slice";
+import { folderVideosInfoActions } from "../../store/folderVideosInfo.slice";
 
 const VideoList = () => {
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
@@ -25,7 +25,10 @@ const VideoList = () => {
 
   const [currentVideo, setCurrentVideo] = useState<VideoDataModel>();
   const [player, setPlayer] = useState<any>();
-  const [videoData, setVideoData] = useState([]);
+
+  const folderVideosInfo = useSelector(
+    (state: RootState) => state.folderVideosInfo.folderVideosInfo
+  );
 
   const pathNav = useSelector((state: RootState) => state.pathNav.pathNav);
 
@@ -34,18 +37,16 @@ const VideoList = () => {
   );
 
   useEffect(() => {
-    ipcRenderer.send("get:root-video-data", currentRootPath);
-
-    ipcRenderer.on("send:root-video-data", (event, data) => {
-      setVideoData(data);
-    });
+    dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
   }, []);
 
   useEffect(() => {
-    if (videoData && videoData.length > 0) {
-      setCurrentVideo(videoData.find((v: any) => v.isDirectory !== true));
+    if (folderVideosInfo && folderVideosInfo.length > 0) {
+      setCurrentVideo(
+        folderVideosInfo.find((v: any) => v.isDirectory !== true)
+      );
     }
-  }, [videoData]);
+  }, [folderVideosInfo]);
 
   const handleVideoSelect = (video: VideoDataModel) => {
     if (video.isDirectory === false) {
@@ -53,7 +54,7 @@ const VideoList = () => {
     } else {
       dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
-      ipcRenderer.send("get:root-video-data", video.filePath);
+      dispatch(folderVideosInfoActions.fetchFolderVideosInfo(video.filePath));
     }
   };
 
@@ -62,7 +63,11 @@ const VideoList = () => {
       dispatch(
         currentRootPathActions.setCurrentRootPath(pathNav[pathNav.length - 1])
       );
-      ipcRenderer.send("get:root-video-data", pathNav[pathNav.length - 1]);
+      dispatch(
+        folderVideosInfoActions.fetchFolderVideosInfo(
+          pathNav[pathNav.length - 1]
+        )
+      );
       dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
     }
   };
@@ -95,9 +100,9 @@ const VideoList = () => {
               </ListSubheader>
             }
           >
-            {videoData && videoData.length > 0 ? (
+            {folderVideosInfo && folderVideosInfo.length > 0 ? (
               <div>
-                {videoData.map((video: VideoDataModel) => {
+                {folderVideosInfo.map((video: VideoDataModel) => {
                   return (
                     <ListItemButton
                       key={video.filePath}

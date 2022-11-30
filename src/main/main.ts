@@ -2,8 +2,8 @@ import { VideoJsonModel } from "./../models/videoJSON.model";
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
-import { readdir } from "fs";
-import { stat, access, readFile, writeFile } from "fs/promises";
+// import { readdir } from "fs";
+import { stat, access, readFile, writeFile, readdir } from "fs/promises";
 import { VideoDataModel } from "../models/videoData.model";
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -62,10 +62,12 @@ app.on("activate", () => {
   }
 });
 
-ipcMain.on("get:root-video-data", (event, filePath) => {
+ipcMain.handle("get:root-video-data", async (event, filePath) => {
   const videoData: VideoDataModel[] = [];
 
-  readdir(filePath, async (err, files) => {
+  try {
+    const files = await readdir(filePath);
+
     for (const file of files) {
       const stats = await stat(filePath + "/" + file);
 
@@ -82,11 +84,12 @@ ipcMain.on("get:root-video-data", (event, filePath) => {
       }
     }
 
-    mainWindow?.webContents.send(
-      "send:root-video-data",
-      videoData.sort((a, b) => Number(b.isDirectory) - Number(a.isDirectory))
+    return videoData.sort(
+      (a, b) => Number(b.isDirectory) - Number(a.isDirectory)
     );
-  });
+  } catch (error) {
+    throw "error";
+  }
 });
 
 ipcMain.on(
