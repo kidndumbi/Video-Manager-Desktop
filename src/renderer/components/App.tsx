@@ -6,19 +6,17 @@ import theme from "../theme";
 import { VideoList } from "./VideoList";
 import { RootState, useAppDispatch } from "../../store";
 import { currentRootPathActions } from "../../store/currentRootpath.slice";
+import { pathNavActions } from "../../store/pathNav.slice";
 
 export default function App(): JSX.Element {
   const [videoData, setVideoData] = useState([]);
-  const [pathNav, setPathNav] = useState<string[]>([]);
   const dispatch = useAppDispatch();
 
   const currentRootPath = useSelector(
     (state: RootState) => state.currentRootPath.currentRootPath
   );
 
-  useEffect(() => {
-    console.log("currentRootPath page change::: ", currentRootPath);
-  }, [currentRootPath]);
+  const pathNav = useSelector((state: RootState) => state.pathNav.pathNav);
 
   useEffect(() => {
     ipcRenderer.send("get:root-video-data", currentRootPath);
@@ -28,14 +26,9 @@ export default function App(): JSX.Element {
     });
   }, []);
 
-  useEffect(() => {
-    console.log("pathnav  ", pathNav);
-  }, [pathNav]);
-
   const onRootPathChange = (path: string) => {
-    console.log("path ", path);
     dispatch(currentRootPathActions.setCurrentRootPath(path));
-    setPathNav((oldArray) => [...oldArray, currentRootPath]);
+    dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
     ipcRenderer.send("get:root-video-data", path);
   };
 
@@ -45,7 +38,7 @@ export default function App(): JSX.Element {
         currentRootPathActions.setCurrentRootPath(pathNav[pathNav.length - 1])
       );
       ipcRenderer.send("get:root-video-data", pathNav[pathNav.length - 1]);
-      setPathNav(pathNav.slice(0, -1));
+      dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
     }
   };
 
