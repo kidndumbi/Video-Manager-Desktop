@@ -13,7 +13,6 @@ export default function App(): JSX.Element {
     ipcRenderer.send("get:root-video-data", rootPath);
 
     ipcRenderer.on("video-files-data", (event, data) => {
-      console.log("data  ", data);
       setVideoData(data);
     });
   }, []);

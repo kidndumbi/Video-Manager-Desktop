@@ -5,9 +5,13 @@ import Box from "@mui/material/Box";
 
 type AppTextEditorProps = {
   onCancelClick: () => void;
+  onSaveNoteClick: (value: string) => void;
 };
 
-const AppTextEditor = ({ onCancelClick }: AppTextEditorProps) => {
+const AppTextEditor = ({
+  onCancelClick,
+  onSaveNoteClick,
+}: AppTextEditorProps) => {
   const [value, setValue] = useState("");
 
   return (
@@ -17,7 +21,9 @@ const AppTextEditor = ({ onCancelClick }: AppTextEditorProps) => {
         <Button onClick={onCancelClick} variant="text">
           Cancel
         </Button>
-        <Button variant="contained">Save Note</Button>
+        <Button onClick={() => onSaveNoteClick(value)} variant="contained">
+          Save Note
+        </Button>
       </Box>
     </>
   );

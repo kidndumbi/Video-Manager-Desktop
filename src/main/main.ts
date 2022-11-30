@@ -1,8 +1,9 @@
+import { VideoJsonModel } from "./../models/videoJSON.model";
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
 import { readdir } from "fs";
-import { stat } from "fs/promises";
+import { stat, access, readFile, writeFile } from "fs/promises";
 import { VideoDataModel } from "../models/videoData.model";
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -19,6 +20,8 @@ function createWindow() {
       webSecurity: false,
     },
   });
+
+  mainWindow.webContents.openDevTools();
 
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL("http://localhost:4000");
@@ -74,6 +77,7 @@ ipcMain.on("get:root-video-data", (event, filePath) => {
           fileName: file,
           filePath: filePath + "/" + file,
           isDirectory: stats.isDirectory(),
+          rootPath: filePath,
         });
       }
     }
@@ -84,3 +88,64 @@ ipcMain.on("get:root-video-data", (event, filePath) => {
     );
   });
 });
+
+ipcMain.on(
+  "get:video-json-data",
+  async (event, currentVideo: VideoDataModel) => {
+    const newFilePath =
+      currentVideo.rootPath +
+      "/" +
+      path.parse(currentVideo.fileName).name +
+      ".json";
+
+    const fileExists = await exists(newFilePath);
+
+    if (fileExists) {
+      const file = await readFile(newFilePath);
+      mainWindow?.webContents.send(
+        "send:video-json-data",
+        JSON.parse(file.toString())
+      );
+    } else {
+      mainWindow?.webContents.send("send:video-json-data", {
+        notes: [],
+        overview: {},
+      });
+    }
+  }
+);
+
+ipcMain.on(
+  "save:video-json-data",
+  async (
+    event,
+    {
+      currentVideo,
+      newVideoJsonData,
+    }: { currentVideo: VideoDataModel; newVideoJsonData: VideoJsonModel }
+  ) => {
+    try {
+      // check if json file exists
+      const newFilePath =
+        currentVideo.rootPath +
+        "/" +
+        path.parse(currentVideo.fileName).name +
+        ".json";
+
+      //create file and write to it.
+      await writeFile(newFilePath, JSON.stringify(newVideoJsonData));
+      mainWindow?.webContents.send("confirm:video-json-data-save", true);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
+
+async function exists(path: string) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}

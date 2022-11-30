@@ -7,11 +7,13 @@ import { secondsTohhmmss } from "../../../util/helperFunctions";
 
 type NoteProps = {
   note: NoteModel;
+  onVideoSeek: (seekTime: number) => void;
 };
 
-const Note = ({ note }: NoteProps) => {
+const Note = ({ note, onVideoSeek }: NoteProps) => {
   const handleClick = () => {
     console.log("You clicked the Chip.");
+    onVideoSeek(note.videoTimeStamp);
   };
 
   return (
@@ -34,7 +36,9 @@ const Note = ({ note }: NoteProps) => {
           color: "#6a6f73",
         }}
       >
-        <div>{note.id} </div>
+        <div dangerouslySetInnerHTML={{ __html: note.content }}>
+          {/* {note.content}{" "} */}
+        </div>
       </Box>
     </>
   );

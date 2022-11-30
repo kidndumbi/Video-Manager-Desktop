@@ -10,6 +10,7 @@ import { VideoDataModel } from "../../models/videoData.model";
 type AppVideoPlayerProps = {
   videoData: VideoDataModel | undefined;
   onCurrentTime: (time: number) => void;
+  setPlayer: (player: any) => void;
 };
 
 export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
@@ -18,6 +19,7 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
   componentDidMount() {
     this.player.playbackRate = 2;
     this.forceUpdate();
+    this.props.setPlayer(this.player);
 
     setInterval(() => {
       const { player } = this.player.getState();
@@ -37,7 +39,7 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
           src={this.props.videoData?.filePath}
         >
           <ControlBar autoHide={false}>
-            <PlaybackRateMenuButton rates={[5, 2, 1, 0.5, 0.1]} />
+            <PlaybackRateMenuButton rates={[5, 2, 1.5, 1, 0.5, 0.1]} />
             <ForwardControl seconds={5} />
             <ForwardControl seconds={10} />
             <ForwardControl seconds={30} />
