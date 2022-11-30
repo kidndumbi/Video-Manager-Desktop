@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ipcRenderer } from "electron";
+import { useSelector } from "react-redux";
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -12,39 +14,56 @@ import AppVideoPlayer from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
 import Button from "@mui/material/Button";
 import { AppTabs } from "./AppTabs";
+import { RootState, useAppDispatch } from "../../store";
+import { currentRootPathActions } from "../../store/currentRootpath.slice";
+import { pathNavActions } from "../../store/pathNav.slice";
 
-type VideoListProps = {
-  videoData: VideoDataModel[];
-  onRootPathChange: (path: string) => void;
-  rootPath: string;
-  onBackTriggered: () => void;
-  showBackBtn: boolean;
-};
-
-const VideoList = ({
-  videoData,
-  onRootPathChange,
-  rootPath,
-  onBackTriggered,
-  showBackBtn,
-}: VideoListProps) => {
+const VideoList = () => {
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
+
+  const dispatch = useAppDispatch();
 
   const [currentVideo, setCurrentVideo] = useState<VideoDataModel>();
   const [player, setPlayer] = useState<any>();
+  const [videoData, setVideoData] = useState([]);
+
+  const pathNav = useSelector((state: RootState) => state.pathNav.pathNav);
+
+  const currentRootPath = useSelector(
+    (state: RootState) => state.currentRootPath.currentRootPath
+  );
+
+  useEffect(() => {
+    ipcRenderer.send("get:root-video-data", currentRootPath);
+
+    ipcRenderer.on("video-files-data", (event, data) => {
+      setVideoData(data);
+    });
+  }, []);
 
   useEffect(() => {
     if (videoData && videoData.length > 0) {
-      setCurrentVideo(videoData.find((v) => v.isDirectory !== true));
+      setCurrentVideo(videoData.find((v: any) => v.isDirectory !== true));
     }
   }, [videoData]);
 
   const handleVideoSelect = (video: VideoDataModel) => {
-    //setOpen(!open);
     if (video.isDirectory === false) {
       setCurrentVideo(video);
     } else {
-      onRootPathChange(video.filePath);
+      dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
+      dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
+      ipcRenderer.send("get:root-video-data", video.filePath);
+    }
+  };
+
+  const onBackTriggered = () => {
+    if (pathNav.length > 0) {
+      dispatch(
+        currentRootPathActions.setCurrentRootPath(pathNav[pathNav.length - 1])
+      );
+      ipcRenderer.send("get:root-video-data", pathNav[pathNav.length - 1]);
+      dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
     }
   };
 
@@ -62,7 +81,7 @@ const VideoList = ({
             aria-labelledby="nested-list-subheader"
             subheader={
               <ListSubheader component="div" id="nested-list-subheader">
-                {showBackBtn ? (
+                {pathNav.length > 0 ? (
                   <Button
                     variant="outlined"
                     onClick={onBackTriggered}
@@ -72,7 +91,7 @@ const VideoList = ({
                   </Button>
                 ) : null}
 
-                <div> {rootPath}</div>
+                <div> {currentRootPath}</div>
               </ListSubheader>
             }
           >
