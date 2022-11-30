@@ -83,7 +83,7 @@ ipcMain.on("get:root-video-data", (event, filePath) => {
     }
 
     mainWindow?.webContents.send(
-      "video-files-data",
+      "send:root-video-data",
       videoData.sort((a, b) => Number(b.isDirectory) - Number(a.isDirectory))
     );
   });

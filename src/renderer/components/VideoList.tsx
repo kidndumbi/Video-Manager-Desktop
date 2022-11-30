@@ -36,7 +36,7 @@ const VideoList = () => {
   useEffect(() => {
     ipcRenderer.send("get:root-video-data", currentRootPath);
 
-    ipcRenderer.on("video-files-data", (event, data) => {
+    ipcRenderer.on("send:root-video-data", (event, data) => {
       setVideoData(data);
     });
   }, []);
