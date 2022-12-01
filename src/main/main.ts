@@ -92,7 +92,7 @@ ipcMain.handle("get:root-video-data", async (event, filePath) => {
   }
 });
 
-ipcMain.on(
+ipcMain.handle(
   "get:video-json-data",
   async (event, currentVideo: VideoDataModel) => {
     const newFilePath =
@@ -105,20 +105,17 @@ ipcMain.on(
 
     if (fileExists) {
       const file = await readFile(newFilePath);
-      mainWindow?.webContents.send(
-        "send:video-json-data",
-        JSON.parse(file.toString())
-      );
+      return JSON.parse(file.toString());
     } else {
-      mainWindow?.webContents.send("send:video-json-data", {
+      return {
         notes: [],
         overview: {},
-      });
+      };
     }
   }
 );
 
-ipcMain.on(
+ipcMain.handle(
   "save:video-json-data",
   async (
     event,
@@ -128,18 +125,15 @@ ipcMain.on(
     }: { currentVideo: VideoDataModel; newVideoJsonData: VideoJsonModel }
   ) => {
     try {
-      // check if json file exists
       const newFilePath =
         currentVideo.rootPath +
         "/" +
         path.parse(currentVideo.fileName).name +
         ".json";
-
-      //create file and write to it.
       await writeFile(newFilePath, JSON.stringify(newVideoJsonData));
-      mainWindow?.webContents.send("confirm:video-json-data-save", true);
+      return newVideoJsonData;
     } catch (error) {
-      console.error(error);
+      throw "error common...";
     }
   }
 );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -6,9 +6,11 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { NoteList } from "./noteList/NoteList";
 import { VideoDataModel } from "../../models/videoData.model";
-import { ipcRenderer } from "electron";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import { NoteModel } from "../../models/note.model";
+import { RootState, useAppDispatch } from "../../store";
+import { videoJsonActions } from "../../store/videoJson.slice";
+import { useSelector } from "react-redux";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -52,34 +54,22 @@ function AppTabs({
   currentVideo: VideoDataModel | undefined;
   onVideoSeek: (seekTime: number) => void;
 }) {
+  const dispatch = useAppDispatch();
   const [value, setValue] = React.useState(1);
+
+  const videoJsonData = useSelector(
+    (state: RootState) => state.videoJson.videoJson
+  );
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const [videoJsonData, setVideoJsonData] = useState<VideoJsonModel>({
-    overview: {},
-    notes: [],
-  });
-
   React.useEffect(() => {
     if (currentVideo) {
-      ipcRenderer.send("get:video-json-data", currentVideo);
+      dispatch(videoJsonActions.getVideoJson(currentVideo));
     }
-    ipcRenderer.on(
-      "send:video-json-data",
-      (event, videoJson: VideoJsonModel) => {
-        setVideoJsonData(videoJson);
-      }
-    );
   }, [currentVideo]);
-
-  useEffect(() => {
-    ipcRenderer.on("confirm:video-json-data-save", (event, confirm) => {
-      console.log("data-saved ", confirm);
-    });
-  }, []);
 
   const onCreateNote = (content: string, videoTimeStamp: number) => {
     const newNote: NoteModel = {
@@ -93,13 +83,12 @@ function AppTabs({
       notes: [...videoJsonData.notes, newNote],
     };
 
-    //save to db
-    ipcRenderer.send("save:video-json-data", {
-      currentVideo,
-      newVideoJsonData,
-    });
-
-    setVideoJsonData(newVideoJsonData);
+    dispatch(
+      videoJsonActions.postVideoJason({
+        currentVideo,
+        newVideoJsonData,
+      })
+    );
   };
 
   return (
