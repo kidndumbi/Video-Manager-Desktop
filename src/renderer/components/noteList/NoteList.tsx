@@ -7,27 +7,59 @@ import { secondsTohhmmss } from "../../../util/helperFunctions";
 import { AppTextEditor } from "../AppTextEditor";
 import { Note } from "./Note";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { v4 as uuidv4 } from "uuid";
+import { RootState, useAppDispatch } from "../../../store";
+import { VideoJsonModel } from "../../../models/videoJSON.model";
+import { useSelector } from "react-redux";
+import { videoJsonActions } from "../../../store/videoJson.slice";
+import { selCurrentVideo } from "../../../store/currentVideo.slice";
 
 export interface NoteListProps {
   notesData?: NoteModel[];
   currentVideoTime: number;
-  onCreateNote: (content: string, videoTimeStamp: number) => void;
   onVideoSeek: (seekTime: number) => void;
 }
 
 const NoteList = ({
   notesData,
   currentVideoTime,
-  onCreateNote,
   onVideoSeek,
 }: NoteListProps) => {
-  //const [notes, setNotes] = useState(notesData);
+  const dispatch = useAppDispatch();
 
   const [showTextEditor, setShowTextEditor] = useState(false);
   const [staticCurrentTime, setStaticCurrentTime] = useState(0);
 
+  const videoJsonData = useSelector(
+    (state: RootState) => state.videoJson.videoJson
+  );
+
+  const currentVideo = useSelector(selCurrentVideo);
+
   const onCancelClick = () => {
     setShowTextEditor(false);
+  };
+
+  const onCreateNote = (content: string) => {
+    const newNote: NoteModel = {
+      id: uuidv4(),
+      content,
+      videoTimeStamp: staticCurrentTime,
+    };
+
+    const newVideoJsonData: VideoJsonModel = {
+      ...videoJsonData,
+      notes: [...videoJsonData.notes, newNote],
+    };
+
+    dispatch(
+      videoJsonActions.postVideoJason({
+        currentVideo,
+        newVideoJsonData,
+      })
+    ).then((data) => {
+      console.log("data saved ", data);
+    });
   };
 
   return (
@@ -47,9 +79,7 @@ const NoteList = ({
               variant="filled"
             />
             <AppTextEditor
-              onSaveNoteClick={(content) => {
-                onCreateNote(content, staticCurrentTime);
-              }}
+              onSaveNoteClick={onCreateNote}
               onCancelClick={onCancelClick}
             ></AppTextEditor>
           </Box>

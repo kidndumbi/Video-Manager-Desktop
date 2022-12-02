@@ -13,28 +13,31 @@ import AppVideoPlayer from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
 import Button from "@mui/material/Button";
 import { AppTabs } from "./AppTabs";
-import { RootState, useAppDispatch } from "../../store";
-import { currentRootPathActions } from "../../store/currentRootpath.slice";
-import { pathNavActions } from "../../store/pathNav.slice";
-import { folderVideosInfoActions } from "../../store/folderVideosInfo.slice";
+import { useAppDispatch } from "../../store";
+import {
+  currentRootPathActions,
+  selCurrentRootPath,
+} from "../../store/currentRootpath.slice";
+import { pathNavActions, selPathNav } from "../../store/pathNav.slice";
+import {
+  folderVideosInfoActions,
+  selFoldersVideosInfo,
+} from "../../store/folderVideosInfo.slice";
+import {
+  currentVideoActions,
+  selCurrentVideo,
+} from "../../store/currentVideo.slice";
 
 const VideoList = () => {
-  const [currentVideoTime, setCurrentVideoTime] = useState(0);
-
   const dispatch = useAppDispatch();
 
-  const [currentVideo, setCurrentVideo] = useState<VideoDataModel>();
+  const [currentVideoTime, setCurrentVideoTime] = useState(0);
+  const currentVideo = useSelector(selCurrentVideo);
+
   const [player, setPlayer] = useState<any>();
-
-  const folderVideosInfo = useSelector(
-    (state: RootState) => state.folderVideosInfo.folderVideosInfo
-  );
-
-  const pathNav = useSelector((state: RootState) => state.pathNav.pathNav);
-
-  const currentRootPath = useSelector(
-    (state: RootState) => state.currentRootPath.currentRootPath
-  );
+  const folderVideosInfo = useSelector(selFoldersVideosInfo);
+  const pathNav = useSelector(selPathNav);
+  const currentRootPath = useSelector(selCurrentRootPath);
 
   useEffect(() => {
     dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
@@ -42,15 +45,17 @@ const VideoList = () => {
 
   useEffect(() => {
     if (folderVideosInfo && folderVideosInfo.length > 0) {
-      setCurrentVideo(
-        folderVideosInfo.find((v: any) => v.isDirectory !== true)
+      dispatch(
+        currentVideoActions.setCurrentVideo(
+          folderVideosInfo.find((v) => v.isDirectory !== true)
+        )
       );
     }
   }, [folderVideosInfo]);
 
   const handleVideoSelect = (video: VideoDataModel) => {
     if (video.isDirectory === false) {
-      setCurrentVideo(video);
+      dispatch(currentVideoActions.setCurrentVideo(video));
     } else {
       dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
@@ -136,7 +141,6 @@ const VideoList = () => {
               onVideoSeek={(seekTime: number) => {
                 player.seek(seekTime);
               }}
-              currentVideo={currentVideo}
               currentVideoTime={currentVideoTime}
             ></AppTabs>
           </Grid>

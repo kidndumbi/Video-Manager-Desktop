@@ -1,16 +1,13 @@
 import React from "react";
-import { v4 as uuidv4 } from "uuid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { NoteList } from "./noteList/NoteList";
-import { VideoDataModel } from "../../models/videoData.model";
-import { VideoJsonModel } from "../../models/videoJSON.model";
-import { NoteModel } from "../../models/note.model";
 import { RootState, useAppDispatch } from "../../store";
 import { videoJsonActions } from "../../store/videoJson.slice";
 import { useSelector } from "react-redux";
+import { selCurrentVideo } from "../../store/currentVideo.slice";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -47,11 +44,9 @@ function a11yProps(index: number) {
 
 function AppTabs({
   currentVideoTime,
-  currentVideo,
   onVideoSeek,
 }: {
   currentVideoTime: number;
-  currentVideo: VideoDataModel | undefined;
   onVideoSeek: (seekTime: number) => void;
 }) {
   const dispatch = useAppDispatch();
@@ -60,6 +55,8 @@ function AppTabs({
   const videoJsonData = useSelector(
     (state: RootState) => state.videoJson.videoJson
   );
+
+  const currentVideo = useSelector(selCurrentVideo);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -70,26 +67,6 @@ function AppTabs({
       dispatch(videoJsonActions.getVideoJson(currentVideo));
     }
   }, [currentVideo]);
-
-  const onCreateNote = (content: string, videoTimeStamp: number) => {
-    const newNote: NoteModel = {
-      id: uuidv4(),
-      content,
-      videoTimeStamp,
-    };
-
-    const newVideoJsonData: VideoJsonModel = {
-      ...videoJsonData,
-      notes: [...videoJsonData.notes, newNote],
-    };
-
-    dispatch(
-      videoJsonActions.postVideoJason({
-        currentVideo,
-        newVideoJsonData,
-      })
-    );
-  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -109,7 +86,6 @@ function AppTabs({
       <TabPanel value={value} index={1}>
         <NoteList
           onVideoSeek={onVideoSeek}
-          onCreateNote={onCreateNote}
           currentVideoTime={currentVideoTime}
           notesData={videoJsonData?.notes}
         ></NoteList>

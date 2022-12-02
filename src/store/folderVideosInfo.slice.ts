@@ -1,5 +1,20 @@
+import { VideoDataModel } from "./../models/videoData.model";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ipcRenderer } from "electron";
+import { RootState } from "./index";
+
+const folderVideosInfoSlice = createSlice({
+  name: "folderVideosInfo",
+  initialState: { folderVideosInfo: [] } as {
+    folderVideosInfo: VideoDataModel[];
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchFolderVideosInfo.fulfilled, (state, action) => {
+      state.folderVideosInfo = action.payload;
+    });
+  },
+});
 
 const fetchFolderVideosInfo = createAsyncThunk(
   "folderVideosInfo/fetchFolderVideosInfo",
@@ -12,17 +27,9 @@ const fetchFolderVideosInfo = createAsyncThunk(
   }
 );
 
-const folderVideosInfoSlice = createSlice({
-  name: "folderVideosInfo",
-  initialState: { folderVideosInfo: [] },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchFolderVideosInfo.fulfilled, (state, action) => {
-      state.folderVideosInfo = action.payload;
-    });
-  },
-});
+const selFoldersVideosInfo = (state: RootState) =>
+  state.folderVideosInfo.folderVideosInfo;
 
 const folderVideosInfoActions = { fetchFolderVideosInfo };
 
-export { folderVideosInfoSlice, folderVideosInfoActions };
+export { folderVideosInfoSlice, folderVideosInfoActions, selFoldersVideosInfo };

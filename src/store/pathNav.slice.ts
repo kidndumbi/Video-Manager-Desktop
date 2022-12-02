@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "./index";
 
 const pathNavSlice = createSlice({
   name: "pathNav",
@@ -13,4 +14,6 @@ const pathNavSlice = createSlice({
 
 const pathNavActions = pathNavSlice.actions;
 
-export { pathNavSlice, pathNavActions };
+const selPathNav = (state: RootState) => state.pathNav.pathNav;
+
+export { pathNavSlice, pathNavActions, selPathNav };
