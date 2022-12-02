@@ -3,6 +3,4 @@ export interface VideoDataModel {
   filePath: string;
   isDirectory: boolean;
   rootPath?: string;
-
-  // notes?: { id: string; videoTimeStamp: number }[];
 }

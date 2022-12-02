@@ -42,13 +42,7 @@ function a11yProps(index: number) {
   };
 }
 
-function AppTabs({
-  currentVideoTime,
-  onVideoSeek,
-}: {
-  currentVideoTime: number;
-  onVideoSeek: (seekTime: number) => void;
-}) {
+function AppTabs({ currentVideoTime }: { currentVideoTime: number }) {
   const dispatch = useAppDispatch();
   const [value, setValue] = React.useState(1);
 
@@ -85,7 +79,7 @@ function AppTabs({
       </TabPanel>
       <TabPanel value={value} index={1}>
         <NoteList
-          onVideoSeek={onVideoSeek}
+          // onVideoSeek={onVideoSeek}
           currentVideoTime={currentVideoTime}
           notesData={videoJsonData?.notes}
         ></NoteList>

@@ -13,18 +13,14 @@ import { VideoJsonModel } from "../../../models/videoJSON.model";
 import { useSelector } from "react-redux";
 import { videoJsonActions } from "../../../store/videoJson.slice";
 import { selCurrentVideo } from "../../../store/currentVideo.slice";
+import { selVideoPlayer } from "../../../store/videoPlaye.slice";
 
 export interface NoteListProps {
   notesData?: NoteModel[];
   currentVideoTime: number;
-  onVideoSeek: (seekTime: number) => void;
 }
 
-const NoteList = ({
-  notesData,
-  currentVideoTime,
-  onVideoSeek,
-}: NoteListProps) => {
+const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
   const dispatch = useAppDispatch();
 
   const [showTextEditor, setShowTextEditor] = useState(false);
@@ -35,6 +31,7 @@ const NoteList = ({
   );
 
   const currentVideo = useSelector(selCurrentVideo);
+  const player = useSelector(selVideoPlayer);
 
   const onCancelClick = () => {
     setShowTextEditor(false);
@@ -59,7 +56,12 @@ const NoteList = ({
       })
     ).then((data) => {
       console.log("data saved ", data);
+      setShowTextEditor(false);
     });
+  };
+
+  const onVideoSeek = (seekTime: number) => {
+    player?.seek(seekTime);
   };
 
   return (

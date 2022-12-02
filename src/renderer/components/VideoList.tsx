@@ -27,6 +27,7 @@ import {
   currentVideoActions,
   selCurrentVideo,
 } from "../../store/currentVideo.slice";
+import { videoPlayerActions } from "../../store/videoPlaye.slice";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +35,6 @@ const VideoList = () => {
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
   const currentVideo = useSelector(selCurrentVideo);
 
-  const [player, setPlayer] = useState<any>();
   const folderVideosInfo = useSelector(selFoldersVideosInfo);
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
@@ -131,18 +131,15 @@ const VideoList = () => {
         <Grid xs={9}>
           <Grid xs={12}>
             <AppVideoPlayer
-              setPlayer={setPlayer}
+              setPlayer={(p) => {
+                dispatch(videoPlayerActions.setVideoPlayer(p));
+              }}
               onCurrentTime={onCurrentTime}
               videoData={currentVideo}
             ></AppVideoPlayer>
           </Grid>
           <Grid xs={12}>
-            <AppTabs
-              onVideoSeek={(seekTime: number) => {
-                player.seek(seekTime);
-              }}
-              currentVideoTime={currentVideoTime}
-            ></AppTabs>
+            <AppTabs currentVideoTime={currentVideoTime}></AppTabs>
           </Grid>
         </Grid>
       </Grid>
