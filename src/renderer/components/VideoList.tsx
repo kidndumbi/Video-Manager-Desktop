@@ -8,7 +8,8 @@ import ListItemText from "@mui/material/ListItemText";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grid from "@mui/material/Grid";
 import FolderIcon from "@mui/icons-material/Folder";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+// // import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+// import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
 import AppVideoPlayer from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
 import Button from "@mui/material/Button";
@@ -86,16 +87,28 @@ const VideoList = () => {
       <Grid container>
         <Grid xs={3}>
           <List
-            sx={{ width: "100%", bgcolor: "background.paper" }}
+            sx={{
+              width: "100%",
+              bgcolor: "background.paper",
+              overflow: "auto",
+              height: "100vh",
+            }}
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={
-              <ListSubheader component="div" id="nested-list-subheader">
+              <ListSubheader
+                sx={{ fontSize: "14px", lineHeight: "19px", marginTop: "10px" }}
+                component="div"
+                id="nested-list-subheader"
+              >
                 {pathNav.length > 0 ? (
                   <Button
-                    variant="outlined"
+                    variant="contained"
+                    color="primary"
                     onClick={onBackTriggered}
                     startIcon={<ArrowBackIosNewIcon />}
+                    size="small"
+                    sx={{ marginBottom: "10px" }}
                   >
                     Back
                   </Button>
@@ -110,17 +123,20 @@ const VideoList = () => {
                 {folderVideosInfo.map((video: VideoDataModel) => {
                   return (
                     <ListItemButton
+                      sx={{ paddingBottom: "3px", paddingTop: "3px" }}
                       key={video.filePath}
                       onClick={() => handleVideoSelect(video)}
                     >
-                      <ListItemIcon>
-                        {video.isDirectory === true ? (
-                          <FolderIcon />
-                        ) : (
-                          <OndemandVideoIcon />
-                        )}
-                      </ListItemIcon>
-                      <ListItemText primary={video.fileName} />
+                      {video.isDirectory ? (
+                        <ListItemIcon sx={{ minWidth: "33px" }}>
+                          <FolderIcon fontSize="small" />
+                        </ListItemIcon>
+                      ) : null}
+
+                      <ListItemText
+                        primaryTypographyProps={{ fontSize: "14px" }}
+                        primary={video.fileName}
+                      />
                     </ListItemButton>
                   );
                 })}

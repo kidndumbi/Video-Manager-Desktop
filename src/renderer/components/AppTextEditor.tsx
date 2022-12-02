@@ -1,28 +1,39 @@
 import React, { useState } from "react";
 import ReactQuill from "react-quill";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 type AppTextEditorProps = {
   onCancelClick: () => void;
   onSaveNoteClick: (value: string) => void;
+  text?: string;
+  btnText?: string;
 };
 
 const AppTextEditor = ({
   onCancelClick,
   onSaveNoteClick,
+  text = "",
+  btnText = "Save Note",
 }: AppTextEditorProps) => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(text);
 
   return (
     <>
-      <ReactQuill theme="snow" value={value} onChange={setValue} />
-      <Box sx={{ marginTop: "7px" }}>
-        <Button onClick={onCancelClick} variant="text">
+      <Box>
+        <ReactQuill theme="snow" value={value} onChange={setValue} />
+      </Box>
+
+      <Box sx={{ marginTop: "5px" }}>
+        <Button size="small" onClick={onCancelClick} variant="text">
           Cancel
         </Button>
-        <Button onClick={() => onSaveNoteClick(value)} variant="contained">
-          Save Note
+        <Button
+          size="small"
+          onClick={() => onSaveNoteClick(value)}
+          variant="contained"
+        >
+          {btnText}
         </Button>
       </Box>
     </>
