@@ -1,3 +1,4 @@
+import { RootState } from "./index";
 import { VideoJsonModel } from "./../models/videoJSON.model";
 import { VideoDataModel } from "./../models/videoData.model";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -47,6 +48,8 @@ const postVideoJason = createAsyncThunk(
   }
 );
 
+const selVideoJson = (state: RootState) => state.videoJson.videoJson;
+
 const videoJsonActions = { getVideoJson, postVideoJason };
 
-export { videoJsonSlice, videoJsonActions };
+export { videoJsonSlice, videoJsonActions, selVideoJson };

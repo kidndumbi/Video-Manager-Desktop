@@ -8,10 +8,10 @@ import { AppTextEditor } from "../AppTextEditor";
 import { Note } from "./Note";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { v4 as uuidv4 } from "uuid";
-import { RootState, useAppDispatch } from "../../../store";
+import { useAppDispatch } from "../../../store";
 import { VideoJsonModel } from "../../../models/videoJSON.model";
 import { useSelector } from "react-redux";
-import { videoJsonActions } from "../../../store/videoJson.slice";
+import { selVideoJson, videoJsonActions } from "../../../store/videoJson.slice";
 import { selCurrentVideo } from "../../../store/currentVideo.slice";
 import { selVideoPlayer } from "../../../store/videoPlaye.slice";
 
@@ -26,9 +26,7 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
   const [showTextEditor, setShowTextEditor] = useState(false);
   const [staticCurrentTime, setStaticCurrentTime] = useState(0);
 
-  const videoJsonData = useSelector(
-    (state: RootState) => state.videoJson.videoJson
-  );
+  const videoJsonData = useSelector(selVideoJson);
 
   const currentVideo = useSelector(selCurrentVideo);
   const player = useSelector(selVideoPlayer);
@@ -54,8 +52,7 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
         currentVideo,
         newVideoJsonData,
       })
-    ).then((data) => {
-      console.log("data saved ", data);
+    ).then(() => {
       setShowTextEditor(false);
     });
   };
@@ -92,6 +89,7 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
               color="secondary"
               variant="outlined"
               onClick={() => {
+                player.pause();
                 setShowTextEditor(true);
                 setStaticCurrentTime(currentVideoTime);
               }}

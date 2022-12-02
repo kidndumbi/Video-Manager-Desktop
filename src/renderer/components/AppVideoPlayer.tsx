@@ -4,13 +4,14 @@ import {
   ForwardControl,
   PlaybackRateMenuButton,
   Player,
+  PlayerReference,
 } from "video-react";
 import { VideoDataModel } from "../../models/videoData.model";
 
 type AppVideoPlayerProps = {
   videoData: VideoDataModel | undefined;
   onCurrentTime: (time: number) => void;
-  setPlayer: (player: any) => void;
+  setPlayer: (player: PlayerReference) => void;
 };
 
 export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
@@ -32,14 +33,14 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
       <>
         <div>{this.props.videoData?.fileName}</div>
         <Player
-          ref={(c) => {
+          ref={(c: PlayerReference) => {
             this.player = c;
           }}
           playsInline
           src={this.props.videoData?.filePath}
         >
           <ControlBar autoHide={false}>
-            <PlaybackRateMenuButton rates={[5, 2, 1.5, 1, 0.5, 0.1]} />
+            <PlaybackRateMenuButton rates={[2, 1.75, 1.5, 1.25, 1]} />
             <ForwardControl seconds={5} />
             <ForwardControl seconds={10} />
             <ForwardControl seconds={30} />

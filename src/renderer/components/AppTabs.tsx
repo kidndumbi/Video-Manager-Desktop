@@ -4,8 +4,8 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { NoteList } from "./noteList/NoteList";
-import { RootState, useAppDispatch } from "../../store";
-import { videoJsonActions } from "../../store/videoJson.slice";
+import { useAppDispatch } from "../../store";
+import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { useSelector } from "react-redux";
 import { selCurrentVideo } from "../../store/currentVideo.slice";
 
@@ -46,9 +46,7 @@ function AppTabs({ currentVideoTime }: { currentVideoTime: number }) {
   const dispatch = useAppDispatch();
   const [value, setValue] = React.useState(1);
 
-  const videoJsonData = useSelector(
-    (state: RootState) => state.videoJson.videoJson
-  );
+  const videoJsonData = useSelector(selVideoJson);
 
   const currentVideo = useSelector(selCurrentVideo);
 
@@ -79,7 +77,6 @@ function AppTabs({ currentVideoTime }: { currentVideoTime: number }) {
       </TabPanel>
       <TabPanel value={value} index={1}>
         <NoteList
-          // onVideoSeek={onVideoSeek}
           currentVideoTime={currentVideoTime}
           notesData={videoJsonData?.notes}
         ></NoteList>
