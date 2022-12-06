@@ -69,6 +69,24 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
     });
   };
 
+  const onDeleteNote = (note: NoteModel) => {
+    const filteredNotes = videoJsonData.notes.filter((n) => n.id !== note.id);
+
+    const newVideoJsonData: VideoJsonModel = {
+      ...videoJsonData,
+      notes: filteredNotes,
+    };
+
+    dispatch(
+      videoJsonActions.postVideoJason({
+        currentVideo,
+        newVideoJsonData,
+      })
+    ).then(() => {
+      // setShowTextEditor(false);
+    });
+  };
+
   const onVideoSeek = (seekTime: number) => {
     player?.seek(seekTime);
   };
@@ -152,6 +170,7 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
                   key={note.id}
                   note={note}
                   onNoteSave={onNoteSave}
+                  onNoteDelete={onDeleteNote}
                 ></Note>
               ))
             : null}

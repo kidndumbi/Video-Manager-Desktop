@@ -9,16 +9,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { AppTextEditor } from "../AppTextEditor";
 import Moment from "react-moment";
+import { AlertDialog } from "../AlertDialog";
 
 type NoteProps = {
   note: NoteModel;
   onVideoSeek: (seekTime: number) => void;
   onNoteSave: (note: NoteModel) => void;
+  onNoteDelete: (note: NoteModel) => void;
 };
 
-const Note = ({ note, onVideoSeek, onNoteSave }: NoteProps) => {
+const Note = ({ note, onVideoSeek, onNoteSave, onNoteDelete }: NoteProps) => {
   const [edit, setEdit] = useState(false);
-  // const [textEditorValue, setTextEditorValue] = useState(note.content);
+  const [showDialog, setShowDialog] = useState(false);
 
   const handleClick = () => {
     console.log("You clicked the Chip.");
@@ -62,7 +64,13 @@ const Note = ({ note, onVideoSeek, onNoteSave }: NoteProps) => {
             <IconButton aria-label="edut" size="medium" onClick={onEditNote}>
               <EditIcon fontSize="small" />
             </IconButton>
-            <IconButton aria-label="delete" size="medium">
+            <IconButton
+              aria-label="delete"
+              size="medium"
+              onClick={() => {
+                setShowDialog(true);
+              }}
+            >
               <DeleteIcon fontSize="small" />
             </IconButton>
           </Box>
@@ -99,18 +107,27 @@ const Note = ({ note, onVideoSeek, onNoteSave }: NoteProps) => {
               if (value === "") {
                 return;
               }
-              console.log("i was saved ", value);
               onNoteSave({ ...note, content: value });
               setEdit(false);
             }}
             onCancelClick={() => {
-              console.log("i was cancelled");
               setEdit(false);
             }}
             text={note.content}
           ></AppTextEditor>
         </Box>
       ) : null}
+      <Box>
+        <AlertDialog
+          showDialog={showDialog}
+          onSelectedOption={(option: string) => {
+            setShowDialog(false);
+            if (option === "ok") {
+              onNoteDelete(note);
+            }
+          }}
+        ></AlertDialog>
+      </Box>
     </>
   );
 };
