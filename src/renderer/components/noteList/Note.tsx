@@ -7,7 +7,7 @@ import { secondsTohhmmss } from "../../../util/helperFunctions";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { AppTextEditor } from "../AppTextEditor";
+import { NoteTextEditor } from "../NoteTextEditor";
 import Moment from "react-moment";
 import { AlertDialog } from "../AlertDialog";
 
@@ -102,7 +102,7 @@ const Note = ({ note, onVideoSeek, onNoteSave, onNoteDelete }: NoteProps) => {
             marginBottom: "100px",
           }}
         >
-          <AppTextEditor
+          <NoteTextEditor
             onSaveNoteClick={(value: string) => {
               if (value === "") {
                 return;
@@ -114,7 +114,7 @@ const Note = ({ note, onVideoSeek, onNoteSave, onNoteDelete }: NoteProps) => {
               setEdit(false);
             }}
             text={note.content}
-          ></AppTextEditor>
+          ></NoteTextEditor>
         </Box>
       ) : null}
       <Box>

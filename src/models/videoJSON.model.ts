@@ -1,9 +1,6 @@
 import { NoteModel } from "./note.model";
+import { OverviewModel } from "./overview.model";
 export interface VideoJsonModel {
-  overview: {
-    createdAt?: number;
-    updatedDat?: number;
-    body?: string;
-  };
+  overview: OverviewModel;
   notes: NoteModel[];
 }

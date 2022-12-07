@@ -8,6 +8,7 @@ import { useAppDispatch } from "../../store";
 import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { useSelector } from "react-redux";
 import { selCurrentVideo } from "../../store/currentVideo.slice";
+import { Overview } from "./overview/Overview";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -73,7 +74,7 @@ function AppTabs({ currentVideoTime }: { currentVideoTime: number }) {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        Overview
+        <Overview overview={videoJsonData.overview}></Overview>
       </TabPanel>
       <TabPanel value={value} index={1}>
         <NoteList

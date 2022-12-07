@@ -4,7 +4,7 @@ import Chip from "@mui/material/Chip";
 import React, { useEffect, useState } from "react";
 import { NoteModel } from "../../../models/note.model";
 import { secondsTohhmmss } from "../../../util/helperFunctions";
-import { AppTextEditor } from "../AppTextEditor";
+import { NoteTextEditor } from "../NoteTextEditor";
 import { Note } from "./Note";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { v4 as uuidv4 } from "uuid";
@@ -36,7 +36,6 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
   };
 
   useEffect(() => {
-    console.log("current video have changed ");
     setShowTextEditor(false);
   }, [currentVideo]);
 
@@ -51,8 +50,6 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
       videoTimeStamp: staticCurrentTime,
       createdAt: new Date().getTime(),
     };
-
-    console.log("date? ", newNote);
 
     const newVideoJsonData: VideoJsonModel = {
       ...videoJsonData,
@@ -92,15 +89,12 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
   };
 
   const onNoteSave = (updatedNote: NoteModel) => {
-    console.log("updated note ", updatedNote);
     const notesForUpdate = JSON.parse(
       JSON.stringify(videoJsonData.notes)
     ) as NoteModel[];
     notesForUpdate.forEach((note) => {
       if (note.id == updatedNote.id) note.content = updatedNote.content;
     });
-
-    console.log("update array ", notesForUpdate);
 
     const newVideoJsonData: VideoJsonModel = {
       ...videoJsonData,
@@ -138,11 +132,11 @@ const NoteList = ({ notesData, currentVideoTime }: NoteListProps) => {
                 sx={{ marginBottom: " 5px" }}
                 size="small"
               />
-              <AppTextEditor
+              <NoteTextEditor
                 onSaveNoteClick={onCreateNote}
                 onCancelClick={onCancelClick}
                 btnText="Save New Note"
-              ></AppTextEditor>
+              ></NoteTextEditor>
             </Box>
           ) : null}
           {!showTextEditor ? (

@@ -3,19 +3,19 @@ import ReactQuill from "react-quill";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
-type AppTextEditorProps = {
+type NoteTextEditorProps = {
   onCancelClick: () => void;
   onSaveNoteClick: (value: string) => void;
   text?: string;
   btnText?: string;
 };
 
-const AppTextEditor = ({
+const NoteTextEditor = ({
   onCancelClick,
   onSaveNoteClick,
   text = "",
   btnText = "Save Note",
-}: AppTextEditorProps) => {
+}: NoteTextEditorProps) => {
   const [value, setValue] = useState(text);
 
   return (
@@ -40,4 +40,4 @@ const AppTextEditor = ({
   );
 };
 
-export { AppTextEditor };
+export { NoteTextEditor };
