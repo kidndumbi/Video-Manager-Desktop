@@ -44,43 +44,47 @@ const Overview = ({ overview }: OverviewProps) => {
 
   return (
     <>
-      {!showTextEditor ? (
-        <Box>
-          <IconButton
-            aria-label="delete"
-            size="large"
-            onClick={() => setShowTextEditor(true)}
-          >
-            <EditIcon fontSize="inherit" />
-          </IconButton>
-        </Box>
-      ) : null}
-
-      <Box sx={{ marginBottom: "30px" }}>
+      <Box>
         {!showTextEditor ? (
-          <Box dangerouslySetInnerHTML={{ __html: overview.body || "" }}></Box>
-        ) : null}
-
-        {showTextEditor ? (
-          <Box
-            sx={{
-              paddingBottom: "10px",
-              height: "300px",
-            }}
-          >
-            <NoteTextEditor
-              onSaveNoteClick={(value: string) => {
-                setShowTextEditor(false);
-                save(value);
-              }}
-              onCancelClick={() => {
-                setShowTextEditor(false);
-              }}
-              btnText="Save"
-              text={overview?.body}
-            />
+          <Box>
+            <IconButton
+              aria-label="delete"
+              size="large"
+              onClick={() => setShowTextEditor(true)}
+            >
+              <EditIcon fontSize="inherit" />
+            </IconButton>
           </Box>
         ) : null}
+
+        <Box sx={{ marginBottom: 1 }}>
+          {!showTextEditor ? (
+            <Box
+              dangerouslySetInnerHTML={{ __html: overview.body || "" }}
+            ></Box>
+          ) : null}
+
+          {showTextEditor ? (
+            <Box
+              sx={{
+                height: 250,
+                mb: 5,
+              }}
+            >
+              <NoteTextEditor
+                onSaveNoteClick={(value: string) => {
+                  setShowTextEditor(false);
+                  save(value);
+                }}
+                onCancelClick={() => {
+                  setShowTextEditor(false);
+                }}
+                btnText="Save"
+                text={overview?.body}
+              />
+            </Box>
+          ) : null}
+        </Box>
       </Box>
     </>
   );

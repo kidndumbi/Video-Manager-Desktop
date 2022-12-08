@@ -79,14 +79,15 @@ ipcMain.handle("get:root-video-data", async (event, filePath) => {
           fileName: file,
           filePath: filePath + "/" + file,
           isDirectory: stats.isDirectory(),
+          createdAt: stats.birthtimeMs,
           rootPath: filePath,
         });
       }
     }
 
-    return videoData.sort(
-      (a, b) => Number(b.isDirectory) - Number(a.isDirectory)
-    );
+    return videoData
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .sort((a, b) => Number(b.isDirectory) - Number(a.isDirectory));
   } catch (error) {
     throw "error";
   }
