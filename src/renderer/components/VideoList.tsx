@@ -8,7 +8,8 @@ import ListItemText from "@mui/material/ListItemText";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grid from "@mui/material/Grid";
 import FolderIcon from "@mui/icons-material/Folder";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+// import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import NotesIcon from "@mui/icons-material/Notes";
 import AppVideoPlayer from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
@@ -35,6 +36,7 @@ import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
 import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoJsonModel } from "../../models/videoJSON.model";
+import Divider from "@mui/material/Divider";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -146,35 +148,39 @@ const VideoList = () => {
               <div>
                 {folderVideosInfo.map((video: VideoDataModel) => {
                   return (
-                    <ListItemButton
-                      sx={{ paddingBottom: "3px", paddingTop: "3px" }}
-                      key={video.filePath}
-                      onClick={() => handleVideoSelect(video)}
-                    >
-                      {video.isDirectory ? (
-                        <ListItemIcon sx={{ minWidth: "33px" }}>
-                          <FolderIcon fontSize="small" />
-                        </ListItemIcon>
-                      ) : null}
+                    <>
+                      <ListItemButton
+                        sx={{ paddingBottom: "9px", paddingTop: "9px" }}
+                        key={video.filePath}
+                        onClick={() => handleVideoSelect(video)}
+                      >
+                        {video.isDirectory ? (
+                          <ListItemIcon sx={{ minWidth: "33px" }}>
+                            <FolderIcon fontSize="small" />
+                          </ListItemIcon>
+                        ) : null}
 
-                      <ListItemText
-                        primaryTypographyProps={{ fontSize: "14px" }}
-                        primary={video.fileName}
-                      />
-                      {video.mustWatch ? (
-                        <ListItemIcon>
-                          <PriorityHighIcon color="warning" fontSize="small" />
-                        </ListItemIcon>
-                      ) : null}
-                      {video.notesCount > 0 ? (
-                        <Badge
-                          color="secondary"
-                          badgeContent={video.notesCount}
-                        >
-                          <NotesIcon fontSize="small" />
-                        </Badge>
-                      ) : null}
-                    </ListItemButton>
+                        <ListItemText
+                          primaryTypographyProps={{ fontSize: "14px" }}
+                          primary={video.fileName}
+                        />
+                        {video.mustWatch ? (
+                          <ListItemIcon>
+                            <NewReleasesIcon color="warning" fontSize="small" />
+                          </ListItemIcon>
+                        ) : null}
+                        {video.notesCount > 0 ? (
+                          <Badge
+                            color="secondary"
+                            badgeContent={video.notesCount}
+                            sx={{ right: 2, top: 9 }}
+                          >
+                            <NotesIcon fontSize="small" />
+                          </Badge>
+                        ) : null}
+                      </ListItemButton>
+                      <Divider />
+                    </>
                   );
                 })}
               </div>
