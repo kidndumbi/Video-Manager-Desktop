@@ -4,4 +4,6 @@ export interface VideoDataModel {
   isDirectory: boolean;
   rootPath?: string;
   createdAt: number;
+  mustWatch?: boolean;
+  notesCount: number;
 }

@@ -75,12 +75,30 @@ ipcMain.handle("get:root-video-data", async (event, filePath) => {
         path.extname(file).toLocaleLowerCase() === ".mp4" ||
         stats.isDirectory()
       ) {
+        const dataJsonpath = filePath + "/" + path.parse(file).name + ".json";
+
+        const dataJsonfileExists = await exists(dataJsonpath);
+
+        let jsonFileContents: VideoJsonModel | null = null;
+
+        if (dataJsonfileExists) {
+          const jsonFile = await readFile(dataJsonpath);
+          jsonFileContents = JSON.parse(jsonFile.toString()) as VideoJsonModel;
+        }
+
         videoData.push({
           fileName: file,
           filePath: filePath + "/" + file,
           isDirectory: stats.isDirectory(),
           createdAt: stats.birthtimeMs,
           rootPath: filePath,
+          mustWatch:
+            jsonFileContents?.mustWatch === undefined
+              ? false
+              : jsonFileContents?.mustWatch,
+          notesCount: jsonFileContents?.notes
+            ? jsonFileContents.notes.length
+            : 0,
         });
       }
     }

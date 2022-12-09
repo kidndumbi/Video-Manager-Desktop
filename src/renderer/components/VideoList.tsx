@@ -8,10 +8,12 @@ import ListItemText from "@mui/material/ListItemText";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grid from "@mui/material/Grid";
 import FolderIcon from "@mui/icons-material/Folder";
-// // import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-// import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import NotesIcon from "@mui/icons-material/Notes";
 import AppVideoPlayer from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { VideoSettingsDialog } from "./VideoSettingsDialog";
 import Button from "@mui/material/Button";
 import { AppTabs } from "./AppTabs";
 import { useAppDispatch } from "../../store";
@@ -29,11 +31,14 @@ import {
   selCurrentVideo,
 } from "../../store/currentVideo.slice";
 import { videoPlayerActions } from "../../store/videoPlaye.slice";
+import Badge from "@mui/material/Badge";
+import IconButton from "@mui/material/IconButton";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
 
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const currentVideo = useSelector(selCurrentVideo);
 
   const folderVideosInfo = useSelector(selFoldersVideosInfo);
@@ -137,6 +142,19 @@ const VideoList = () => {
                         primaryTypographyProps={{ fontSize: "14px" }}
                         primary={video.fileName}
                       />
+                      {video.mustWatch ? (
+                        <ListItemIcon>
+                          <PriorityHighIcon color="warning" fontSize="small" />
+                        </ListItemIcon>
+                      ) : null}
+                      {video.notesCount > 0 ? (
+                        <Badge
+                          color="secondary"
+                          badgeContent={video.notesCount}
+                        >
+                          <NotesIcon fontSize="small" />
+                        </Badge>
+                      ) : null}
                     </ListItemButton>
                   );
                 })}
@@ -145,6 +163,15 @@ const VideoList = () => {
           </List>
         </Grid>
         <Grid xs={9}>
+          <Grid xs={12}>
+            <IconButton
+              color="primary"
+              aria-label="add to shopping cart"
+              onClick={() => setShowSettingsDialog(true)}
+            >
+              <SettingsIcon />
+            </IconButton>
+          </Grid>
           <Grid xs={12}>
             <AppVideoPlayer
               setPlayer={(p) => {
@@ -158,6 +185,10 @@ const VideoList = () => {
             <AppTabs currentVideoTime={currentVideoTime}></AppTabs>
           </Grid>
         </Grid>
+        <VideoSettingsDialog
+          onClose={() => setShowSettingsDialog(false)}
+          showDialog={showSettingsDialog}
+        ></VideoSettingsDialog>
       </Grid>
     </>
   );
