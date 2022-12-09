@@ -33,6 +33,8 @@ import {
 import { videoPlayerActions } from "../../store/videoPlaye.slice";
 import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
+import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
+import { VideoJsonModel } from "../../models/videoJSON.model";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -44,6 +46,7 @@ const VideoList = () => {
   const folderVideosInfo = useSelector(selFoldersVideosInfo);
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
+  const videoJsonData = useSelector(selVideoJson);
 
   useEffect(() => {
     dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
@@ -85,6 +88,22 @@ const VideoList = () => {
 
   const onCurrentTime = (time: number) => {
     setCurrentVideoTime(time);
+  };
+
+  const saveVideosettings = (value: { [value: string]: boolean }) => {
+    const newVideoJsonData: VideoJsonModel = {
+      ...videoJsonData,
+      ...value,
+    };
+
+    dispatch(
+      videoJsonActions.postVideoJason({
+        currentVideo,
+        newVideoJsonData,
+      })
+    ).then(() => {
+      // setShowTextEditor(false);
+    });
   };
 
   return (
@@ -188,6 +207,8 @@ const VideoList = () => {
         <VideoSettingsDialog
           onClose={() => setShowSettingsDialog(false)}
           showDialog={showSettingsDialog}
+          mustWatch={videoJsonData.mustWatch}
+          onStateChange={saveVideosettings}
         ></VideoSettingsDialog>
       </Grid>
     </>

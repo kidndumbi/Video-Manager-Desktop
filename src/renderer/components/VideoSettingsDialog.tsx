@@ -11,27 +11,23 @@ import FormControl from "@mui/material/FormControl";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+import FormLabel from "@mui/material/FormLabel";
 
 type VideoSettingsDialogProps = {
   onClose: () => void;
   showDialog: boolean;
+  mustWatch: boolean | undefined;
+  onStateChange: (value: { [value: string]: boolean }) => void;
 };
 
 const VideoSettingsDialog = ({
   showDialog,
   onClose,
+  mustWatch,
+  onStateChange,
 }: VideoSettingsDialogProps) => {
-  const [state, setState] = React.useState({
-    gilad: true,
-    jason: false,
-    antoine: true,
-  });
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked,
-    });
+    onStateChange({ [event.target.name]: event.target.checked });
   };
 
   return (
@@ -42,7 +38,6 @@ const VideoSettingsDialog = ({
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle sx={{ mb: 2 }}>
-          Video Settings
           <IconButton
             aria-label="close"
             onClick={() => onClose()}
@@ -60,19 +55,19 @@ const VideoSettingsDialog = ({
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <FormControl component="fieldset" variant="standard">
-              {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
+              <FormLabel component="legend">Video Settings</FormLabel>
               <FormGroup>
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={state.gilad}
+                      checked={mustWatch}
                       onChange={handleChange}
-                      name="gilad"
+                      name="mustWatch"
                     />
                   }
-                  label="Gilad Gray"
+                  label="Must Watch"
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   control={
                     <Switch
                       checked={state.jason}
@@ -81,17 +76,7 @@ const VideoSettingsDialog = ({
                     />
                   }
                   label="Jason Killian"
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={state.antoine}
-                      onChange={handleChange}
-                      name="antoine"
-                    />
-                  }
-                  label="Antoine Llorca"
-                />
+                /> */}
               </FormGroup>
             </FormControl>
           </DialogContentText>
