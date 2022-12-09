@@ -27,10 +27,9 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
     this.forceUpdate();
     this.props.setPlayer(this.player);
 
-    setInterval(() => {
-      const { player } = this.player.getState();
-      this.props.onCurrentTime(player.currentTime);
-    }, 1000);
+    this.player.subscribeToStateChange((state: any) => {
+      this.props.onCurrentTime(state.currentTime);
+    });
   }
 
   skip(seconds: number) {
