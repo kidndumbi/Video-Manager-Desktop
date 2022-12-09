@@ -31,12 +31,17 @@ import {
   currentVideoActions,
   selCurrentVideo,
 } from "../../store/currentVideo.slice";
-import { videoPlayerActions } from "../../store/videoPlaye.slice";
+import {
+  selVideoPlayer,
+  videoPlayerActions,
+} from "../../store/videoPlaye.slice";
 import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
 import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import Divider from "@mui/material/Divider";
+import { PlayerState } from "video-react";
+import { ipcRenderer } from "electron";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -44,6 +49,7 @@ const VideoList = () => {
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const currentVideo = useSelector(selCurrentVideo);
+  const player = useSelector(selVideoPlayer);
 
   const folderVideosInfo = useSelector(selFoldersVideosInfo);
   const pathNav = useSelector(selPathNav);
@@ -53,6 +59,27 @@ const VideoList = () => {
   useEffect(() => {
     dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
   }, []);
+
+  useEffect(() => {
+    if (player.subscribeToStateChange) {
+      player.subscribeToStateChange(async (state: PlayerState) => {
+        if (!state.paused && currentVideo.filePath) {
+          await ipcRenderer.invoke("save:lastWatch", {
+            currentVideo,
+            lastWatched: state.currentTime,
+          });
+        }
+      });
+    }
+  }, [player, currentVideo]);
+
+  useEffect(() => {
+    if (player) {
+      if (videoJsonData.lastWatched) {
+        player.seek(videoJsonData.lastWatched);
+      }
+    }
+  }, [videoJsonData]);
 
   useEffect(() => {
     if (folderVideosInfo && folderVideosInfo.length > 0) {

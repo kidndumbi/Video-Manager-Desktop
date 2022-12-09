@@ -157,6 +157,43 @@ ipcMain.handle(
   }
 );
 
+ipcMain.handle(
+  "save:lastWatch",
+  async (
+    event,
+    {
+      currentVideo,
+      lastWatched,
+    }: { currentVideo: VideoDataModel; lastWatched: number }
+  ) => {
+    const jsonFilePath =
+      currentVideo.rootPath +
+      "/" +
+      path.parse(currentVideo.fileName).name +
+      ".json";
+
+    const fileExists = await exists(jsonFilePath);
+
+    if (fileExists) {
+      let jsonFileContents: VideoJsonModel | null = null;
+      const jsonFile = await readFile(jsonFilePath);
+      jsonFileContents = JSON.parse(jsonFile.toString()) as VideoJsonModel;
+
+      jsonFileContents.lastWatched = lastWatched;
+      await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
+      return jsonFileContents;
+    } else {
+      const newJsonContent: VideoJsonModel = {
+        notes: [],
+        overview: {},
+        lastWatched,
+      };
+      await writeFile(jsonFilePath, JSON.stringify(newJsonContent));
+      return newJsonContent;
+    }
+  }
+);
+
 async function exists(path: string) {
   try {
     await access(path);
