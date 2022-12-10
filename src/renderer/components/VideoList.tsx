@@ -8,7 +8,6 @@ import ListItemText from "@mui/material/ListItemText";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grid from "@mui/material/Grid";
 import FolderIcon from "@mui/icons-material/Folder";
-// import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import NotesIcon from "@mui/icons-material/Notes";
 import AppVideoPlayer from "./AppVideoPlayer";
@@ -40,7 +39,6 @@ import IconButton from "@mui/material/IconButton";
 import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import Divider from "@mui/material/Divider";
-import { PlayerState } from "video-react";
 import { ipcRenderer } from "electron";
 
 const VideoList = () => {
@@ -59,19 +57,6 @@ const VideoList = () => {
   useEffect(() => {
     dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
   }, []);
-
-  useEffect(() => {
-    if (player.subscribeToStateChange) {
-      player.subscribeToStateChange(async (state: PlayerState) => {
-        if (!state.paused && currentVideo.filePath) {
-          await ipcRenderer.invoke("save:lastWatch", {
-            currentVideo,
-            lastWatched: state.currentTime,
-          });
-        }
-      });
-    }
-  }, [player, currentVideo]);
 
   useEffect(() => {
     if (player) {
@@ -132,6 +117,13 @@ const VideoList = () => {
       })
     ).then(() => {
       // setShowTextEditor(false);
+    });
+  };
+
+  const updateLastWatched = async (time: number) => {
+    await ipcRenderer.invoke("save:lastWatch", {
+      currentVideo,
+      lastWatched: time,
     });
   };
 
@@ -231,6 +223,7 @@ const VideoList = () => {
               }}
               onCurrentTime={onCurrentTime}
               videoData={currentVideo}
+              onUpdateLastWatched={updateLastWatched}
             ></AppVideoPlayer>
           </Grid>
           <Grid xs={12}>

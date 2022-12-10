@@ -180,7 +180,12 @@ ipcMain.handle(
       jsonFileContents = JSON.parse(jsonFile.toString()) as VideoJsonModel;
 
       jsonFileContents.lastWatched = lastWatched;
-      await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
+
+      try {
+        await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
+      } catch (error) {
+        console.log("ERROR HERE? ", error);
+      }
       return jsonFileContents;
     } else {
       const newJsonContent: VideoJsonModel = {

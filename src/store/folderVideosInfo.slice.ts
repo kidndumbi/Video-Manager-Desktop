@@ -23,7 +23,6 @@ const fetchFolderVideosInfo = createAsyncThunk(
       "get:root-video-data",
       currentRootPath
     );
-    console.log("response ", response);
     return response;
   }
 );

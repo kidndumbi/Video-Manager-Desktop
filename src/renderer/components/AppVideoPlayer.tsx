@@ -6,6 +6,7 @@ import {
   PlaybackRateMenuButton,
   Player,
   PlayerReference,
+  PlayerState,
 } from "video-react";
 import { VideoDataModel } from "../../models/videoData.model";
 import Replay5Icon from "@mui/icons-material/Replay5";
@@ -17,6 +18,7 @@ type AppVideoPlayerProps = {
   videoData: VideoDataModel | undefined;
   onCurrentTime: (time: number) => void;
   setPlayer: (player: PlayerReference) => void;
+  onUpdateLastWatched: (time: number) => void;
 };
 
 export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
@@ -27,8 +29,11 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
     this.forceUpdate();
     this.props.setPlayer(this.player);
 
-    this.player.subscribeToStateChange((state: any) => {
+    this.player.subscribeToStateChange((state: PlayerState) => {
       this.props.onCurrentTime(state.currentTime);
+      if (!state.paused) {
+        this.props.onUpdateLastWatched(state.currentTime);
+      }
     });
   }
 
