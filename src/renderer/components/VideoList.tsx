@@ -47,11 +47,13 @@ const VideoList = () => {
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const currentVideo = useSelector(selCurrentVideo);
+
   const player = useSelector(selVideoPlayer);
 
   const folderVideosInfo = useSelector(selFoldersVideosInfo);
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
+
   const videoJsonData = useSelector(selVideoJson);
 
   useEffect(() => {
@@ -76,7 +78,15 @@ const VideoList = () => {
     }
   }, [folderVideosInfo]);
 
+  const updateLastWatched = async () => {
+    await ipcRenderer.invoke("save:lastWatch", {
+      currentVideo,
+      lastWatched: currentVideoTime,
+    });
+  };
+
   const handleVideoSelect = (video: VideoDataModel) => {
+    updateLastWatched();
     if (video.isDirectory === false) {
       dispatch(currentVideoActions.setCurrentVideo(video));
     } else {
@@ -117,13 +127,6 @@ const VideoList = () => {
       })
     ).then(() => {
       // setShowTextEditor(false);
-    });
-  };
-
-  const updateLastWatched = async (time: number) => {
-    await ipcRenderer.invoke("save:lastWatch", {
-      currentVideo,
-      lastWatched: time,
     });
   };
 
@@ -223,7 +226,6 @@ const VideoList = () => {
               }}
               onCurrentTime={onCurrentTime}
               videoData={currentVideo}
-              onUpdateLastWatched={updateLastWatched}
             ></AppVideoPlayer>
           </Grid>
           <Grid xs={12}>

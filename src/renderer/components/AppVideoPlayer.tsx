@@ -18,7 +18,6 @@ type AppVideoPlayerProps = {
   videoData: VideoDataModel | undefined;
   onCurrentTime: (time: number) => void;
   setPlayer: (player: PlayerReference) => void;
-  onUpdateLastWatched: (time: number) => void;
 };
 
 export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
@@ -31,9 +30,6 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
 
     this.player.subscribeToStateChange((state: PlayerState) => {
       this.props.onCurrentTime(state.currentTime);
-      if (!state.paused) {
-        this.props.onUpdateLastWatched(state.currentTime);
-      }
     });
   }
 

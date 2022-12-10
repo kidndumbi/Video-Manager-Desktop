@@ -166,35 +166,39 @@ ipcMain.handle(
       lastWatched,
     }: { currentVideo: VideoDataModel; lastWatched: number }
   ) => {
-    const jsonFilePath =
-      currentVideo.rootPath +
-      "/" +
-      path.parse(currentVideo.fileName).name +
-      ".json";
+    try {
+      const jsonFilePath =
+        currentVideo.rootPath +
+        "/" +
+        path.parse(currentVideo.fileName).name +
+        ".json";
 
-    const fileExists = await exists(jsonFilePath);
+      const fileExists = await exists(jsonFilePath);
 
-    if (fileExists) {
-      let jsonFileContents: VideoJsonModel | null = null;
-      const jsonFile = await readFile(jsonFilePath);
-      jsonFileContents = JSON.parse(jsonFile.toString()) as VideoJsonModel;
+      if (fileExists) {
+        let jsonFileContents: VideoJsonModel | null = null;
+        const jsonFile = await readFile(jsonFilePath);
+        if (jsonFile.toString()) {
+          jsonFileContents = JSON.parse(jsonFile.toString()) as VideoJsonModel;
 
-      jsonFileContents.lastWatched = lastWatched;
+          jsonFileContents.lastWatched = lastWatched;
 
-      try {
-        await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
-      } catch (error) {
-        console.log("ERROR HERE? ", error);
+          await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
+        }
+
+        return jsonFileContents;
+      } else {
+        const newJsonContent: VideoJsonModel = {
+          notes: [],
+          overview: {},
+          lastWatched,
+        };
+        await writeFile(jsonFilePath, JSON.stringify(newJsonContent));
+        return newJsonContent;
       }
-      return jsonFileContents;
-    } else {
-      const newJsonContent: VideoJsonModel = {
-        notes: [],
-        overview: {},
-        lastWatched,
-      };
-      await writeFile(jsonFilePath, JSON.stringify(newJsonContent));
-      return newJsonContent;
+    } catch (error) {
+      console.log("save:lastWatch error ", error);
+      console.log("currentVideo ::: ", currentVideo);
     }
   }
 );
