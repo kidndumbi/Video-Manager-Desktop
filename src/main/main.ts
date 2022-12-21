@@ -3,8 +3,11 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import * as url from "url";
 // import { readdir } from "fs";
-import { stat, access, readFile, writeFile, readdir } from "fs/promises";
+import { stat, writeFile, readdir } from "fs/promises";
 import { VideoDataModel } from "../models/videoData.model";
+import { FileManager } from "../util/FileManager";
+
+const fm = new FileManager();
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -77,13 +80,13 @@ ipcMain.handle("get:root-video-data", async (event, filePath) => {
       ) {
         const dataJsonpath = filePath + "/" + path.parse(file).name + ".json";
 
-        const dataJsonfileExists = await exists(dataJsonpath);
+        const dataJsonfileExists = await fm.exists(dataJsonpath);
 
         let jsonFileContents: VideoJsonModel | null = null;
 
         if (dataJsonfileExists) {
-          const jsonFile = await readFile(dataJsonpath);
-          jsonFileContents = JSON.parse(jsonFile.toString()) as VideoJsonModel;
+          const jsonFile = await fm.readFile(dataJsonpath);
+          jsonFileContents = JSON.parse(jsonFile || "") as VideoJsonModel;
         }
 
         videoData.push({
@@ -120,11 +123,11 @@ ipcMain.handle(
       path.parse(currentVideo.fileName).name +
       ".json";
 
-    const fileExists = await exists(newFilePath);
+    const fileExists = await fm.exists(newFilePath);
 
     if (fileExists) {
-      const file = await readFile(newFilePath);
-      return JSON.parse(file.toString());
+      const file = await fm.readFile(newFilePath);
+      return JSON.parse(file || "");
     } else {
       return {
         notes: [],
@@ -173,13 +176,13 @@ ipcMain.handle(
         path.parse(currentVideo.fileName).name +
         ".json";
 
-      const fileExists = await exists(jsonFilePath);
+      const fileExists = await fm.exists(jsonFilePath);
 
       if (fileExists) {
         let jsonFileContents: VideoJsonModel | null = null;
-        const jsonFile = await readFile(jsonFilePath);
-        if (jsonFile.toString()) {
-          jsonFileContents = JSON.parse(jsonFile.toString()) as VideoJsonModel;
+        const jsonFile = await fm.readFile(jsonFilePath);
+        if (jsonFile) {
+          jsonFileContents = JSON.parse(jsonFile) as VideoJsonModel;
 
           jsonFileContents.lastWatched = lastWatched;
 
@@ -202,12 +205,3 @@ ipcMain.handle(
     }
   }
 );
-
-async function exists(path: string) {
-  try {
-    await access(path);
-    return true;
-  } catch {
-    return false;
-  }
-}
