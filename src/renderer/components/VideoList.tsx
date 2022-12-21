@@ -40,6 +40,7 @@ import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import Divider from "@mui/material/Divider";
 import { ipcRenderer } from "electron";
+import { convertMillisecondsToDate } from "../../util/helperFunctions";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -172,7 +173,14 @@ const VideoList = () => {
                   return (
                     <>
                       <ListItemButton
-                        sx={{ paddingBottom: "9px", paddingTop: "9px" }}
+                        sx={{
+                          paddingBottom: "9px",
+                          paddingTop: "9px",
+                          backgroundColor:
+                            video.fileName === currentVideo.fileName
+                              ? "#e0e0e0"
+                              : "",
+                        }}
                         key={video.filePath}
                         onClick={() => handleVideoSelect(video)}
                       >
@@ -184,8 +192,11 @@ const VideoList = () => {
 
                         <ListItemText
                           primaryTypographyProps={{ fontSize: "14px" }}
+                          secondaryTypographyProps={{ fontSize: "11px" }}
                           primary={video.fileName}
+                          secondary={convertMillisecondsToDate(video.createdAt)}
                         />
+
                         {video.mustWatch ? (
                           <ListItemIcon>
                             <NewReleasesIcon color="warning" fontSize="small" />

@@ -12,4 +12,16 @@ const secondsTohhmmss = (valueInseconds: number) => {
   return (Number(h) > 0 ? h + ":" : "") + m + ":" + s;
 };
 
-export { secondsTohhmmss };
+function convertMillisecondsToDate(milliseconds: number): string {
+  const date = new Date(milliseconds);
+  const hours = date.getHours();
+  const minutes = "0" + date.getMinutes();
+  const seconds = "0" + date.getSeconds();
+  const formattedTime =
+    hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+  const formattedDate = date.toDateString();
+
+  return formattedDate + " " + formattedTime;
+}
+
+export { secondsTohhmmss, convertMillisecondsToDate };
