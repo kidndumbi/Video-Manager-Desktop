@@ -205,3 +205,19 @@ ipcMain.handle(
     }
   }
 );
+
+ipcMain.handle("delete:video", async (event, videoData: VideoDataModel[]) => {
+  const filepathsToDelete: string[] = [];
+
+  for (const video of videoData) {
+    filepathsToDelete.push(video.filePath);
+
+    const jsonFilePath =
+      video.rootPath + "/" + path.parse(video.fileName).name + ".json";
+    const fileExists = await fm.exists(jsonFilePath);
+    if (fileExists) filepathsToDelete.push(jsonFilePath);
+  }
+
+  await fm.deleteFiles(filepathsToDelete);
+  return "deletion complete";
+});

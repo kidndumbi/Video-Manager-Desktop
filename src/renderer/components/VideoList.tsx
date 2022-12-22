@@ -36,17 +36,24 @@ import {
 } from "../../store/videoPlaye.slice";
 import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import Divider from "@mui/material/Divider";
 import { ipcRenderer } from "electron";
 import { convertMillisecondsToDate } from "../../util/helperFunctions";
+import Checkbox from "@mui/material/Checkbox";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import { AlertDialog } from "./AlertDialog";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
 
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedVideos, setSelectedVideos] = useState<VideoDataModel[]>([]);
   const currentVideo = useSelector(selCurrentVideo);
 
   const player = useSelector(selVideoPlayer);
@@ -131,10 +138,43 @@ const VideoList = () => {
     });
   };
 
+  const handleOnVideoSelected = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    video: VideoDataModel
+  ) => {
+    if (event.target.checked) {
+      setSelectedVideos([...selectedVideos, video]);
+    } else {
+      setSelectedVideos(
+        selectedVideos.filter((v) => v.filePath !== video.filePath)
+      );
+    }
+  };
+
+  const deleteVideos = async () => {
+    if (selectedVideos.length > 0) {
+      await ipcRenderer.invoke("delete:video", selectedVideos);
+      setSelectedVideos([]);
+      dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
+    }
+  };
+
   return (
     <>
       <Grid container>
         <Grid xs={3}>
+          <Box>
+            <Stack direction="row" spacing={1}>
+              <IconButton
+                aria-label="delete"
+                color="secondary"
+                size="small"
+                onClick={() => setShowDialog(true)}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Stack>
+          </Box>
           <List
             sx={{
               width: "100%",
@@ -188,7 +228,18 @@ const VideoList = () => {
                           <ListItemIcon sx={{ minWidth: "33px" }}>
                             <FolderIcon fontSize="small" />
                           </ListItemIcon>
-                        ) : null}
+                        ) : (
+                          <ListItemIcon
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <Checkbox
+                              edge="start"
+                              onChange={(event) => {
+                                handleOnVideoSelected(event, video);
+                              }}
+                            />
+                          </ListItemIcon>
+                        )}
 
                         <ListItemText
                           primaryTypographyProps={{ fontSize: "14px" }}
@@ -250,6 +301,17 @@ const VideoList = () => {
           onStateChange={saveVideosettings}
         ></VideoSettingsDialog>
       </Grid>
+      <Box>
+        <AlertDialog
+          showDialog={showDialog}
+          onSelectedOption={(option: string) => {
+            setShowDialog(false);
+            if (option === "ok") {
+              deleteVideos();
+            }
+          }}
+        ></AlertDialog>
+      </Box>
     </>
   );
 };
