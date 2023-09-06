@@ -3,7 +3,7 @@ import { RootState } from "./index";
 
 const currentRootPathSlice = createSlice({
   name: "currentRootPath",
-  initialState: { currentRootPath: "D:/Pru videos" },
+  initialState: { currentRootPath: "D:/Private-pilot" },
   reducers: {
     setCurrentRootPath: (state, action) => {
       state.currentRootPath = action.payload;
