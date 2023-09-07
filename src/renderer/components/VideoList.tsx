@@ -214,6 +214,10 @@ const VideoList = () => {
                     <>
                       <ListItemButton
                         sx={{
+                          marginLeft: "5px",
+                          borderLeft: video.watched
+                            ? "5px solid #9575CD"
+                            : "5px solid transparent",
                           paddingBottom: "9px",
                           paddingTop: "9px",
                           backgroundColor:
@@ -298,6 +302,7 @@ const VideoList = () => {
           onClose={() => setShowSettingsDialog(false)}
           showDialog={showSettingsDialog}
           mustWatch={videoJsonData.mustWatch}
+          watched={videoJsonData.watched}
           onStateChange={saveVideosettings}
         ></VideoSettingsDialog>
       </Grid>

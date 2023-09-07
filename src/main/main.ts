@@ -102,6 +102,10 @@ ipcMain.handle("get:root-video-data", async (event, filePath) => {
           notesCount: jsonFileContents?.notes
             ? jsonFileContents.notes.length
             : 0,
+          watched:
+            jsonFileContents?.watched === undefined
+              ? false
+              : jsonFileContents?.watched,
         });
       }
     }
@@ -185,8 +189,8 @@ ipcMain.handle(
           jsonFileContents = JSON.parse(jsonFile) as VideoJsonModel;
 
           jsonFileContents.lastWatched = lastWatched;
-
-          await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
+          (jsonFileContents.watched = lastWatched == 0 ? false : true),
+            await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
         }
 
         return jsonFileContents;
@@ -195,6 +199,7 @@ ipcMain.handle(
           notes: [],
           overview: {},
           lastWatched,
+          watched: lastWatched == 0 ? false : true,
         };
         await writeFile(jsonFilePath, JSON.stringify(newJsonContent));
         return newJsonContent;
