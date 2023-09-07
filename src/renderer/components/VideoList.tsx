@@ -215,7 +215,7 @@ const VideoList = () => {
                       <ListItemButton
                         sx={{
                           marginLeft: "5px",
-                          borderLeft: video.watched
+                          borderLeft: !video.watched
                             ? "5px solid #9575CD"
                             : "5px solid transparent",
                           paddingBottom: "9px",
@@ -253,9 +253,7 @@ const VideoList = () => {
                         />
 
                         {video.mustWatch ? (
-                          <ListItemIcon>
-                            <NewReleasesIcon color="warning" fontSize="small" />
-                          </ListItemIcon>
+                          <NewReleasesIcon color="warning" fontSize="small" />
                         ) : null}
                         {video.notesCount > 0 ? (
                           <Badge
