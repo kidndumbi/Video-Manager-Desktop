@@ -5,4 +5,5 @@ export interface VideoJsonModel {
   notes: NoteModel[];
   mustWatch?: boolean;
   lastWatched?: number;
+  watched?: boolean;
 }

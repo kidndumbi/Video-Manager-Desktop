@@ -6,4 +6,5 @@ export interface VideoDataModel {
   createdAt: number;
   mustWatch?: boolean;
   notesCount: number;
+  watched: boolean;
 }
