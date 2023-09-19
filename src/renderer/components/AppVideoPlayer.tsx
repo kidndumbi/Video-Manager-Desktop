@@ -41,7 +41,7 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
   render() {
     return (
       <>
-        <Box>{this.props.videoData?.fileName}</Box>
+        <Box>{this.props.videoData?.fileName?.replace(/\.mp4$/, "")}</Box>
         <Player
           ref={(c: PlayerReference) => {
             this.player = c;
