@@ -7,4 +7,5 @@ export interface VideoDataModel {
   mustWatch?: boolean;
   notesCount: number;
   watched: boolean;
+  like: boolean;
 }

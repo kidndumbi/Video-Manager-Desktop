@@ -106,6 +106,10 @@ ipcMain.handle("get:root-video-data", async (event, filePath) => {
             jsonFileContents?.watched === undefined
               ? false
               : jsonFileContents?.watched,
+          like:
+            jsonFileContents?.like === undefined
+              ? false
+              : jsonFileContents?.like,
         });
       }
     }

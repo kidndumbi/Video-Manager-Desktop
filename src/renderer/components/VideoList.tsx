@@ -13,6 +13,7 @@ import NotesIcon from "@mui/icons-material/Notes";
 import AppVideoPlayer from "./AppVideoPlayer";
 import { VideoDataModel } from "../../models/videoData.model";
 import SettingsIcon from "@mui/icons-material/Settings";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { VideoSettingsDialog } from "./VideoSettingsDialog";
 import Button from "@mui/material/Button";
 import { AppTabs } from "./AppTabs";
@@ -255,6 +256,12 @@ const VideoList = () => {
                         {video.mustWatch ? (
                           <NewReleasesIcon color="warning" fontSize="small" />
                         ) : null}
+                        {video.like ? (
+                          <FavoriteIcon
+                            color="primary"
+                            fontSize="small"
+                          ></FavoriteIcon>
+                        ) : null}
                         {video.notesCount > 0 ? (
                           <Badge
                             color="secondary"
@@ -301,6 +308,7 @@ const VideoList = () => {
           showDialog={showSettingsDialog}
           mustWatch={videoJsonData.mustWatch}
           watched={videoJsonData.watched}
+          like={videoJsonData.like}
           onStateChange={saveVideosettings}
         ></VideoSettingsDialog>
       </Grid>
