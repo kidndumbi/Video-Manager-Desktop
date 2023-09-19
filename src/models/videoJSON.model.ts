@@ -6,4 +6,5 @@ export interface VideoJsonModel {
   mustWatch?: boolean;
   lastWatched?: number;
   watched?: boolean;
+  like?: boolean;
 }

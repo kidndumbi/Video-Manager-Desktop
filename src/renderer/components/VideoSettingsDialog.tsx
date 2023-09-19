@@ -18,6 +18,7 @@ type VideoSettingsDialogProps = {
   showDialog: boolean;
   mustWatch: boolean | undefined;
   watched: boolean | undefined;
+  like: boolean | undefined;
   onStateChange: (value: { [value: string]: boolean }) => void;
 };
 
@@ -26,6 +27,7 @@ const VideoSettingsDialog = ({
   onClose,
   mustWatch,
   watched,
+  like,
   onStateChange,
 }: VideoSettingsDialogProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,6 +80,16 @@ const VideoSettingsDialog = ({
                     />
                   }
                   label="Watched"
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={like}
+                      onChange={handleChange}
+                      name="like"
+                    />
+                  }
+                  label="like"
                 />
               </FormGroup>
             </FormControl>
