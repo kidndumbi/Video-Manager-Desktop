@@ -42,12 +42,16 @@ import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import Divider from "@mui/material/Divider";
 import { ipcRenderer } from "electron";
-import { convertMillisecondsToDate } from "../../util/helperFunctions";
+import {
+  convertMillisecondsToDate,
+  secondsTohhmmss,
+} from "../../util/helperFunctions";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { AlertDialog } from "./AlertDialog";
 import { Search } from "./Search";
+import Typography from "@mui/material/Typography";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -67,7 +71,9 @@ const VideoList = () => {
   const videoJsonData = useSelector(selVideoJson);
 
   useEffect(() => {
-    dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
+    dispatch(
+      folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
+    );
   }, []);
 
   useEffect(() => {
@@ -102,7 +108,11 @@ const VideoList = () => {
     } else {
       dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
-      dispatch(folderVideosInfoActions.fetchFolderVideosInfo(video.filePath));
+      dispatch(
+        folderVideosInfoActions.fetchFolderVideosInfo({
+          currentRootPath: video.filePath,
+        })
+      );
     }
   };
 
@@ -112,9 +122,9 @@ const VideoList = () => {
         currentRootPathActions.setCurrentRootPath(pathNav[pathNav.length - 1])
       );
       dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo(
-          pathNav[pathNav.length - 1]
-        )
+        folderVideosInfoActions.fetchFolderVideosInfo({
+          currentRootPath: pathNav[pathNav.length - 1],
+        })
       );
       dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
     }
@@ -157,19 +167,26 @@ const VideoList = () => {
     if (selectedVideos.length > 0) {
       await ipcRenderer.invoke("delete:video", selectedVideos);
       setSelectedVideos([]);
-      dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
+      dispatch(
+        folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
+      );
     }
+  };
+
+  const onSearchClick = (searchText: string) => {
+    dispatch(
+      folderVideosInfoActions.fetchFolderVideosInfo({
+        currentRootPath,
+        searchText: searchText.trim(),
+      })
+    );
   };
 
   return (
     <>
       <Grid container>
         <Grid xs={3}>
-          <Search
-            onSearchClick={(searchText: string) =>
-              console.log("searchText ", searchText)
-            }
-          ></Search>
+          <Search onSearchClick={onSearchClick}></Search>
           <Box>
             <Stack direction="row" spacing={1}>
               <IconButton
@@ -253,10 +270,34 @@ const VideoList = () => {
                         )}
 
                         <ListItemText
-                          primaryTypographyProps={{ fontSize: "14px" }}
-                          secondaryTypographyProps={{ fontSize: "11px" }}
-                          primary={video.fileName}
-                          secondary={convertMillisecondsToDate(video.createdAt)}
+                          disableTypography
+                          primary={
+                            <Typography
+                              variant="body1"
+                              style={{ fontSize: "14px" }}
+                            >
+                              {video.fileName}
+                            </Typography>
+                          }
+                          secondary={
+                            <>
+                              <Typography
+                                variant="body2"
+                                style={{ fontSize: "11px" }}
+                              >
+                                {convertMillisecondsToDate(video.createdAt)}
+                              </Typography>
+                              {!video.isDirectory && (
+                                <Typography
+                                  variant="body2"
+                                  style={{ fontSize: "10px" }}
+                                >
+                                  {"Duration: " +
+                                    secondsTohhmmss(video.duration || 0)}
+                                </Typography>
+                              )}
+                            </>
+                          }
                         />
 
                         {video.mustWatch ? (
