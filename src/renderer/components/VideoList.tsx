@@ -245,7 +245,7 @@ const VideoList = () => {
                           paddingBottom: "9px",
                           paddingTop: "9px",
                           backgroundColor:
-                            video.fileName === currentVideo.fileName
+                            video.fileName === currentVideo?.fileName
                               ? "#e0e0e0"
                               : "",
                         }}

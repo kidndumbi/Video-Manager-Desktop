@@ -1,13 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./index";
 
+const localStoragePathNav = JSON.parse(localStorage.getItem("pathNav") || "[]");
+
 const pathNavSlice = createSlice({
   name: "pathNav",
-  initialState: { pathNav: [] },
+  initialState: { pathNav: localStoragePathNav },
   reducers: {
     setPathNav: (state, action) => {
-      console.log("in here ", action.payload);
       state.pathNav = action.payload;
+      localStorage.setItem("pathNav", JSON.stringify(action.payload));
     },
   },
 });
