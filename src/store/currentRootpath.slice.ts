@@ -1,12 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./index";
 
+const localStorageCurrentnPath = localStorage.getItem("currentRootPath");
+
 const currentRootPathSlice = createSlice({
   name: "currentRootPath",
-  initialState: { currentRootPath: "D:/Private-pilot" },
+  initialState: {
+    currentRootPath: localStorageCurrentnPath
+      ? localStorageCurrentnPath
+      : "D:/",
+  },
   reducers: {
     setCurrentRootPath: (state, action) => {
       state.currentRootPath = action.payload;
+      localStorage.setItem("currentRootPath", action.payload);
     },
   },
 });
