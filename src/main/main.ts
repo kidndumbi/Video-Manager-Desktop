@@ -84,7 +84,7 @@ const populateVideoData = async (
   stats: Stats
 ) => {
   const dataJsonPath = `${filePath}/${path.parse(file).name}.json`;
-  const jsonFileExists = await fm.exists(dataJsonPath);
+  const jsonFileExists = await fileExists(dataJsonPath);
   let jsonFileContents: VideoJsonModel | null = null;
 
   if (jsonFileExists) {
@@ -112,6 +112,10 @@ const populateVideoData = async (
     watched: jsonFileContents?.watched || false,
     like: jsonFileContents?.like || false,
   };
+};
+
+const fileExists = async (filePath: string): Promise<boolean> => {
+  return await fm.exists(filePath);
 };
 
 ipcMain.handle("get:root-video-data", async (event, filePath, searchText) => {
@@ -151,7 +155,7 @@ ipcMain.handle(
   async (event, currentVideo: VideoDataModel) => {
     try {
       // Constant for reusable value
-      const EMPTY_JSON_RESPONSE = { notes: [], overview: {} };
+      const EMPTY_JSON_RESPONSE: VideoJsonModel = { notes: [], overview: {} };
       //Validate the input data
       if (!currentVideo || !currentVideo.rootPath || !currentVideo.fileName) {
         console.warn(
@@ -167,9 +171,7 @@ ipcMain.handle(
       }.json`;
 
       // Check if the file exists
-      const fileExists = await fm.exists(newFilePath);
-
-      if (fileExists) {
+      if (await fileExists(newFilePath)) {
         const file = await fm.readFile(newFilePath);
         return file ? JSON.parse(file) : EMPTY_JSON_RESPONSE;
       } else {
@@ -183,6 +185,22 @@ ipcMain.handle(
   }
 );
 
+const getNewFilePath = (video: VideoDataModel): string => {
+  if (!video.rootPath) {
+    throw new Error("video.rootPath is undefined!");
+  }
+  const fileNameWithoutExtension = path.parse(video.fileName).name;
+  return path.join(video.rootPath, `${fileNameWithoutExtension}.json`);
+};
+
+const writeJsonToFile = async (
+  filePath: string,
+  jsonData: VideoJsonModel
+): Promise<VideoJsonModel> => {
+  await writeFile(filePath, JSON.stringify(jsonData));
+  return jsonData;
+};
+
 ipcMain.handle(
   "save:video-json-data",
   async (
@@ -193,18 +211,34 @@ ipcMain.handle(
     }: { currentVideo: VideoDataModel; newVideoJsonData: VideoJsonModel }
   ) => {
     try {
-      const newFilePath =
-        currentVideo.rootPath +
-        "/" +
-        path.parse(currentVideo.fileName).name +
-        ".json";
-      await writeFile(newFilePath, JSON.stringify(newVideoJsonData));
-      return newVideoJsonData;
-    } catch (error) {
-      throw "error common...";
+      const newFilePath = getNewFilePath(currentVideo);
+      return await writeJsonToFile(newFilePath, newVideoJsonData);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("An error occurred:", error.message);
+      } else {
+        console.error("An unknown error occurred:", error);
+      }
+      throw new Error("Failed to save video JSON data");
     }
   }
 );
+
+const readJsonFile = async (
+  filePath: string
+): Promise<VideoJsonModel | null> => {
+  const jsonFile = await fm.readFile(filePath);
+  return jsonFile ? (JSON.parse(jsonFile) as VideoJsonModel) : null;
+};
+
+const updateJsonContent = (
+  jsonContent: VideoJsonModel,
+  lastWatched: number
+): VideoJsonModel => {
+  jsonContent.lastWatched = lastWatched;
+  jsonContent.watched = lastWatched !== 0;
+  return jsonContent;
+};
 
 ipcMain.handle(
   "save:lastWatch",
@@ -216,23 +250,14 @@ ipcMain.handle(
     }: { currentVideo: VideoDataModel; lastWatched: number }
   ) => {
     try {
-      const jsonFilePath =
-        currentVideo.rootPath +
-        "/" +
-        path.parse(currentVideo.fileName).name +
-        ".json";
+      const jsonFilePath = getNewFilePath(currentVideo);
 
-      const fileExists = await fm.exists(jsonFilePath);
+      if (await fileExists(jsonFilePath)) {
+        let jsonFileContents = await readJsonFile(jsonFilePath);
 
-      if (fileExists) {
-        let jsonFileContents: VideoJsonModel | null = null;
-        const jsonFile = await fm.readFile(jsonFilePath);
-        if (jsonFile) {
-          jsonFileContents = JSON.parse(jsonFile) as VideoJsonModel;
-
-          jsonFileContents.lastWatched = lastWatched;
-          (jsonFileContents.watched = lastWatched == 0 ? false : true),
-            await writeFile(jsonFilePath, JSON.stringify(jsonFileContents));
+        if (jsonFileContents) {
+          jsonFileContents = updateJsonContent(jsonFileContents, lastWatched);
+          await writeJsonToFile(jsonFilePath, jsonFileContents);
         }
 
         return jsonFileContents;
@@ -241,32 +266,47 @@ ipcMain.handle(
           notes: [],
           overview: {},
           lastWatched,
-          watched: lastWatched == 0 ? false : true,
+          watched: lastWatched !== 0,
         };
-        await writeFile(jsonFilePath, JSON.stringify(newJsonContent));
+        await writeJsonToFile(jsonFilePath, newJsonContent);
         return newJsonContent;
       }
-    } catch (error) {
-      console.log("save:lastWatch error ", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log("save:lastWatch error ", error.message);
+      } else {
+        console.log("An unknown error occurred:", error);
+      }
       console.log("currentVideo ::: ", currentVideo);
     }
   }
 );
 
 ipcMain.handle("delete:video", async (event, videoData: VideoDataModel[]) => {
-  const filepathsToDelete: string[] = [];
+  try {
+    const filepathsToDelete: string[] = [];
 
-  for (const video of videoData) {
-    filepathsToDelete.push(video.filePath);
+    for (const video of videoData) {
+      filepathsToDelete.push(video.filePath);
 
-    const jsonFilePath =
-      video.rootPath + "/" + path.parse(video.fileName).name + ".json";
-    const fileExists = await fm.exists(jsonFilePath);
-    if (fileExists) filepathsToDelete.push(jsonFilePath);
+      const jsonFilePath = getNewFilePath(video);
+
+      if (await fileExists(jsonFilePath)) {
+        filepathsToDelete.push(jsonFilePath);
+      }
+    }
+
+    await fm.deleteFiles(filepathsToDelete);
+
+    return "deletion complete";
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("delete:video error:", error.message);
+    } else {
+      console.error("An unknown error occurred:", error);
+    }
+    return "deletion failed";
   }
-
-  await fm.deleteFiles(filepathsToDelete);
-  return "deletion complete";
 });
 
 function getVideoDuration(filePath: string): Promise<number | "unknown"> {
