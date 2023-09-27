@@ -67,7 +67,9 @@ const VideoList = () => {
   const videoJsonData = useSelector(selVideoJson);
 
   useEffect(() => {
-    dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
+    dispatch(
+      folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
+    );
   }, []);
 
   useEffect(() => {
@@ -102,7 +104,11 @@ const VideoList = () => {
     } else {
       dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
-      dispatch(folderVideosInfoActions.fetchFolderVideosInfo(video.filePath));
+      dispatch(
+        folderVideosInfoActions.fetchFolderVideosInfo({
+          currentRootPath: video.filePath,
+        })
+      );
     }
   };
 
@@ -112,9 +118,9 @@ const VideoList = () => {
         currentRootPathActions.setCurrentRootPath(pathNav[pathNav.length - 1])
       );
       dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo(
-          pathNav[pathNav.length - 1]
-        )
+        folderVideosInfoActions.fetchFolderVideosInfo({
+          currentRootPath: pathNav[pathNav.length - 1],
+        })
       );
       dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
     }
@@ -157,19 +163,26 @@ const VideoList = () => {
     if (selectedVideos.length > 0) {
       await ipcRenderer.invoke("delete:video", selectedVideos);
       setSelectedVideos([]);
-      dispatch(folderVideosInfoActions.fetchFolderVideosInfo(currentRootPath));
+      dispatch(
+        folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
+      );
     }
+  };
+
+  const onSearchClick = (searchText: string) => {
+    dispatch(
+      folderVideosInfoActions.fetchFolderVideosInfo({
+        currentRootPath,
+        searchText: searchText.trim(),
+      })
+    );
   };
 
   return (
     <>
       <Grid container>
         <Grid xs={3}>
-          <Search
-            onSearchClick={(searchText: string) =>
-              console.log("searchText ", searchText)
-            }
-          ></Search>
+          <Search onSearchClick={onSearchClick}></Search>
           <Box>
             <Stack direction="row" spacing={1}>
               <IconButton

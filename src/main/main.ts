@@ -65,7 +65,7 @@ app.on("activate", () => {
   }
 });
 
-ipcMain.handle("get:root-video-data", async (event, filePath) => {
+ipcMain.handle("get:root-video-data", async (event, filePath, searchText) => {
   const videoData: VideoDataModel[] = [];
 
   try {
@@ -73,6 +73,15 @@ ipcMain.handle("get:root-video-data", async (event, filePath) => {
 
     for (const file of files) {
       const stats = await stat(filePath + "/" + file);
+
+      // Check if the filename contains the searchText
+      if (
+        searchText &&
+        !file.toLowerCase().includes(searchText.toLowerCase()) &&
+        !stats.isDirectory()
+      ) {
+        continue; // Skip this iteration if the filename doesn't contain the searchText
+      }
 
       if (
         path.extname(file).toLocaleLowerCase() === ".mp4" ||

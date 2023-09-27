@@ -18,10 +18,17 @@ const folderVideosInfoSlice = createSlice({
 
 const fetchFolderVideosInfo = createAsyncThunk(
   "folderVideosInfo/fetchFolderVideosInfo",
-  async (currentRootPath: string) => {
+  async ({
+    currentRootPath,
+    searchText,
+  }: {
+    currentRootPath: string;
+    searchText?: string;
+  }) => {
     const response = await ipcRenderer.invoke(
       "get:root-video-data",
-      currentRootPath
+      currentRootPath,
+      searchText
     );
     return response;
   }
