@@ -47,6 +47,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { AlertDialog } from "./AlertDialog";
+import { Search } from "./Search";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -164,6 +165,11 @@ const VideoList = () => {
     <>
       <Grid container>
         <Grid xs={3}>
+          <Search
+            onSearchClick={(searchText: string) =>
+              console.log("searchText ", searchText)
+            }
+          ></Search>
           <Box>
             <Stack direction="row" spacing={1}>
               <IconButton
