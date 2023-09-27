@@ -8,4 +8,5 @@ export interface VideoDataModel {
   notesCount: number;
   watched: boolean;
   like: boolean;
+  duration?: number;
 }

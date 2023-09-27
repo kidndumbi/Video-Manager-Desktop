@@ -42,12 +42,16 @@ import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import Divider from "@mui/material/Divider";
 import { ipcRenderer } from "electron";
-import { convertMillisecondsToDate } from "../../util/helperFunctions";
+import {
+  convertMillisecondsToDate,
+  secondsTohhmmss,
+} from "../../util/helperFunctions";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { AlertDialog } from "./AlertDialog";
 import { Search } from "./Search";
+import Typography from "@mui/material/Typography";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -266,10 +270,34 @@ const VideoList = () => {
                         )}
 
                         <ListItemText
-                          primaryTypographyProps={{ fontSize: "14px" }}
-                          secondaryTypographyProps={{ fontSize: "11px" }}
-                          primary={video.fileName}
-                          secondary={convertMillisecondsToDate(video.createdAt)}
+                          disableTypography
+                          primary={
+                            <Typography
+                              variant="body1"
+                              style={{ fontSize: "14px" }}
+                            >
+                              {video.fileName}
+                            </Typography>
+                          }
+                          secondary={
+                            <>
+                              <Typography
+                                variant="body2"
+                                style={{ fontSize: "11px" }}
+                              >
+                                {convertMillisecondsToDate(video.createdAt)}
+                              </Typography>
+                              {!video.isDirectory && (
+                                <Typography
+                                  variant="body2"
+                                  style={{ fontSize: "10px" }}
+                                >
+                                  {"Duration: " +
+                                    secondsTohhmmss(video.duration || 0)}
+                                </Typography>
+                              )}
+                            </>
+                          }
                         />
 
                         {video.mustWatch ? (

@@ -1,5 +1,7 @@
 import { VideoJsonModel } from "./../models/videoJSON.model";
 import { app, BrowserWindow, ipcMain } from "electron";
+import { exec } from "child_process";
+
 import * as path from "path";
 import * as url from "url";
 // import { readdir } from "fs";
@@ -98,12 +100,24 @@ ipcMain.handle("get:root-video-data", async (event, filePath, searchText) => {
           jsonFileContents = JSON.parse(jsonFile || "") as VideoJsonModel;
         }
 
+        let duration = 0;
+        if (path.extname(file).toLocaleLowerCase() === ".mp4") {
+          const videoFilePath = filePath + "/" + file;
+          const maybeDuration = await getVideoDuration(videoFilePath);
+          if (typeof maybeDuration === "number") {
+            duration = maybeDuration;
+          } else {
+            console.error(`Unable to determine duration for ${file}`);
+          }
+        }
+
         videoData.push({
           fileName: file,
           filePath: filePath + "/" + file,
           isDirectory: stats.isDirectory(),
           createdAt: stats.birthtimeMs,
           rootPath: filePath,
+          duration,
           mustWatch:
             jsonFileContents?.mustWatch === undefined
               ? false
@@ -239,3 +253,19 @@ ipcMain.handle("delete:video", async (event, videoData: VideoDataModel[]) => {
   await fm.deleteFiles(filepathsToDelete);
   return "deletion complete";
 });
+
+function getVideoDuration(filePath: string): Promise<number | "unknown"> {
+  return new Promise((resolve, reject) => {
+    exec(
+      `ffprobe -i "${filePath}" -show_entries format=duration -v quiet -of csv="p=0"`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error("Exec error:", error);
+          console.error("Stderr:", stderr);
+          return reject(error);
+        }
+        resolve(parseFloat(stdout));
+      }
+    );
+  });
+}
