@@ -1,17 +1,18 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from "@mui/material/IconButton";
+import React, { ChangeEvent } from "react";
+import {
+  Box,
+  DialogContent,
+  DialogContentText,
+  Dialog,
+  DialogTitle,
+  IconButton,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
+  Switch,
+  FormLabel,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-// import FormLabel from "@mui/material/FormLabel";
-import FormControl from "@mui/material/FormControl";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import FormLabel from "@mui/material/FormLabel";
 
 type VideoSettingsDialogProps = {
   onClose: () => void;
@@ -22,6 +23,23 @@ type VideoSettingsDialogProps = {
   onStateChange: (value: { [value: string]: boolean }) => void;
 };
 
+const SwitchControl = ({
+  checked,
+  onChange,
+  name,
+  label,
+}: {
+  checked: boolean | undefined;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  name: string;
+  label: string;
+}) => (
+  <FormControlLabel
+    control={<Switch checked={checked} onChange={onChange} name={name} />}
+    label={label}
+  />
+);
+
 const VideoSettingsDialog = ({
   showDialog,
   onClose,
@@ -30,7 +48,7 @@ const VideoSettingsDialog = ({
   like,
   onStateChange,
 }: VideoSettingsDialogProps) => {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onStateChange({ [event.target.name]: event.target.checked });
   };
 
@@ -44,12 +62,11 @@ const VideoSettingsDialog = ({
         <DialogTitle sx={{ mb: 2 }}>
           <IconButton
             aria-label="close"
-            onClick={() => onClose()}
+            onClick={onClose}
             sx={{
               position: "absolute",
               right: 8,
               top: 8,
-
               color: (theme) => theme.palette.grey[500],
             }}
           >
@@ -61,35 +78,23 @@ const VideoSettingsDialog = ({
             <FormControl component="fieldset" variant="standard">
               <FormLabel component="legend">Video Settings</FormLabel>
               <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={mustWatch}
-                      onChange={handleChange}
-                      name="mustWatch"
-                    />
-                  }
+                <SwitchControl
+                  checked={mustWatch}
+                  onChange={handleChange}
+                  name="mustWatch"
                   label="Must Watch"
                 />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={watched}
-                      onChange={handleChange}
-                      name="watched"
-                    />
-                  }
+                <SwitchControl
+                  checked={watched}
+                  onChange={handleChange}
+                  name="watched"
                   label="Watched"
                 />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={like}
-                      onChange={handleChange}
-                      name="like"
-                    />
-                  }
-                  label="like"
+                <SwitchControl
+                  checked={like}
+                  onChange={handleChange}
+                  name="like"
+                  label="Like"
                 />
               </FormGroup>
             </FormControl>
