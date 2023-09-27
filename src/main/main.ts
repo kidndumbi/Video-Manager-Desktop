@@ -6,6 +6,7 @@ import * as path from "path";
 import * as url from "url";
 // import { readdir } from "fs";
 import { stat, writeFile, readdir } from "fs/promises";
+import { Stats } from "fs";
 import { VideoDataModel } from "../models/videoData.model";
 import { FileManager } from "../util/FileManager";
 
@@ -67,103 +68,117 @@ app.on("activate", () => {
   }
 });
 
+// Utility function to check if a file should be processed
+const shouldProcessFile = (file: string, stats: Stats, searchText?: string) => {
+  return searchText &&
+    !file.toLowerCase().includes(searchText.toLowerCase()) &&
+    !stats.isDirectory()
+    ? false
+    : true;
+};
+
+// Utility function to populate video data from a file and its JSON sidecar (if exists)
+const populateVideoData = async (
+  file: string,
+  filePath: string,
+  stats: Stats
+) => {
+  const dataJsonPath = `${filePath}/${path.parse(file).name}.json`;
+  const jsonFileExists = await fm.exists(dataJsonPath);
+  let jsonFileContents: VideoJsonModel | null = null;
+
+  if (jsonFileExists) {
+    const jsonFile = await fm.readFile(dataJsonPath);
+    jsonFileContents = JSON.parse(jsonFile || "") as VideoJsonModel;
+  }
+
+  let duration = 0;
+  if (path.extname(file).toLocaleLowerCase() === ".mp4") {
+    const maybeDuration = await getVideoDuration(`${filePath}/${file}`);
+    if (typeof maybeDuration === "number") {
+      duration = maybeDuration;
+    }
+  }
+
+  return {
+    fileName: file,
+    filePath: `${filePath}/${file}`,
+    isDirectory: stats.isDirectory(),
+    createdAt: stats.birthtimeMs,
+    rootPath: filePath,
+    duration,
+    mustWatch: jsonFileContents?.mustWatch || false,
+    notesCount: jsonFileContents?.notes?.length || 0,
+    watched: jsonFileContents?.watched || false,
+    like: jsonFileContents?.like || false,
+  };
+};
+
 ipcMain.handle("get:root-video-data", async (event, filePath, searchText) => {
   const videoData: VideoDataModel[] = [];
 
   try {
     const files = await readdir(filePath);
+    const fileProcessingPromises = files.map(async (file) => {
+      const fullPath = `${filePath}/${file}`;
+      const stats = await stat(fullPath);
 
-    for (const file of files) {
-      const stats = await stat(filePath + "/" + file);
-
-      // Check if the filename contains the searchText
-      if (
-        searchText &&
-        !file.toLowerCase().includes(searchText.toLowerCase()) &&
-        !stats.isDirectory()
-      ) {
-        continue; // Skip this iteration if the filename doesn't contain the searchText
+      if (!shouldProcessFile(file, stats, searchText)) {
+        return;
       }
 
       if (
         path.extname(file).toLocaleLowerCase() === ".mp4" ||
         stats.isDirectory()
       ) {
-        const dataJsonpath = filePath + "/" + path.parse(file).name + ".json";
-
-        const dataJsonfileExists = await fm.exists(dataJsonpath);
-
-        let jsonFileContents: VideoJsonModel | null = null;
-
-        if (dataJsonfileExists) {
-          const jsonFile = await fm.readFile(dataJsonpath);
-          jsonFileContents = JSON.parse(jsonFile || "") as VideoJsonModel;
-        }
-
-        let duration = 0;
-        if (path.extname(file).toLocaleLowerCase() === ".mp4") {
-          const videoFilePath = filePath + "/" + file;
-          const maybeDuration = await getVideoDuration(videoFilePath);
-          if (typeof maybeDuration === "number") {
-            duration = maybeDuration;
-          } else {
-            console.error(`Unable to determine duration for ${file}`);
-          }
-        }
-
-        videoData.push({
-          fileName: file,
-          filePath: filePath + "/" + file,
-          isDirectory: stats.isDirectory(),
-          createdAt: stats.birthtimeMs,
-          rootPath: filePath,
-          duration,
-          mustWatch:
-            jsonFileContents?.mustWatch === undefined
-              ? false
-              : jsonFileContents?.mustWatch,
-          notesCount: jsonFileContents?.notes
-            ? jsonFileContents.notes.length
-            : 0,
-          watched:
-            jsonFileContents?.watched === undefined
-              ? false
-              : jsonFileContents?.watched,
-          like:
-            jsonFileContents?.like === undefined
-              ? false
-              : jsonFileContents?.like,
-        });
+        const data = await populateVideoData(file, filePath, stats);
+        videoData.push(data);
       }
-    }
+    });
+
+    await Promise.all(fileProcessingPromises);
 
     return videoData
       .sort((a, b) => b.createdAt - a.createdAt)
       .sort((a, b) => Number(b.isDirectory) - Number(a.isDirectory));
   } catch (error) {
-    throw "error";
+    throw new Error("An error occurred while fetching root video data.");
   }
 });
 
 ipcMain.handle(
   "get:video-json-data",
   async (event, currentVideo: VideoDataModel) => {
-    const newFilePath =
-      currentVideo.rootPath +
-      "/" +
-      path.parse(currentVideo.fileName).name +
-      ".json";
+    try {
+      // Constant for reusable value
+      const EMPTY_JSON_RESPONSE = { notes: [], overview: {} };
+      //Validate the input data
+      if (!currentVideo || !currentVideo.rootPath || !currentVideo.fileName) {
+        console.warn(
+          "Warning: Received undefined or invalid currentVideo.rootPath or currentVideo.fileName."
+        );
+        return EMPTY_JSON_RESPONSE;
+        //throw new Error("Invalid input data");
+      }
 
-    const fileExists = await fm.exists(newFilePath);
+      // Construct the new file path using template literals
+      const newFilePath = `${currentVideo.rootPath}/${
+        path.parse(currentVideo.fileName).name
+      }.json`;
 
-    if (fileExists) {
-      const file = await fm.readFile(newFilePath);
-      return JSON.parse(file || "");
-    } else {
-      return {
-        notes: [],
-        overview: {},
-      };
+      // Check if the file exists
+      const fileExists = await fm.exists(newFilePath);
+
+      if (fileExists) {
+        const file = await fm.readFile(newFilePath);
+        return file ? JSON.parse(file) : EMPTY_JSON_RESPONSE;
+      } else {
+        return EMPTY_JSON_RESPONSE;
+      }
+    } catch (error) {
+      // Handle the error appropriately
+      console.error("An error occurred:", error);
+      return null;
     }
   }
 );
