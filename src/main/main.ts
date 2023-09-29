@@ -1,5 +1,5 @@
 import { VideoJsonModel } from "./../models/videoJSON.model";
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { exec } from "child_process";
 
 import * as path from "path";
@@ -200,6 +200,18 @@ const writeJsonToFile = async (
   await writeFile(filePath, JSON.stringify(jsonData));
   return jsonData;
 };
+
+ipcMain.handle("open-file-dialog", async (_event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+
+  if (!result.canceled) {
+    return result.filePaths[0];
+  }
+
+  return null;
+});
 
 ipcMain.handle(
   "save:video-json-data",
