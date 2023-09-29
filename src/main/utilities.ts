@@ -180,7 +180,7 @@ export const openFileDialog = async (_event: any) => {
   return null;
 };
 
-const getNewFilePath = (video: VideoDataModel): string => {
+export const getNewFilePath = (video: VideoDataModel): string => {
   if (!video.rootPath) {
     throw new Error("video.rootPath is undefined!");
   }
@@ -220,7 +220,7 @@ const shouldProcessFile = (file: string, stats: Stats, searchText?: string) => {
     : true;
 };
 
-const populateVideoData = async (
+export const populateVideoData = async (
   file: string,
   filePath: string,
   stats: Stats
@@ -256,11 +256,13 @@ const populateVideoData = async (
   };
 };
 
-const fileExists = async (filePath: string): Promise<boolean> => {
+export const fileExists = async (filePath: string): Promise<boolean> => {
   return await fm.exists(filePath);
 };
 
-function getVideoDuration(filePath: string): Promise<number | "unknown"> {
+export function getVideoDuration(
+  filePath: string
+): Promise<number | "unknown"> {
   return new Promise((resolve, reject) => {
     exec(
       `ffprobe -i "${filePath}" -show_entries format=duration -v quiet -of csv="p=0"`,
