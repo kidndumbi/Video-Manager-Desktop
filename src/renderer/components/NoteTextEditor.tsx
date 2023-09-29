@@ -3,6 +3,36 @@ import ReactQuill from "react-quill";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
+type EditorProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+const Editor = ({ value, onChange }: EditorProps) => (
+  <ReactQuill theme="snow" value={value} onChange={onChange} />
+);
+
+type EditorActionsProps = {
+  onCancel: () => void;
+  onSave: () => void;
+  saveBtnText: string;
+};
+
+const EditorActions = ({
+  onCancel,
+  onSave,
+  saveBtnText,
+}: EditorActionsProps) => (
+  <Box sx={{ marginTop: "5px" }}>
+    <Button size="small" onClick={onCancel} variant="text">
+      Cancel
+    </Button>
+    <Button size="small" onClick={onSave} variant="contained">
+      {saveBtnText}
+    </Button>
+  </Box>
+);
+
 type NoteTextEditorProps = {
   onCancelClick: () => void;
   onSaveNoteClick: (value: string) => void;
@@ -21,21 +51,13 @@ const NoteTextEditor = ({
   return (
     <>
       <Box>
-        <ReactQuill theme="snow" value={value} onChange={setValue} />
+        <Editor value={value} onChange={setValue} />
       </Box>
-
-      <Box sx={{ marginTop: "5px" }}>
-        <Button size="small" onClick={onCancelClick} variant="text">
-          Cancel
-        </Button>
-        <Button
-          size="small"
-          onClick={() => onSaveNoteClick(value)}
-          variant="contained"
-        >
-          {btnText}
-        </Button>
-      </Box>
+      <EditorActions
+        onCancel={onCancelClick}
+        onSave={() => onSaveNoteClick(value)}
+        saveBtnText={btnText}
+      />
     </>
   );
 };
