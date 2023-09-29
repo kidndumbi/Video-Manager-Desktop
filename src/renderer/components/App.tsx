@@ -10,6 +10,7 @@ export default function App(): JSX.Element {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box
+        data-testid="box-container"
         sx={{
           backgroundColor: "white",
         }}

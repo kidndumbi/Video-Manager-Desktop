@@ -185,8 +185,8 @@ const VideoList = () => {
 
   return (
     <>
-      <Grid container>
-        <Grid xs={3}>
+      <Grid container data-testid="video-list">
+        <Grid xs={3} item>
           <Search onSearchClick={onSearchClick}></Search>
           <Box>
             <Stack direction="row" spacing={1}>
@@ -338,8 +338,8 @@ const VideoList = () => {
             ) : null}
           </List>
         </Grid>
-        <Grid xs={9}>
-          <Grid xs={12}>
+        <Grid xs={9} item>
+          <Grid xs={12} item>
             <IconButton
               color="primary"
               aria-label="add to shopping cart"
@@ -348,7 +348,7 @@ const VideoList = () => {
               <SettingsIcon />
             </IconButton>
           </Grid>
-          <Grid xs={12}>
+          <Grid xs={12} item>
             <AppVideoPlayer
               setPlayer={(p) => {
                 dispatch(videoPlayerActions.setVideoPlayer(p));
@@ -357,7 +357,7 @@ const VideoList = () => {
               videoData={currentVideo}
             ></AppVideoPlayer>
           </Grid>
-          <Grid xs={12}>
+          <Grid xs={12} item>
             <AppTabs currentVideoTime={currentVideoTime}></AppTabs>
           </Grid>
         </Grid>
