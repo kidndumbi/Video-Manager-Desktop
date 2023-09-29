@@ -52,6 +52,7 @@ import Stack from "@mui/material/Stack";
 import { AlertDialog } from "./AlertDialog";
 import { Search } from "./Search";
 import Typography from "@mui/material/Typography";
+import { SelectFolder } from "./SelectFolder";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -210,7 +211,14 @@ const VideoList = () => {
             aria-labelledby="nested-list-subheader"
             subheader={
               <ListSubheader
-                sx={{ fontSize: "14px", lineHeight: "19px", marginTop: "10px" }}
+                sx={{
+                  fontSize: "14px",
+                  lineHeight: "19px",
+                  marginTop: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
                 component="div"
                 id="nested-list-subheader"
               >
@@ -227,7 +235,10 @@ const VideoList = () => {
                   </Button>
                 ) : null}
 
-                <div> {currentRootPath}</div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <SelectFolder />
+                  <Typography variant="body1">{currentRootPath}</Typography>
+                </div>
               </ListSubheader>
             }
           >
