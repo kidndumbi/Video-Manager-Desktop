@@ -1,4 +1,3 @@
-// useVideoListLogic.js
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
@@ -15,11 +14,15 @@ import {
   currentVideoActions,
   selCurrentVideo,
 } from "../../store/currentVideo.slice";
-import { selVideoPlayer } from "../../store/videoPlaye.slice";
+import {
+  selVideoPlayer,
+  videoPlayerActions,
+} from "../../store/videoPlaye.slice";
 import { pathNavActions, selPathNav } from "../../store/pathNav.slice";
 import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { VideoDataModel } from "../../models/videoData.model";
 import { VideoJsonModel } from "../../models/videoJSON.model";
+import { PlayerReference } from "video-react";
 
 export const useVideoListLogic = () => {
   const dispatch = useAppDispatch();
@@ -135,6 +138,10 @@ export const useVideoListLogic = () => {
     );
   };
 
+  const setPlayer = (p: PlayerReference) => {
+    dispatch(videoPlayerActions.setVideoPlayer(p));
+  };
+
   return {
     currentVideoTime,
     showSettingsDialog,
@@ -151,5 +158,10 @@ export const useVideoListLogic = () => {
     deleteVideos,
     onSearchClick,
     currentVideo,
+    player,
+    pathNav,
+    currentRootPath,
+    videoJsonData,
+    setPlayer,
   };
 };
