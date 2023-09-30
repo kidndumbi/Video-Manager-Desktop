@@ -246,7 +246,7 @@ const VideoList = () => {
               <div>
                 {folderVideosInfo.map((video: VideoDataModel) => {
                   return (
-                    <>
+                    <div key={video.filePath}>
                       <ListItemButton
                         sx={{
                           marginLeft: "5px",
@@ -331,7 +331,7 @@ const VideoList = () => {
                         ) : null}
                       </ListItemButton>
                       <Divider />
-                    </>
+                    </div>
                   );
                 })}
               </div>
