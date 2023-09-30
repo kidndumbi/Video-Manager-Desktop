@@ -5,27 +5,52 @@ import { OverviewModel } from "../../../models/overview.model";
 import { NoteTextEditor } from "../NoteTextEditor";
 import EditIcon from "@mui/icons-material/Edit";
 import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../../store";
 import { selVideoJson, videoJsonActions } from "../../../store/videoJson.slice";
 import { VideoJsonModel } from "../../../models/videoJSON.model";
-import { useAppDispatch } from "../../../store";
 import { selCurrentVideo } from "../../../store/currentVideo.slice";
 
 type OverviewProps = {
   overview: OverviewModel;
 };
 
+const EditButton = ({ onClick }: { onClick: () => void }) => (
+  <IconButton aria-label="edit" size="large" onClick={onClick}>
+    <EditIcon fontSize="inherit" />
+  </IconButton>
+);
+
+const TextDisplay = ({ body }: { body: string }) => (
+  <Box dangerouslySetInnerHTML={{ __html: body || "" }}></Box>
+);
+
+const TextEditor = ({
+  onSave,
+  onCancel,
+  body,
+}: {
+  onSave: (value: string) => void;
+  onCancel: () => void;
+  body: string;
+}) => (
+  <Box sx={{ height: 250, mb: 5 }}>
+    <NoteTextEditor
+      onSaveNoteClick={onSave}
+      onCancelClick={onCancel}
+      btnText="Save"
+      text={body}
+    />
+  </Box>
+);
+
 const Overview = ({ overview }: OverviewProps) => {
   const dispatch = useAppDispatch();
-
   const [showTextEditor, setShowTextEditor] = useState(false);
-
   const videoJsonData = useSelector(selVideoJson);
   const currentVideo = useSelector(selCurrentVideo);
 
   const save = (body: string) => {
-    if (body === "") {
-      return;
-    }
+    if (!body) return;
 
     const newVideoJsonData: VideoJsonModel = {
       ...videoJsonData,
@@ -37,56 +62,28 @@ const Overview = ({ overview }: OverviewProps) => {
         currentVideo,
         newVideoJsonData,
       })
-    ).then(() => {
-      setShowTextEditor(false);
-    });
+    ).then(() => setShowTextEditor(false));
   };
 
   return (
-    <>
-      <Box>
-        {!showTextEditor ? (
-          <Box>
-            <IconButton
-              aria-label="delete"
-              size="large"
-              onClick={() => setShowTextEditor(true)}
-            >
-              <EditIcon fontSize="inherit" />
-            </IconButton>
-          </Box>
-        ) : null}
-
-        <Box sx={{ marginBottom: 1 }}>
-          {!showTextEditor ? (
-            <Box
-              dangerouslySetInnerHTML={{ __html: overview.body || "" }}
-            ></Box>
-          ) : null}
-
-          {showTextEditor ? (
-            <Box
-              sx={{
-                height: 250,
-                mb: 5,
-              }}
-            >
-              <NoteTextEditor
-                onSaveNoteClick={(value: string) => {
-                  setShowTextEditor(false);
-                  save(value);
-                }}
-                onCancelClick={() => {
-                  setShowTextEditor(false);
-                }}
-                btnText="Save"
-                text={overview?.body}
-              />
-            </Box>
-          ) : null}
-        </Box>
+    <Box>
+      {!showTextEditor && (
+        <EditButton onClick={() => setShowTextEditor(true)} />
+      )}
+      <Box sx={{ marginBottom: 1 }}>
+        {!showTextEditor && <TextDisplay body={overview.body || ""} />}
+        {showTextEditor && (
+          <TextEditor
+            onSave={(value) => {
+              setShowTextEditor(false);
+              save(value);
+            }}
+            onCancel={() => setShowTextEditor(false)}
+            body={overview?.body || ""}
+          />
+        )}
       </Box>
-    </>
+    </Box>
   );
 };
 

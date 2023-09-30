@@ -10,30 +10,38 @@ type AlertDialogProps = {
   showDialog: boolean;
 };
 
-const AlertDialog = ({ onSelectedOption, showDialog }: AlertDialogProps) => {
-  const handleClose = (option: "ok" | "cancel") => {
-    onSelectedOption(option);
-  };
+const DialogButtons = ({
+  onClose,
+}: {
+  onClose: (option: "ok" | "cancel") => void;
+}) => (
+  <DialogActions>
+    <Button onClick={() => onClose("cancel")}>Cancel</Button>
+    <Button onClick={() => onClose("ok")} autoFocus>
+      Ok
+    </Button>
+  </DialogActions>
+);
 
+const DialogMessage = () => (
+  <DialogContent>
+    <DialogContentText id="alert-dialog-description">
+      Are you sure you want to delete?
+    </DialogContentText>
+  </DialogContent>
+);
+
+const AlertDialog = ({ onSelectedOption, showDialog }: AlertDialogProps) => {
   return (
     <div>
       <Dialog
         open={showDialog}
-        onClose={handleClose}
+        onClose={() => onSelectedOption("cancel")}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleClose("cancel")}>Cancel</Button>
-          <Button onClick={() => handleClose("ok")} autoFocus>
-            Ok
-          </Button>
-        </DialogActions>
+        <DialogMessage />
+        <DialogButtons onClose={onSelectedOption} />
       </Dialog>
     </div>
   );
