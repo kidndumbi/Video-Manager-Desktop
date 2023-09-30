@@ -1,7 +1,8 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { AlertDialog } from "./AlertDialog"; // Adjust the import to your project structure
 import "@testing-library/jest-dom";
+import { Button } from "@mui/material";
 
 describe("AlertDialog Component", () => {
   afterEach(() => {
@@ -9,51 +10,94 @@ describe("AlertDialog Component", () => {
   });
 
   it("renders the dialog when showDialog is true", () => {
-    render(
-      <AlertDialog onSelectedOption={() => jest.fn()} showDialog={true} />
-    );
-    expect(
-      screen.getByText("Are you sure you want to delete?")
-    ).toBeInTheDocument();
+    const testContent = "Are you sure you want to delete?"; // Define the dialog content
+
+    render(<AlertDialog showDialog={true} dialogContent={testContent} />);
+
+    expect(screen.getByText(testContent)).toBeInTheDocument(); // Check if the dialog content is rendered
   });
 
   it("does not render the dialog when showDialog is false", () => {
+    const testContent = "Are you sure you want to delete?"; // Define the dialog content
     const { container } = render(
-      <AlertDialog onSelectedOption={() => jest.fn()} showDialog={false} />
+      <AlertDialog showDialog={false} dialogContent={testContent} />
     );
+
     expect(container.querySelector("#alert-dialog-description")).toBeNull();
   });
 
-  it('calls onSelectedOption with "ok" when Ok button is clicked', () => {
-    const mockCallback = jest.fn();
-    render(<AlertDialog onSelectedOption={mockCallback} showDialog={true} />);
+  it("calls onClose when Ok button is clicked", () => {
+    const mockCallback = jest.fn(); // Mock callback for onClose
+    const testContent = "Are you sure you want to delete?"; // Define the dialog content
+
+    render(
+      <AlertDialog
+        showDialog={true}
+        dialogContent={testContent}
+        dialogActions={
+          <>
+            <Button onClick={() => mockCallback("cancel")}>Cancel</Button>
+            <Button onClick={() => mockCallback("ok")} autoFocus>
+              Ok
+            </Button>
+          </>
+        }
+      />
+    );
 
     fireEvent.click(screen.getByText("Ok"));
     expect(mockCallback).toHaveBeenCalledWith("ok");
   });
 
-  it('calls onSelectedOption with "cancel" when Cancel button is clicked', () => {
-    const mockCallback = jest.fn();
-    render(<AlertDialog onSelectedOption={mockCallback} showDialog={true} />);
+  it('calls onClose with "cancel" when Cancel button is clicked', () => {
+    const mockCallback = jest.fn(); // Mock callback for onClose
+    const testContent = "Are you sure you want to delete?"; // Define the dialog content
+
+    render(
+      <AlertDialog
+        showDialog={true}
+        dialogContent={testContent}
+        dialogActions={
+          <>
+            <Button onClick={() => mockCallback("cancel")}>Cancel</Button>
+            <Button onClick={() => mockCallback("ok")} autoFocus>
+              Ok
+            </Button>
+          </>
+        }
+      />
+    );
 
     fireEvent.click(screen.getByText("Cancel"));
     expect(mockCallback).toHaveBeenCalledWith("cancel");
   });
 
-  // it('calls onSelectedOption with "cancel" when dialog is closed', () => {
-  //   const mockCallback = jest.fn();
-  //   const { unmount, rerender } = render(
-  //     <AlertDialog onSelectedOption={mockCallback} showDialog={true} />
-  //   );
+  it("closes on backdrop click", () => {
+    const mockCloseCallback = jest.fn(); // Mock callback for onClose
+    const testContent = "Are you sure you want to delete?"; // Define the dialog content
 
-  //   // Manually trigger dialog close by setting showDialog to false
-  //   rerender(
-  //     <AlertDialog onSelectedOption={mockCallback} showDialog={false} />
-  //   );
+    render(
+      <AlertDialog
+        showDialog={true}
+        dialogContent={testContent}
+        dialogActions={
+          <>
+            <Button onClick={() => mockCloseCallback("cancel")}>Cancel</Button>
+            <Button onClick={() => mockCloseCallback("ok")} autoFocus>
+              Ok
+            </Button>
+          </>
+        }
+        onClose={mockCloseCallback}
+      />
+    );
 
-  //   // Unmount the component to clear any effects
-  //   unmount();
+    // Add a null check before calling fireEvent.click
+    const backdropElement = document.querySelector(".MuiBackdrop-root");
+    if (backdropElement !== null) {
+      fireEvent.click(backdropElement);
+    }
 
-  //   expect(mockCallback).toHaveBeenCalledWith("cancel");
-  // });
+    expect(mockCloseCallback).toHaveBeenCalled();
+  });
 });

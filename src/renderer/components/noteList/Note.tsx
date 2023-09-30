@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { NoteTextEditor } from "../NoteTextEditor";
 import Moment from "react-moment";
 import { AlertDialog } from "../AlertDialog";
+import { Button, DialogContentText } from "@mui/material";
 
 type NoteProps = {
   note: NoteModel;
@@ -119,13 +120,33 @@ const Note = ({ note, onVideoSeek, onNoteSave, onNoteDelete }: NoteProps) => {
       ) : null}
       <Box>
         <AlertDialog
+          onClose={() => setShowDialog(false)}
           showDialog={showDialog}
-          onSelectedOption={(option: string) => {
-            setShowDialog(false);
-            if (option === "ok") {
-              onNoteDelete(note);
-            }
-          }}
+          dialogContent={
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete?
+            </DialogContentText>
+          }
+          dialogActions={
+            <>
+              <Button
+                onClick={() => {
+                  setShowDialog(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowDialog(false);
+                  onNoteDelete(note);
+                }}
+                autoFocus
+              >
+                Ok
+              </Button>
+            </>
+          }
         ></AlertDialog>
       </Box>
     </>
