@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import AppVideoPlayer from "../AppVideoPlayer";
@@ -7,18 +6,8 @@ import { VideoDataModel } from "../../../models/videoData.model";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { VideoSettingsDialog } from "../VideoSettingsDialog";
 import { AppTabs } from "../AppTabs";
-import { useAppDispatch } from "../../../store";
-import { selCurrentRootPath } from "../../../store/currentRootpath.slice";
-import { selPathNav } from "../../../store/pathNav.slice";
-import { folderVideosInfoActions } from "../../../store/folderVideosInfo.slice";
-import { currentVideoActions } from "../../../store/currentVideo.slice";
-import {
-  selVideoPlayer,
-  videoPlayerActions,
-} from "../../../store/videoPlaye.slice";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { selVideoJson } from "../../../store/videoJson.slice";
 import Divider from "@mui/material/Divider";
 import {
   convertMillisecondsToDate,
@@ -48,38 +37,11 @@ const VideoList = () => {
     deleteVideos,
     onSearchClick,
     currentVideo,
+    setPlayer,
+    pathNav,
+    currentRootPath,
+    videoJsonData,
   } = useVideoListLogic();
-
-  const dispatch = useAppDispatch();
-
-  const player = useSelector(selVideoPlayer);
-  const pathNav = useSelector(selPathNav);
-  const currentRootPath = useSelector(selCurrentRootPath);
-  const videoJsonData = useSelector(selVideoJson);
-
-  useEffect(() => {
-    dispatch(
-      folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
-    );
-  }, []);
-
-  useEffect(() => {
-    if (player) {
-      if (videoJsonData.lastWatched) {
-        player.seek(videoJsonData.lastWatched);
-      }
-    }
-  }, [videoJsonData]);
-
-  useEffect(() => {
-    if (folderVideosInfo && folderVideosInfo.length > 0) {
-      dispatch(
-        currentVideoActions.setCurrentVideo(
-          folderVideosInfo.find((v) => v.isDirectory !== true)
-        )
-      );
-    }
-  }, [folderVideosInfo]);
 
   return (
     <>
@@ -148,9 +110,7 @@ const VideoList = () => {
           </Grid>
           <Grid xs={12} item>
             <AppVideoPlayer
-              setPlayer={(p) => {
-                dispatch(videoPlayerActions.setVideoPlayer(p));
-              }}
+              setPlayer={setPlayer}
               onCurrentTime={onCurrentTime}
               videoData={currentVideo}
             ></AppVideoPlayer>
