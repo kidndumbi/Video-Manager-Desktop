@@ -1,39 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grid from "@mui/material/Grid";
 import AppVideoPlayer from "../AppVideoPlayer";
 import { VideoDataModel } from "../../../models/videoData.model";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { VideoSettingsDialog } from "../VideoSettingsDialog";
-import Button from "@mui/material/Button";
 import { AppTabs } from "../AppTabs";
 import { useAppDispatch } from "../../../store";
-import {
-  currentRootPathActions,
-  selCurrentRootPath,
-} from "../../../store/currentRootpath.slice";
-import { pathNavActions, selPathNav } from "../../../store/pathNav.slice";
-import {
-  folderVideosInfoActions,
-  selFoldersVideosInfo,
-} from "../../../store/folderVideosInfo.slice";
-import {
-  currentVideoActions,
-  selCurrentVideo,
-} from "../../../store/currentVideo.slice";
+import { selCurrentRootPath } from "../../../store/currentRootpath.slice";
+import { selPathNav } from "../../../store/pathNav.slice";
+import { folderVideosInfoActions } from "../../../store/folderVideosInfo.slice";
+import { currentVideoActions } from "../../../store/currentVideo.slice";
 import {
   selVideoPlayer,
   videoPlayerActions,
 } from "../../../store/videoPlaye.slice";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { selVideoJson, videoJsonActions } from "../../../store/videoJson.slice";
-import { VideoJsonModel } from "../../../models/videoJSON.model";
+import { selVideoJson } from "../../../store/videoJson.slice";
 import Divider from "@mui/material/Divider";
-import { ipcRenderer } from "electron";
 import {
   convertMillisecondsToDate,
   secondsTohhmmss,
@@ -41,26 +27,34 @@ import {
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { Search } from "../Search";
-import Typography from "@mui/material/Typography";
-import { SelectFolder } from "../SelectFolder";
 import VideoListItem from "./VideoListItem";
 import VideoAlertDialog from "./VideoAlertDialog";
+import { useVideoListLogic } from "../../hooks/useVideoListLogic";
+import VideoListSubheader from "./VideoListSubheader";
 
 const VideoList = () => {
+  const {
+    currentVideoTime,
+    showSettingsDialog,
+    setShowSettingsDialog,
+    showDialog,
+    setShowDialog,
+    folderVideosInfo,
+    handleVideoSelect,
+    onBackTriggered,
+    onCurrentTime,
+    saveVideoSettings,
+    handleOnVideoSelected,
+    deleteVideos,
+    onSearchClick,
+    currentVideo,
+  } = useVideoListLogic();
+
   const dispatch = useAppDispatch();
 
-  const [currentVideoTime, setCurrentVideoTime] = useState(0);
-  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-  const [selectedVideos, setSelectedVideos] = useState<VideoDataModel[]>([]);
-  const currentVideo = useSelector(selCurrentVideo);
-
   const player = useSelector(selVideoPlayer);
-
-  const folderVideosInfo = useSelector(selFoldersVideosInfo);
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
-
   const videoJsonData = useSelector(selVideoJson);
 
   useEffect(() => {
@@ -86,94 +80,6 @@ const VideoList = () => {
       );
     }
   }, [folderVideosInfo]);
-
-  const updateLastWatched = async () => {
-    await ipcRenderer.invoke("save:lastWatch", {
-      currentVideo,
-      lastWatched: currentVideoTime,
-    });
-  };
-
-  const handleVideoSelect = (video: VideoDataModel) => {
-    updateLastWatched();
-    if (video.isDirectory === false) {
-      dispatch(currentVideoActions.setCurrentVideo(video));
-    } else {
-      dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
-      dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
-      dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo({
-          currentRootPath: video.filePath,
-        })
-      );
-    }
-  };
-
-  const onBackTriggered = () => {
-    if (pathNav.length > 0) {
-      dispatch(
-        currentRootPathActions.setCurrentRootPath(pathNav[pathNav.length - 1])
-      );
-      dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo({
-          currentRootPath: pathNav[pathNav.length - 1],
-        })
-      );
-      dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
-    }
-  };
-
-  const onCurrentTime = (time: number) => {
-    setCurrentVideoTime(time);
-  };
-
-  const saveVideosettings = (value: { [value: string]: boolean }) => {
-    const newVideoJsonData: VideoJsonModel = {
-      ...videoJsonData,
-      ...value,
-    };
-
-    dispatch(
-      videoJsonActions.postVideoJason({
-        currentVideo,
-        newVideoJsonData,
-      })
-    ).then(() => {
-      // setShowTextEditor(false);
-    });
-  };
-
-  const handleOnVideoSelected = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    video: VideoDataModel
-  ) => {
-    if (event.target.checked) {
-      setSelectedVideos([...selectedVideos, video]);
-    } else {
-      setSelectedVideos(
-        selectedVideos.filter((v) => v.filePath !== video.filePath)
-      );
-    }
-  };
-
-  const deleteVideos = async () => {
-    if (selectedVideos.length > 0) {
-      await ipcRenderer.invoke("delete:video", selectedVideos);
-      setSelectedVideos([]);
-      dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
-      );
-    }
-  };
-
-  const onSearchClick = (searchText: string) => {
-    dispatch(
-      folderVideosInfoActions.fetchFolderVideosInfo({
-        currentRootPath,
-        searchText: searchText.trim(),
-      })
-    );
-  };
 
   return (
     <>
@@ -202,36 +108,11 @@ const VideoList = () => {
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={
-              <ListSubheader
-                sx={{
-                  fontSize: "14px",
-                  lineHeight: "19px",
-                  marginTop: "10px",
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
-                component="div"
-                id="nested-list-subheader"
-              >
-                {pathNav.length > 0 ? (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={onBackTriggered}
-                    startIcon={<ArrowBackIosNewIcon />}
-                    size="small"
-                    sx={{ marginBottom: "10px" }}
-                  >
-                    Back
-                  </Button>
-                ) : null}
-
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <SelectFolder />
-                  <Typography variant="body1">{currentRootPath}</Typography>
-                </div>
-              </ListSubheader>
+              <VideoListSubheader
+                pathNav={pathNav}
+                onBackTriggered={onBackTriggered}
+                currentRootPath={currentRootPath}
+              />
             }
           >
             {folderVideosInfo && folderVideosInfo.length > 0 ? (
@@ -284,7 +165,7 @@ const VideoList = () => {
           mustWatch={videoJsonData.mustWatch}
           watched={videoJsonData.watched}
           like={videoJsonData.like}
-          onStateChange={saveVideosettings}
+          onStateChange={saveVideoSettings}
         ></VideoSettingsDialog>
       </Grid>
       <Box>
