@@ -1,7 +1,7 @@
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import React from "react";
 import theme from "../theme";
-import { VideoList } from "./VideoList";
+import { VideoList } from "./videoList/VideoList";
 
 export default function App(): JSX.Element {
   return (
