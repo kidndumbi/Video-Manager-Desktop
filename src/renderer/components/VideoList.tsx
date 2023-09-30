@@ -53,6 +53,7 @@ import { AlertDialog } from "./AlertDialog";
 import { Search } from "./Search";
 import Typography from "@mui/material/Typography";
 import { SelectFolder } from "./SelectFolder";
+import { DialogContentText } from "@mui/material";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -372,13 +373,33 @@ const VideoList = () => {
       </Grid>
       <Box>
         <AlertDialog
+          onClose={() => setShowDialog(false)}
           showDialog={showDialog}
-          onSelectedOption={(option: string) => {
-            setShowDialog(false);
-            if (option === "ok") {
-              deleteVideos();
-            }
-          }}
+          dialogContent={
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete?
+            </DialogContentText>
+          }
+          dialogActions={
+            <>
+              <Button
+                onClick={() => {
+                  setShowDialog(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowDialog(false);
+                  deleteVideos();
+                }}
+                autoFocus
+              >
+                Ok
+              </Button>
+            </>
+          }
         ></AlertDialog>
       </Box>
     </>
