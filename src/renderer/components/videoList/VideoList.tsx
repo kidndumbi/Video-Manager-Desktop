@@ -2,58 +2,49 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Grid from "@mui/material/Grid";
-import FolderIcon from "@mui/icons-material/Folder";
-import NewReleasesIcon from "@mui/icons-material/NewReleases";
-import NotesIcon from "@mui/icons-material/Notes";
-import AppVideoPlayer from "./AppVideoPlayer";
-import { VideoDataModel } from "../../models/videoData.model";
+import AppVideoPlayer from "../AppVideoPlayer";
+import { VideoDataModel } from "../../../models/videoData.model";
 import SettingsIcon from "@mui/icons-material/Settings";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import { VideoSettingsDialog } from "./VideoSettingsDialog";
+import { VideoSettingsDialog } from "../VideoSettingsDialog";
 import Button from "@mui/material/Button";
-import { AppTabs } from "./AppTabs";
-import { useAppDispatch } from "../../store";
+import { AppTabs } from "../AppTabs";
+import { useAppDispatch } from "../../../store";
 import {
   currentRootPathActions,
   selCurrentRootPath,
-} from "../../store/currentRootpath.slice";
-import { pathNavActions, selPathNav } from "../../store/pathNav.slice";
+} from "../../../store/currentRootpath.slice";
+import { pathNavActions, selPathNav } from "../../../store/pathNav.slice";
 import {
   folderVideosInfoActions,
   selFoldersVideosInfo,
-} from "../../store/folderVideosInfo.slice";
+} from "../../../store/folderVideosInfo.slice";
 import {
   currentVideoActions,
   selCurrentVideo,
-} from "../../store/currentVideo.slice";
+} from "../../../store/currentVideo.slice";
 import {
   selVideoPlayer,
   videoPlayerActions,
-} from "../../store/videoPlaye.slice";
-import Badge from "@mui/material/Badge";
+} from "../../../store/videoPlaye.slice";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
-import { VideoJsonModel } from "../../models/videoJSON.model";
+import { selVideoJson, videoJsonActions } from "../../../store/videoJson.slice";
+import { VideoJsonModel } from "../../../models/videoJSON.model";
 import Divider from "@mui/material/Divider";
 import { ipcRenderer } from "electron";
 import {
   convertMillisecondsToDate,
   secondsTohhmmss,
-} from "../../util/helperFunctions";
-import Checkbox from "@mui/material/Checkbox";
+} from "../../../util/helperFunctions";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { AlertDialog } from "./AlertDialog";
-import { Search } from "./Search";
+import { Search } from "../Search";
 import Typography from "@mui/material/Typography";
-import { SelectFolder } from "./SelectFolder";
-import { DialogContentText } from "@mui/material";
+import { SelectFolder } from "../SelectFolder";
+import VideoListItem from "./VideoListItem";
+import VideoAlertDialog from "./VideoAlertDialog";
 
 const VideoList = () => {
   const dispatch = useAppDispatch();
@@ -248,89 +239,14 @@ const VideoList = () => {
                 {folderVideosInfo.map((video: VideoDataModel) => {
                   return (
                     <div key={video.filePath}>
-                      <ListItemButton
-                        sx={{
-                          marginLeft: "5px",
-                          borderLeft: !video.watched
-                            ? "5px solid #9575CD"
-                            : "5px solid transparent",
-                          paddingBottom: "9px",
-                          paddingTop: "9px",
-                          backgroundColor:
-                            video.fileName === currentVideo?.fileName
-                              ? "#e0e0e0"
-                              : "",
-                        }}
-                        key={video.filePath}
-                        onClick={() => handleVideoSelect(video)}
-                      >
-                        {video.isDirectory ? (
-                          <ListItemIcon sx={{ minWidth: "33px" }}>
-                            <FolderIcon fontSize="small" />
-                          </ListItemIcon>
-                        ) : (
-                          <ListItemIcon
-                            onClick={(event) => event.stopPropagation()}
-                          >
-                            <Checkbox
-                              edge="start"
-                              onChange={(event) => {
-                                handleOnVideoSelected(event, video);
-                              }}
-                            />
-                          </ListItemIcon>
-                        )}
-
-                        <ListItemText
-                          disableTypography
-                          primary={
-                            <Typography
-                              variant="body1"
-                              style={{ fontSize: "14px" }}
-                            >
-                              {video.fileName}
-                            </Typography>
-                          }
-                          secondary={
-                            <>
-                              <Typography
-                                variant="body2"
-                                style={{ fontSize: "11px" }}
-                              >
-                                {convertMillisecondsToDate(video.createdAt)}
-                              </Typography>
-                              {!video.isDirectory && (
-                                <Typography
-                                  variant="body2"
-                                  style={{ fontSize: "10px" }}
-                                >
-                                  {"Duration: " +
-                                    secondsTohhmmss(video.duration || 0)}
-                                </Typography>
-                              )}
-                            </>
-                          }
-                        />
-
-                        {video.mustWatch ? (
-                          <NewReleasesIcon color="warning" fontSize="small" />
-                        ) : null}
-                        {video.like ? (
-                          <FavoriteIcon
-                            color="primary"
-                            fontSize="small"
-                          ></FavoriteIcon>
-                        ) : null}
-                        {video.notesCount > 0 ? (
-                          <Badge
-                            color="secondary"
-                            badgeContent={video.notesCount}
-                            sx={{ right: 2, top: 9 }}
-                          >
-                            <NotesIcon fontSize="small" />
-                          </Badge>
-                        ) : null}
-                      </ListItemButton>
+                      <VideoListItem
+                        currentVideo={currentVideo}
+                        secondsTohhmmss={secondsTohhmmss}
+                        video={video}
+                        handleOnVideoSelected={handleOnVideoSelected}
+                        handleVideoSelect={handleVideoSelect}
+                        convertMillisecondsToDate={convertMillisecondsToDate}
+                      ></VideoListItem>
                       <Divider />
                     </div>
                   );
@@ -372,35 +288,11 @@ const VideoList = () => {
         ></VideoSettingsDialog>
       </Grid>
       <Box>
-        <AlertDialog
-          onClose={() => setShowDialog(false)}
+        <VideoAlertDialog
           showDialog={showDialog}
-          dialogContent={
-            <DialogContentText id="alert-dialog-description">
-              Are you sure you want to delete?
-            </DialogContentText>
-          }
-          dialogActions={
-            <>
-              <Button
-                onClick={() => {
-                  setShowDialog(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowDialog(false);
-                  deleteVideos();
-                }}
-                autoFocus
-              >
-                Ok
-              </Button>
-            </>
-          }
-        ></AlertDialog>
+          onClose={() => setShowDialog(false)}
+          deleteVideos={deleteVideos}
+        />
       </Box>
     </>
   );
