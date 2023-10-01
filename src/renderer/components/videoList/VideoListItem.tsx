@@ -36,14 +36,13 @@ const renderIcon = (
     );
   } else {
     return (
-      <ListItemIcon onClick={(event) => event.stopPropagation()}>
-        <Checkbox
-          edge="start"
-          onChange={(event) => {
-            handleOnVideoSelected(event, video);
-          }}
-        />
-      </ListItemIcon>
+      <Checkbox
+        onClick={(event) => event.stopPropagation()}
+        edge="start"
+        onChange={(event) => {
+          handleOnVideoSelected(event, video);
+        }}
+      />
     );
   }
 };

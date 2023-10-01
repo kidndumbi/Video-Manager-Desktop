@@ -41,6 +41,7 @@ const VideoList = () => {
     pathNav,
     currentRootPath,
     videoJsonData,
+    selectedVideos,
   } = useVideoListLogic();
 
   return (
@@ -54,6 +55,7 @@ const VideoList = () => {
                 aria-label="delete"
                 color="secondary"
                 size="small"
+                disabled={selectedVideos.length === 0}
                 onClick={() => setShowDialog(true)}
               >
                 <DeleteIcon fontSize="small" />
