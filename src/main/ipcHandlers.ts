@@ -7,6 +7,7 @@ import {
   deleteVideo,
   openFileDialog,
 } from "./utilities";
+import { getAllPlaylistsDb } from "./playlistOperations";
 
 export function registerIpcHandlers() {
   ipcMain.handle("get:root-video-data", getRootVideoData);
@@ -15,4 +16,7 @@ export function registerIpcHandlers() {
   ipcMain.handle("save:lastWatch", saveLastWatch);
   ipcMain.handle("delete:video", deleteVideo);
   ipcMain.handle("open-file-dialog", openFileDialog);
+  ipcMain.handle("playlist:getAllPlaylistsDb", () => {
+    return getAllPlaylistsDb();
+  });
 }

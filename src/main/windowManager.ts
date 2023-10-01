@@ -1,9 +1,19 @@
 import { BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
+import { initializeDb } from "./lowdb-config";
+import { getAllPlaylistsDb } from "./playlistOperations";
 
-export function createWindow() {
+export async function createWindow() {
   let mainWindow: Electron.BrowserWindow | null;
+
+  // Initialize your database
+  try {
+    await initializeDb();
+    console.log("Database initialized");
+  } catch (error) {
+    console.error("Error initializing db:", error);
+  }
 
   mainWindow = new BrowserWindow({
     width: 1100,

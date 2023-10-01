@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../store";
-import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
-import { selCurrentVideo } from "../../store/currentVideo.slice";
-import { selVideoPlayer } from "../../store/videoPlaye.slice";
+import { useAppDispatch } from "../store";
+import { selVideoJson, videoJsonActions } from "../store/videoJson.slice";
+import { selCurrentVideo } from "../store/currentVideo.slice";
+import { selVideoPlayer } from "../store/videoPlaye.slice";
 import { v4 as uuidv4 } from "uuid";
-import { NoteModel } from "../../models/note.model";
-import { VideoJsonModel } from "../../models/videoJSON.model";
+import { NoteModel } from "../models/note.model";
+import { VideoJsonModel } from "../models/videoJSON.model";
 
 export const useNoteListLogic = (currentVideoTime: number) => {
   const dispatch = useAppDispatch();

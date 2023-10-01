@@ -7,7 +7,7 @@ import { secondsTohhmmss } from "../../../util/helperFunctions";
 import { NoteTextEditor } from "../NoteTextEditor";
 import { Note } from "./note/Note";
 import CreateNewNote from "./CreateNewNote";
-import { useNoteListLogic } from "../../hooks/useNoteListLogic";
+import { useNoteListLogic } from "../../../hooks/useNoteListLogic";
 
 export interface NoteListProps {
   notesData?: NoteModel[];
