@@ -7,20 +7,18 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { VideoSettingsDialog } from "../VideoSettingsDialog";
 import { AppTabs } from "../AppTabs";
 import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import Divider from "@mui/material/Divider";
 import {
   convertMillisecondsToDate,
   secondsTohhmmss,
 } from "../../../util/helperFunctions";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import { Search } from "../Search";
 import VideoListItem from "./VideoListItem";
 import VideoAlertDialog from "./VideoAlertDialog";
 import { useVideoListLogic } from "../../hooks/useVideoListLogic";
 import VideoListSubheader from "./VideoListSubheader";
+import VideoListToolbar from "./VideoListToolbar";
 
 const VideoList = () => {
   const {
@@ -51,27 +49,12 @@ const VideoList = () => {
       <Grid container data-testid="video-list">
         <Grid xs={3} item>
           <Search onSearchClick={onSearchClick}></Search>
-          <Box>
-            <Stack direction="row">
-              <IconButton
-                aria-label="delete"
-                color="secondary"
-                size="small"
-                disabled={selectedVideos.length === 0}
-                onClick={() => setShowDialog(true)}
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                aria-label="refresh"
-                color="secondary"
-                size="small"
-                onClick={() => fetchFolderVideosInfo({ currentRootPath })}
-              >
-                <RefreshIcon fontSize="small" />
-              </IconButton>
-            </Stack>
-          </Box>
+          <VideoListToolbar
+            selectedVideos={selectedVideos}
+            fetchFolderVideosInfo={fetchFolderVideosInfo}
+            currentRootPath={currentRootPath}
+            setShowDialog={setShowDialog}
+          />
           <Divider />
           <List
             sx={{

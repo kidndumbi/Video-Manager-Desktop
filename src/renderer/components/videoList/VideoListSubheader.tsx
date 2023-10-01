@@ -3,7 +3,6 @@ import ListSubheader from "@mui/material/ListSubheader";
 import Button from "@mui/material/Button";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Typography from "@mui/material/Typography";
-import { SelectFolder } from "../SelectFolder";
 
 interface VideoListSubheaderProps {
   pathNav: string[];
@@ -43,7 +42,6 @@ const VideoListSubheader: React.FC<VideoListSubheaderProps> = ({
       ) : null}
 
       <div style={{ display: "flex", alignItems: "center" }}>
-        <SelectFolder />
         <Typography variant="body1">{currentRootPath}</Typography>
       </div>
     </ListSubheader>
