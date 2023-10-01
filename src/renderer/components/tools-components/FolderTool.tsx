@@ -3,15 +3,15 @@ import { IconButton } from "@mui/material";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { ipcRenderer } from "electron";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch } from "../../../store";
 import {
   currentRootPathActions,
   selCurrentRootPath,
-} from "../../store/currentRootpath.slice";
-import { pathNavActions, selPathNav } from "../../store/pathNav.slice";
-import { folderVideosInfoActions } from "../../store/folderVideosInfo.slice";
+} from "../../../store/currentRootpath.slice";
+import { pathNavActions, selPathNav } from "../../../store/pathNav.slice";
+import { folderVideosInfoActions } from "../../../store/folderVideosInfo.slice";
 
-const SelectFolder: React.FC = () => {
+const FolderTool: React.FC = () => {
   const dispatch = useAppDispatch();
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
@@ -68,4 +68,4 @@ const SelectFolder: React.FC = () => {
   );
 };
 
-export { SelectFolder };
+export { FolderTool };
