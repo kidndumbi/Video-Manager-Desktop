@@ -1,38 +1,40 @@
+import React, { useState, FC } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import React, { useState } from "react";
-import { OverviewModel } from "../../../models/overview.model";
-import { NoteTextEditor } from "../NoteTextEditor";
 import EditIcon from "@mui/icons-material/Edit";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../../store";
-import { selVideoJson, videoJsonActions } from "../../../store/videoJson.slice";
+import { OverviewModel } from "../../../models/overview.model";
 import { VideoJsonModel } from "../../../models/videoJSON.model";
+import { NoteTextEditor } from "../NoteTextEditor";
+import { selVideoJson, videoJsonActions } from "../../../store/videoJson.slice";
 import { selCurrentVideo } from "../../../store/currentVideo.slice";
+import { useAppDispatch } from "../../../store";
 
-type OverviewProps = {
-  overview: OverviewModel;
+type EditButtonProps = {
+  onClick: () => void;
 };
 
-const EditButton = ({ onClick }: { onClick: () => void }) => (
+const EditButton: FC<EditButtonProps> = ({ onClick }) => (
   <IconButton aria-label="edit" size="large" onClick={onClick}>
     <EditIcon fontSize="inherit" />
   </IconButton>
 );
 
-const TextDisplay = ({ body }: { body: string }) => (
+type TextDisplayProps = {
+  body: string;
+};
+
+const TextDisplay: FC<TextDisplayProps> = ({ body }) => (
   <Box dangerouslySetInnerHTML={{ __html: body || "" }}></Box>
 );
 
-const TextEditor = ({
-  onSave,
-  onCancel,
-  body,
-}: {
+type TextEditorProps = {
   onSave: (value: string) => void;
   onCancel: () => void;
   body: string;
-}) => (
+};
+
+const TextEditor: FC<TextEditorProps> = ({ onSave, onCancel, body }) => (
   <Box sx={{ height: 250, mb: 5 }}>
     <NoteTextEditor
       onSaveNoteClick={onSave}
@@ -43,7 +45,11 @@ const TextEditor = ({
   </Box>
 );
 
-const Overview = ({ overview }: OverviewProps) => {
+type OverviewProps = {
+  overview: OverviewModel;
+};
+
+const Overview: FC<OverviewProps> = ({ overview }) => {
   const dispatch = useAppDispatch();
   const [showTextEditor, setShowTextEditor] = useState(false);
   const videoJsonData = useSelector(selVideoJson);
