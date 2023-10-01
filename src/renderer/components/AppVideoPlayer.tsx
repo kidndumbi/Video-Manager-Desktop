@@ -101,6 +101,7 @@ import { VideoDataModel } from "../../models/videoData.model";
 import Replay5Icon from "@mui/icons-material/Replay5";
 import Replay10Icon from "@mui/icons-material/Replay10";
 import Replay30Icon from "@mui/icons-material/Replay30";
+import { Tooltip } from "@mui/material";
 
 type AppVideoPlayerProps = {
   videoData: VideoDataModel | undefined;
@@ -147,7 +148,9 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
 
     return (
       <>
-        <Box>{videoData?.fileName?.replace(/\.mp4$/, "")}</Box>
+        <Tooltip title={videoData?.filePath || ""} placement="bottom-start">
+          <Box>{videoData?.fileName?.replace(/\.mp4$/, "")}</Box>
+        </Tooltip>
         <Player
           ref={(c: PlayerReference) => {
             this.player = c;
