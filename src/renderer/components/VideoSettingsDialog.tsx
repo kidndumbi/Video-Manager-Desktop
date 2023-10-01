@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, FC } from "react";
 import {
   Box,
   DialogContent,
@@ -14,6 +14,25 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
+type SwitchControlProps = {
+  checked: boolean | undefined;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  name: string;
+  label: string;
+};
+
+const SwitchControl: FC<SwitchControlProps> = ({
+  checked,
+  onChange,
+  name,
+  label,
+}) => (
+  <FormControlLabel
+    control={<Switch checked={checked} onChange={onChange} name={name} />}
+    label={label}
+  />
+);
+
 type VideoSettingsDialogProps = {
   onClose: () => void;
   showDialog: boolean;
@@ -23,31 +42,14 @@ type VideoSettingsDialogProps = {
   onStateChange: (value: { [value: string]: boolean }) => void;
 };
 
-const SwitchControl = ({
-  checked,
-  onChange,
-  name,
-  label,
-}: {
-  checked: boolean | undefined;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  name: string;
-  label: string;
-}) => (
-  <FormControlLabel
-    control={<Switch checked={checked} onChange={onChange} name={name} />}
-    label={label}
-  />
-);
-
-const VideoSettingsDialog = ({
+const VideoSettingsDialog: FC<VideoSettingsDialogProps> = ({
   showDialog,
   onClose,
   mustWatch,
   watched,
   like,
   onStateChange,
-}: VideoSettingsDialogProps) => {
+}) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onStateChange({ [event.target.name]: event.target.checked });
   };
@@ -58,6 +60,7 @@ const VideoSettingsDialog = ({
         open={showDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        onClose={onClose}
       >
         <DialogTitle sx={{ mb: 2 }}>
           <IconButton
