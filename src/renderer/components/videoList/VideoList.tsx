@@ -16,7 +16,7 @@ import Box from "@mui/material/Box";
 import { Search } from "../Search";
 import VideoListItem from "./VideoListItem";
 import VideoAlertDialog from "./VideoAlertDialog";
-import { useVideoListLogic } from "../../hooks/useVideoListLogic";
+import { useVideoListLogic } from "../../../hooks/useVideoListLogic";
 import VideoListSubheader from "./VideoListSubheader";
 import VideoListToolbar from "./VideoListToolbar";
 

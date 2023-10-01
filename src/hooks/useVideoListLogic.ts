@@ -1,28 +1,26 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch } from "../store";
 import { ipcRenderer } from "electron";
 import {
   folderVideosInfoActions,
   selFoldersVideosInfo,
-} from "../../store/folderVideosInfo.slice";
+} from "../store/folderVideosInfo.slice";
 import {
   currentRootPathActions,
   selCurrentRootPath,
-} from "../../store/currentRootpath.slice";
+} from "../store/currentRootpath.slice";
 import {
   currentVideoActions,
   selCurrentVideo,
-} from "../../store/currentVideo.slice";
-import {
-  selVideoPlayer,
-  videoPlayerActions,
-} from "../../store/videoPlaye.slice";
-import { pathNavActions, selPathNav } from "../../store/pathNav.slice";
-import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
-import { VideoDataModel } from "../../models/videoData.model";
-import { VideoJsonModel } from "../../models/videoJSON.model";
+} from "../store/currentVideo.slice";
+import { selVideoPlayer, videoPlayerActions } from "../store/videoPlaye.slice";
+import { pathNavActions, selPathNav } from "../store/pathNav.slice";
+import { selVideoJson, videoJsonActions } from "../store/videoJson.slice";
+import { VideoDataModel } from "../models/videoData.model";
+import { VideoJsonModel } from "../models/videoJSON.model";
 import { PlayerReference } from "video-react";
+import { playlistsActions, selplaylists } from "../store/playlists.slice";
 
 export const useVideoListLogic = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +35,15 @@ export const useVideoListLogic = () => {
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
   const videoJsonData = useSelector(selVideoJson);
+  const playlists = useSelector(selplaylists);
+
+  useEffect(() => {
+    fetchPlalists();
+  }, []);
+
+  useEffect(() => {
+    console.log("playlists: ", playlists);
+  }, [playlists]);
 
   useEffect(() => {
     fetchFolderVideosInfo({ currentRootPath });
@@ -59,12 +66,15 @@ export const useVideoListLogic = () => {
     currentRootPath: string;
     searchText?: string;
   }) => {
-    console.log("fetchFolderVideosInfo ");
     dispatch(
       folderVideosInfoActions.fetchFolderVideosInfo({
         ...args,
       })
     );
+  };
+
+  const fetchPlalists = () => {
+    dispatch(playlistsActions.getAllPlaylists());
   };
 
   const handleVideoSelect = (video: VideoDataModel) => {
@@ -154,5 +164,6 @@ export const useVideoListLogic = () => {
     videoJsonData,
     setPlayer,
     fetchFolderVideosInfo,
+    playlists,
   };
 };
