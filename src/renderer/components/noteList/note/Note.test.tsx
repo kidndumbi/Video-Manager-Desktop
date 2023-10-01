@@ -11,12 +11,12 @@ const mockNoteData = {
   content: "Test Note Content",
 };
 
+const handleVideoSeek = jest.fn();
+const handleNoteSave = jest.fn();
+const handleNoteDelete = jest.fn();
+
 // ParentWrapper component for testing
 const ParentWrapper = () => {
-  const handleVideoSeek = jest.fn();
-  const handleNoteSave = jest.fn();
-  const handleNoteDelete = jest.fn();
-
   const noteProps: NoteProps = {
     note: mockNoteData,
     onVideoSeek: handleVideoSeek,
@@ -72,10 +72,8 @@ describe("Note Component", () => {
       expect(screen.getByTestId("DeleteIcon")).toBeInTheDocument();
     });
     it("should toggle the editor when the Edit button is clicked", () => {
-      // Find the Edit button and click it
       const editButton = screen.getByLabelText("edit");
       fireEvent.click(editButton);
-      //debug();
     });
     it("should open the confirmation dialog when the delete button is clicked", async () => {
       fireEvent.click(screen.getByLabelText("delete")); // Assumes the delete IconButton has aria-label="delete"
@@ -83,7 +81,52 @@ describe("Note Component", () => {
         expect(
           screen.getByText("Are you sure you want to delete?")
         ).toBeInTheDocument();
+
+        const cancelButton = screen.getByText("Cancel");
+        const okButton = screen.getByText("Ok");
+
+        expect(cancelButton).toBeInTheDocument();
+        expect(okButton).toBeInTheDocument();
       });
+    });
+    it("closes dialog on cancel button click", async () => {
+      // Trigger the delete action to open the dialog
+      fireEvent.click(screen.getByLabelText("delete"));
+
+      // Wait for the dialog to appear
+      const text = await screen.findByText("Are you sure you want to delete?");
+      expect(text).toBeInTheDocument();
+
+      // Click the "Cancel" button in the dialog
+      fireEvent.click(screen.getByText("Cancel"));
+
+      // Wait for the dialog to be removed
+      await waitFor(() => {
+        expect(
+          screen.queryByText("Are you sure you want to delete?")
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it("closes dialog on Ok button click", async () => {
+      fireEvent.click(screen.getByLabelText("delete"));
+
+      const text = await screen.findByText("Are you sure you want to delete?");
+      expect(text).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText("Ok"));
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText("Are you sure you want to delete?")
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it("calls onVideoSeek when AccessTimeIcon is clicked", async () => {
+      const accessTimeIcon = screen.getByTestId("AccessTimeIcon");
+      fireEvent.click(accessTimeIcon);
+      expect(handleVideoSeek).toHaveBeenCalledWith(mockNoteData.videoTimeStamp);
     });
   });
 

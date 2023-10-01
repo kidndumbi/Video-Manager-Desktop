@@ -15,7 +15,7 @@ const Note = ({ note, onVideoSeek, onNoteSave, onNoteDelete }: NoteProps) => {
   const [edit, setEdit] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
-  const handleClick = () => {
+  const handleClickChip = () => {
     onVideoSeek(note.videoTimeStamp);
   };
 
@@ -37,7 +37,7 @@ const Note = ({ note, onVideoSeek, onNoteSave, onNoteDelete }: NoteProps) => {
       <NoteHeader
         edit={edit}
         note={note}
-        onClickChip={handleClick}
+        onClickChip={handleClickChip}
         onClickEdit={toggleEdit}
         onClickDelete={() => setShowDialog(true)}
       />
