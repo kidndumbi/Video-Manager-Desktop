@@ -21,7 +21,6 @@ export const useNoteListLogic = (currentVideoTime: number) => {
     setShowTextEditor(false);
   }, [currentVideo]);
 
-  // Handler functions
   const handleCreateNote = (content: string) => {
     if (content === "") {
       return;

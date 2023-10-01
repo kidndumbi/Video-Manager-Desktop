@@ -39,9 +39,7 @@ export const useVideoListLogic = () => {
   const videoJsonData = useSelector(selVideoJson);
 
   useEffect(() => {
-    dispatch(
-      folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
-    );
+    fetchFolderVideosInfo({ currentRootPath });
   }, [dispatch, currentRootPath]);
 
   useEffect(() => {
@@ -57,6 +55,18 @@ export const useVideoListLogic = () => {
     });
   };
 
+  const fetchFolderVideosInfo = (args: {
+    currentRootPath: string;
+    searchText?: string;
+  }) => {
+    console.log("fetchFolderVideosInfo ");
+    dispatch(
+      folderVideosInfoActions.fetchFolderVideosInfo({
+        ...args,
+      })
+    );
+  };
+
   const handleVideoSelect = (video: VideoDataModel) => {
     updateLastWatched();
     if (!video.isDirectory) {
@@ -64,11 +74,7 @@ export const useVideoListLogic = () => {
     } else {
       dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
-      dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo({
-          currentRootPath: video.filePath,
-        })
-      );
+      fetchFolderVideosInfo({ currentRootPath: video.filePath });
     }
   };
 
@@ -76,11 +82,9 @@ export const useVideoListLogic = () => {
     if (pathNav.length > 0) {
       const newPath = pathNav[pathNav.length - 1];
       dispatch(currentRootPathActions.setCurrentRootPath(newPath));
-      dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo({
-          currentRootPath: newPath,
-        })
-      );
+      fetchFolderVideosInfo({
+        currentRootPath: newPath,
+      });
       dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
     }
   };
@@ -113,19 +117,15 @@ export const useVideoListLogic = () => {
     if (selectedVideos.length > 0) {
       await ipcRenderer.invoke("delete:video", selectedVideos);
       setSelectedVideos([]);
-      dispatch(
-        folderVideosInfoActions.fetchFolderVideosInfo({ currentRootPath })
-      );
+      fetchFolderVideosInfo({ currentRootPath });
     }
   };
 
   const onSearchClick = (searchText: string) => {
-    dispatch(
-      folderVideosInfoActions.fetchFolderVideosInfo({
-        currentRootPath,
-        searchText: searchText.trim(),
-      })
-    );
+    fetchFolderVideosInfo({
+      currentRootPath,
+      searchText: searchText.trim(),
+    });
   };
 
   const setPlayer = (p: PlayerReference) => {
@@ -153,5 +153,6 @@ export const useVideoListLogic = () => {
     currentRootPath,
     videoJsonData,
     setPlayer,
+    fetchFolderVideosInfo,
   };
 };

@@ -8,6 +8,7 @@ import { VideoSettingsDialog } from "../VideoSettingsDialog";
 import { AppTabs } from "../AppTabs";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import Divider from "@mui/material/Divider";
 import {
   convertMillisecondsToDate,
@@ -42,6 +43,7 @@ const VideoList = () => {
     currentRootPath,
     videoJsonData,
     selectedVideos,
+    fetchFolderVideosInfo,
   } = useVideoListLogic();
 
   return (
@@ -50,7 +52,7 @@ const VideoList = () => {
         <Grid xs={3} item>
           <Search onSearchClick={onSearchClick}></Search>
           <Box>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row">
               <IconButton
                 aria-label="delete"
                 color="secondary"
@@ -60,8 +62,17 @@ const VideoList = () => {
               >
                 <DeleteIcon fontSize="small" />
               </IconButton>
+              <IconButton
+                aria-label="refresh"
+                color="secondary"
+                size="small"
+                onClick={() => fetchFolderVideosInfo({ currentRootPath })}
+              >
+                <RefreshIcon fontSize="small" />
+              </IconButton>
             </Stack>
           </Box>
+          <Divider />
           <List
             sx={{
               width: "100%",
