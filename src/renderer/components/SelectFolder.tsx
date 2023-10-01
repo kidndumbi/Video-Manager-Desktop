@@ -1,7 +1,65 @@
+// import { IconButton } from "@mui/material";
+// import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+// import { ipcRenderer } from "electron";
+// import React, { MouseEventHandler } from "react";
+// import { useAppDispatch } from "../../store";
+// import {
+//   currentRootPathActions,
+//   selCurrentRootPath,
+// } from "../../store/currentRootpath.slice";
+// import { pathNavActions, selPathNav } from "../../store/pathNav.slice";
+// import { folderVideosInfoActions } from "../../store/folderVideosInfo.slice";
+// import { useSelector } from "react-redux";
+
+// const SelectFolder: React.FC = () => {
+//   const dispatch = useAppDispatch();
+//   const pathNav = useSelector(selPathNav);
+//   const currentRootPath = useSelector(selCurrentRootPath);
+
+//   const updateState = (newFolderPath: string) => {
+//     dispatch(currentRootPathActions.setCurrentRootPath(newFolderPath));
+//     if (newFolderPath !== currentRootPath)
+//       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
+//     dispatch(
+//       folderVideosInfoActions.fetchFolderVideosInfo({
+//         currentRootPath: newFolderPath,
+//       })
+//     );
+//   };
+
+//   const selectFolder = async () => {
+//     try {
+//       const folderPath: string | null = await ipcRenderer.invoke(
+//         "open-file-dialog"
+//       );
+//       if (folderPath) {
+//         console.log(`You selected: ${folderPath}`);
+//         updateState(folderPath);
+//       }
+//     } catch (error: any) {
+//       console.error("An error occurred while selecting folder:", error);
+//     }
+//   };
+
+//   return (
+//     <IconButton
+//       aria-label="select-folder"
+//       color="secondary"
+//       size="small"
+//       onClick={selectFolder as MouseEventHandler<HTMLButtonElement>}
+//     >
+//       <FolderOpenIcon fontSize="small" />
+//     </IconButton>
+//   );
+// };
+
+// export { SelectFolder };
+
+import React from "react";
 import { IconButton } from "@mui/material";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { ipcRenderer } from "electron";
-import React, { MouseEventHandler } from "react";
+import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../store";
 import {
   currentRootPathActions,
@@ -9,22 +67,34 @@ import {
 } from "../../store/currentRootpath.slice";
 import { pathNavActions, selPathNav } from "../../store/pathNav.slice";
 import { folderVideosInfoActions } from "../../store/folderVideosInfo.slice";
-import { useSelector } from "react-redux";
 
 const SelectFolder: React.FC = () => {
   const dispatch = useAppDispatch();
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
 
-  const updateState = (newFolderPath: string) => {
-    dispatch(currentRootPathActions.setCurrentRootPath(newFolderPath));
-    if (newFolderPath !== currentRootPath)
+  const setCurrentRootPath = (path: string) => {
+    dispatch(currentRootPathActions.setCurrentRootPath(path));
+  };
+
+  const updatePathNav = (newRootPath: string) => {
+    if (newRootPath !== currentRootPath) {
       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
+    }
+  };
+
+  const fetchFolderVideos = (newRootPath: string) => {
     dispatch(
       folderVideosInfoActions.fetchFolderVideosInfo({
-        currentRootPath: newFolderPath,
+        currentRootPath: newRootPath,
       })
     );
+  };
+
+  const updateState = (newFolderPath: string) => {
+    setCurrentRootPath(newFolderPath);
+    updatePathNav(newFolderPath);
+    fetchFolderVideos(newFolderPath);
   };
 
   const selectFolder = async () => {
@@ -36,8 +106,10 @@ const SelectFolder: React.FC = () => {
         console.log(`You selected: ${folderPath}`);
         updateState(folderPath);
       }
-    } catch (error: any) {
-      console.error("An error occurred while selecting folder:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("An error occurred while selecting folder:", error);
+      }
     }
   };
 
@@ -46,7 +118,7 @@ const SelectFolder: React.FC = () => {
       aria-label="select-folder"
       color="secondary"
       size="small"
-      onClick={selectFolder as MouseEventHandler<HTMLButtonElement>}
+      onClick={selectFolder}
     >
       <FolderOpenIcon fontSize="small" />
     </IconButton>
