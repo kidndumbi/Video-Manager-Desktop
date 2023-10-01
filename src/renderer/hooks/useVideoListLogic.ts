@@ -50,16 +50,6 @@ export const useVideoListLogic = () => {
     }
   }, [player, videoJsonData.lastWatched]);
 
-  useEffect(() => {
-    if (folderVideosInfo && folderVideosInfo.length > 0) {
-      dispatch(
-        currentVideoActions.setCurrentVideo(
-          folderVideosInfo.find((v) => !v.isDirectory)
-        )
-      );
-    }
-  }, [dispatch, folderVideosInfo]);
-
   const updateLastWatched = async () => {
     await ipcRenderer.invoke("save:lastWatch", {
       currentVideo,
