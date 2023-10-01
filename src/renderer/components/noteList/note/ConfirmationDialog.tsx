@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { Button, DialogContentText } from "@mui/material";
 import { AlertDialog } from "../../AlertDialog";
 
-type ConfirmationDialogProps = {
+export type ConfirmationDialogProps = {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
