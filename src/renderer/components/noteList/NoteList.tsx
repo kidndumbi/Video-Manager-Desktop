@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { NoteModel } from "../../../models/note.model";
 import { secondsTohhmmss } from "../../../util/helperFunctions";
 import { NoteTextEditor } from "../NoteTextEditor";
-import { Note } from "./Note";
+import { Note } from "./note/Note";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { v4 as uuidv4 } from "uuid";
 import { useAppDispatch } from "../../../store";
