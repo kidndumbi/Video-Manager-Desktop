@@ -17,6 +17,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
+import ConfirmationDialog from "../noteList/note/ConfirmationDialog";
+import { useDialog } from "../../../hooks/useDialog";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -62,11 +64,16 @@ type PlaylistItemProps = {
 
 const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
   const { deletePlaylistById } = usePlaylistLogic();
+  const { isOpen, openDialog, closeDialog, message } = useDialog();
 
   const handleDeletePlaylist = () => {
-    // Your logic for deleting a playlist goes here
-    console.log(`Deleting playlist ${playlist.id}`);
-    deletePlaylistById(playlist.id);
+    openDialog().then((dialogDecision) => {
+      if (dialogDecision === "Ok") {
+        deletePlaylistById(playlist.id);
+      } else {
+        console.log("Cancelled");
+      }
+    });
   };
 
   // Handler for renaming a playlist
@@ -92,59 +99,66 @@ const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
   };
 
   return (
-    <Accordion expanded={expanded} onChange={onChange}>
-      <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
-        <Typography>{playlist.name}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Box>
-          <Stack direction="row">
-            <Tooltip title="delete playlist" placement="bottom-start">
-              <IconButton
-                aria-label="delete-playlist"
-                color="secondary"
-                size="small"
-                onClick={handleDeletePlaylist}
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="rename-playlist" placement="bottom-start">
-              <IconButton
-                aria-label="rename-playlist"
-                color="secondary"
-                size="small"
-                onClick={handleRenamePlaylist}
-              >
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="play playlist" placement="bottom-start">
-              <IconButton
-                aria-label="play-playlist"
-                color="secondary"
-                size="small"
-                onClick={handlePlayPlaylist}
-              >
-                <PlaylistPlayIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        </Box>
-        <Divider></Divider>
-        <List dense={false}>
-          {playlist.videos.map((video: PlaylistVideoModel) => (
-            <PlaylistVideo
-              key={video.filePath}
-              video={video}
-              onDelete={onDelete}
-              onPlay={onPlay}
-            />
-          ))}
-        </List>
-      </AccordionDetails>
-    </Accordion>
+    <>
+      <Accordion expanded={expanded} onChange={onChange}>
+        <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
+          <Typography>{playlist.name}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box>
+            <Stack direction="row">
+              <Tooltip title="delete playlist" placement="bottom-start">
+                <IconButton
+                  aria-label="delete-playlist"
+                  color="secondary"
+                  size="small"
+                  onClick={handleDeletePlaylist}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="rename-playlist" placement="bottom-start">
+                <IconButton
+                  aria-label="rename-playlist"
+                  color="secondary"
+                  size="small"
+                  onClick={handleRenamePlaylist}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="play playlist" placement="bottom-start">
+                <IconButton
+                  aria-label="play-playlist"
+                  color="secondary"
+                  size="small"
+                  onClick={handlePlayPlaylist}
+                >
+                  <PlaylistPlayIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Box>
+          <Divider></Divider>
+          <List dense={false}>
+            {playlist.videos.map((video: PlaylistVideoModel) => (
+              <PlaylistVideo
+                key={video.filePath}
+                video={video}
+                onDelete={onDelete}
+                onPlay={onPlay}
+              />
+            ))}
+          </List>
+        </AccordionDetails>
+      </Accordion>
+      <ConfirmationDialog
+        open={isOpen}
+        message={message}
+        handleClose={closeDialog}
+      />
+    </>
   );
 };
 
-export default PlaylistItem;
+export { PlaylistItem };

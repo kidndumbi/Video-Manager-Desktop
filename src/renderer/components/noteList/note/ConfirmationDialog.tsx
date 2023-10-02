@@ -1,35 +1,36 @@
-import React, { FC } from "react";
-import { Button, DialogContentText } from "@mui/material";
-import { AlertDialog } from "../../AlertDialog";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import Button from "@mui/material/Button";
+import React from "react";
 
-export type ConfirmationDialogProps = {
+type ConfirmationDialogProps = {
   open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
+  message: string;
+  handleClose: (choice: string) => void;
 };
 
-const ConfirmationDialog: FC<ConfirmationDialogProps> = ({
+const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   open,
-  onClose,
-  onConfirm,
-}) => (
-  <AlertDialog
-    onClose={onClose}
-    showDialog={open}
-    dialogContent={
-      <DialogContentText id="alert-dialog-description">
-        Are you sure you want to delete?
-      </DialogContentText>
-    }
-    dialogActions={
-      <>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onConfirm} autoFocus>
+  message,
+  handleClose,
+}) => {
+  return (
+    <Dialog open={open} onClose={() => handleClose("Cancel")}>
+      <DialogContent>
+        <DialogContentText>{message}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => handleClose("Cancel")} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={() => handleClose("Ok")} color="primary">
           Ok
         </Button>
-      </>
-    }
-  />
-);
+      </DialogActions>
+    </Dialog>
+  );
+};
 
-export { ConfirmationDialog };
+export default ConfirmationDialog;
