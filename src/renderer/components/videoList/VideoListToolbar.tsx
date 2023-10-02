@@ -5,6 +5,7 @@ import { VideoDataModel } from "../../../models/videoData.model";
 import DeleteTool from "../tools-components/DeleteTool";
 import RefreshTool from "../tools-components/RefreshTool";
 import { FolderTool } from "../tools-components/FolderTool";
+import PlaylistsTool from "../tools-components/PlaylistsTool";
 
 interface VideoListToolbarProps {
   selectedVideos: VideoDataModel[];
@@ -31,6 +32,7 @@ const VideoListToolbar: React.FC<VideoListToolbarProps> = ({
           currentRootPath={currentRootPath}
         />
         <FolderTool></FolderTool>
+        <PlaylistsTool></PlaylistsTool>
       </Stack>
     </Box>
   );
