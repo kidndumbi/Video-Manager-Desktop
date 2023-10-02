@@ -15,5 +15,9 @@ export const usePlaylistLogic = () => {
     dispatch(playlistsActions.getAllPlaylists());
   };
 
-  return { playlists };
+  const deletePlaylistById = (playListId: number) => {
+    dispatch(playlistsActions.deletePlaylistById(playListId));
+  };
+
+  return { playlists, deletePlaylistById };
 };

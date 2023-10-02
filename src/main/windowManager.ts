@@ -2,7 +2,6 @@ import { BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
 import { initializeDb } from "./lowdb-config";
-import { getAllPlaylistsDb } from "./playlistOperations";
 
 export async function createWindow() {
   let mainWindow: Electron.BrowserWindow | null;

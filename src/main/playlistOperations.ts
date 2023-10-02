@@ -25,7 +25,6 @@ export async function findPlaylistByIdDb(
 
 export async function getAllPlaylistsDb(): Promise<PlaylistModel[]> {
   try {
-    console.log("getAllPlaylistsDb() lalalala", db.data.playlists);
     return db.data.playlists;
   } catch (error) {
     console.error("Error getting all playlists:", error);
@@ -57,6 +56,31 @@ export async function addVideoToPlaylistByIdDb(
       `Error adding video to playlist with ID ${playlistId}:`,
       error
     );
+    throw error; // Re-throw the error to be caught in the calling function
+  }
+}
+
+export async function deletePlaylistById(id: number): Promise<PlaylistModel[]> {
+  try {
+    // Find the index of the playlist with the given ID
+    const playlistIndex = db.data.playlists.findIndex(
+      (p: PlaylistModel) => p.id === id
+    );
+
+    if (playlistIndex === -1) {
+      throw new Error(`Playlist with ID ${id} not found`);
+    }
+
+    // Remove the playlist from the array
+    db.data.playlists.splice(playlistIndex, 1);
+
+    // Write the updated data back to the database
+    await db.write();
+
+    // Return the updated list of playlists
+    return db.data.playlists;
+  } catch (error) {
+    console.error(`Error deleting playlist with ID ${id}:`, error);
     throw error; // Re-throw the error to be caught in the calling function
   }
 }
