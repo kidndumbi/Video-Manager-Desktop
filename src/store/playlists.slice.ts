@@ -16,7 +16,11 @@ const playlistSlice = createSlice({
       state.playlists = action.payload;
     });
 
-    builder.addCase(deletePlaylistById.fulfilled, (state, action) => {
+    builder.addCase(deletePlaylist.fulfilled, (state, action) => {
+      state.playlists = action.payload;
+    });
+
+    builder.addCase(deletePlaylistVideo.fulfilled, (state, action) => {
       state.playlists = action.payload;
     });
   },
@@ -25,25 +29,37 @@ const playlistSlice = createSlice({
 const getAllPlaylists = createAsyncThunk(
   "playlists/getAllPlaylists",
   async () => {
-    const playlists = await ipcRenderer.invoke("playlist:getAllPlaylistsDb");
+    const playlists = await ipcRenderer.invoke("playlist:getAllPlaylists");
     return playlists;
   }
 );
 
-//deletePlaylistById
-const deletePlaylistById = createAsyncThunk(
-  "playlists/deletePlaylistById",
+const deletePlaylist = createAsyncThunk(
+  "playlists/deletePlaylist",
   async (id: number) => {
+    const playlists = await ipcRenderer.invoke("playlist:deletePlaylist", id);
+    return playlists;
+  }
+);
+
+const deletePlaylistVideo = createAsyncThunk(
+  "playlists/deletePlaylistVideo",
+  async ({ id, videoFilePath }: { id: number; videoFilePath: string }) => {
     const playlists = await ipcRenderer.invoke(
-      "playlist:deletePlaylistById",
-      id
+      "playlist:deletePlaylistVideo",
+      id,
+      videoFilePath
     );
     return playlists;
   }
 );
 
 // Export the actions
-const playlistsActions = { getAllPlaylists, deletePlaylistById };
+const playlistsActions = {
+  getAllPlaylists,
+  deletePlaylist,
+  deletePlaylistVideo,
+};
 
 const selplaylists = (state: RootState) => state.playlists.playlists;
 

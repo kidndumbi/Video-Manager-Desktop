@@ -1,14 +1,47 @@
 {
   "playlists": [
     {
-      "name": "Flight review training",
-      "id": 2,
+      "name": "Flight review 2 training",
+      "id": 23,
       "videos": [
         {
-          "filePath": "/Users/Cassava/Videos/Intro_to_Typescript2.mp4"
+          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript3.mp4"
         },
         {
-          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript3.mp4"
+          "filePath": "/Users/Cassava/Videos/languish.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/french.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/furniture.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/pretense.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/romance.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/patrick.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/willfull.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/lipid.mp4"
+        },
+        {
+          "filePath": "/Users/Cassava/Videos/rollover.mp4"
+        }
+      ]
+    },
+    {
+      "name": "Flight review 2 training",
+      "id": 233,
+      "videos": [
+        {
+          "filePath": "/Users/Cassava/Videos/free.mp4"
         }
       ]
     }

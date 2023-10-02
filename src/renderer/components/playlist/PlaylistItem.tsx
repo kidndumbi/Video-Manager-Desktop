@@ -63,13 +63,14 @@ type PlaylistItemProps = {
 };
 
 const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
-  const { deletePlaylistById } = usePlaylistLogic();
-  const { isOpen, openDialog, closeDialog, message } = useDialog();
+  const { deletePlaylist, deletePlaylistVideo } = usePlaylistLogic();
+  const { isOpen, openDialog, closeDialog, message, setMessage } = useDialog();
 
   const handleDeletePlaylist = () => {
+    setMessage("Are you sure you want to delete playlist?");
     openDialog().then((dialogDecision) => {
       if (dialogDecision === "Ok") {
-        deletePlaylistById(playlist.id);
+        deletePlaylist(playlist.id);
       } else {
         console.log("Cancelled");
       }
@@ -90,7 +91,14 @@ const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
 
   // Handler for deleting a video from a playlist
   const onDelete = (video: PlaylistVideoModel) => {
-    console.log("onDelete ", video);
+    setMessage("Are you sure you want to delete video from playlist?");
+    openDialog().then((dialogDecision) => {
+      if (dialogDecision === "Ok") {
+        deletePlaylistVideo(playlist.id, video.filePath);
+      } else {
+        console.log("Cancelled");
+      }
+    });
   };
 
   // Handler for playing a video from a playlist
