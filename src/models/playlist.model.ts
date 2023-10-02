@@ -1,7 +1,9 @@
-import { VideoDataModel } from "./videoData.model";
-
 export interface PlaylistModel {
   name: string;
   id: number;
-  videos: VideoDataModel[];
+  videos: PlaylistVideoModel[];
+}
+
+export interface PlaylistVideoModel {
+  filePath: string;
 }

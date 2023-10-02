@@ -56,6 +56,8 @@ const ManagePlaylistsDialog = ({
   return (
     <div>
       <BootstrapDialog
+        maxWidth="md" // 'sm', 'md', 'lg', 'xl'
+        fullWidth={true}
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={showDialog}

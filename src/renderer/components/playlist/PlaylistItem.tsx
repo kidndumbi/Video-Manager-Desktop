@@ -7,10 +7,12 @@ import MuiAccordionSummary, {
 } from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
-import { PlaylistModel } from "../../../models/playlist.model";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { List, ListItem, ListItemText, IconButton } from "@mui/material";
-import { VideoDataModel } from "../../../models/videoData.model";
+import {
+  PlaylistModel,
+  PlaylistVideoModel,
+} from "../../../models/playlist.model";
+import { List } from "@mui/material";
+import PlaylistVideo from "./PlaylistVideo";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -62,19 +64,17 @@ const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
       </AccordionSummary>
       <AccordionDetails>
         <List dense={false}>
-          {playlist.videos.map((video: VideoDataModel) => (
-            <ListItem
+          {playlist.videos.map((video: PlaylistVideoModel) => (
+            <PlaylistVideo
               key={video.filePath}
-              secondaryAction={
-                <>
-                  <IconButton edge="end" aria-label="delete" color="secondary">
-                    <DeleteIcon />
-                  </IconButton>
-                </>
+              video={video}
+              onDelete={(video: PlaylistVideoModel) =>
+                console.log("onDelete ", video)
               }
-            >
-              <ListItemText primary={video.fileName} />
-            </ListItem>
+              onPlay={(video: PlaylistVideoModel) =>
+                console.log("onPlay ", video)
+              }
+            />
           ))}
         </List>
       </AccordionDetails>
