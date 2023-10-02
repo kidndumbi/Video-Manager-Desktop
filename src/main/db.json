@@ -1,18 +1,6 @@
 {
   "playlists": [
     {
-      "name": "React tutorials",
-      "id": 1,
-      "videos": [
-        {
-          "filePath": "/Users/Cassava/Videos/Intro_to_Typescript.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript1.mp4"
-        }
-      ]
-    },
-    {
       "name": "Flight review training",
       "id": 2,
       "videos": [

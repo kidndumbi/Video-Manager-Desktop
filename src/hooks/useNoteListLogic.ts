@@ -48,7 +48,7 @@ export const useNoteListLogic = (currentVideoTime: number) => {
     });
   };
 
-  const handleDeleteNote = (note: NoteModel) => {
+  const handleDeleteNote = (note: NoteModel, callback?: () => void) => {
     const filteredNotes = videoJsonData.notes.filter((n) => n.id !== note.id);
 
     const newVideoJsonData: VideoJsonModel = {
@@ -62,7 +62,7 @@ export const useNoteListLogic = (currentVideoTime: number) => {
         newVideoJsonData,
       })
     ).then(() => {
-      // Optional: setShowTextEditor(false);
+      callback?.();
     });
   };
 

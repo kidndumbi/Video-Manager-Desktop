@@ -18,7 +18,7 @@ import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
 import theme from "../../theme";
-import PlaylistItem from "./PlaylistItem";
+import { PlaylistItem } from "./PlaylistItem";
 import { PlaylistModel } from "../../../models/playlist.model";
 
 type ManagePlaylistsDialogProps = {
