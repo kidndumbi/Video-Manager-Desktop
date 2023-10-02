@@ -5,28 +5,10 @@
       "id": 1,
       "videos": [
         {
-          "fileName": "Intro_to_Typescript.mp4",
-          "filePath": "/Users/Cassava/Videos/Intro_to_Typescript.mp4",
-          "isDirectory": false,
-          "rootPath": "/Users/Cassava/Videos",
-          "createdAt": 1633049523000,
-          "mustWatch": true,
-          "notesCount": 3,
-          "watched": false,
-          "like": false,
-          "duration": 300
+          "filePath": "/Users/Cassava/Videos/Intro_to_Typescript.mp4"
         },
         {
-          "fileName": "Great Life.mp4",
-          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript1.mp4",
-          "isDirectory": false,
-          "rootPath": "/Users/Cassava/Videos",
-          "createdAt": 1633050123000,
-          "mustWatch": false,
-          "notesCount": 1,
-          "watched": true,
-          "like": true,
-          "duration": 420
+          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript1.mp4"
         }
       ]
     },
@@ -35,28 +17,10 @@
       "id": 2,
       "videos": [
         {
-          "fileName": "Free chrome.mp4",
-          "filePath": "/Users/Cassava/Videos/Intro_to_Typescript2.mp4",
-          "isDirectory": false,
-          "rootPath": "/Users/Cassava/Videos",
-          "createdAt": 1633049523000,
-          "mustWatch": true,
-          "notesCount": 3,
-          "watched": false,
-          "like": false,
-          "duration": 300
+          "filePath": "/Users/Cassava/Videos/Intro_to_Typescript2.mp4"
         },
         {
-          "fileName": "What now.mp4",
-          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript3.mp4",
-          "isDirectory": false,
-          "rootPath": "/Users/Cassava/Videos",
-          "createdAt": 1633050123000,
-          "mustWatch": false,
-          "notesCount": 1,
-          "watched": true,
-          "like": true,
-          "duration": 420
+          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript3.mp4"
         }
       ]
     }
