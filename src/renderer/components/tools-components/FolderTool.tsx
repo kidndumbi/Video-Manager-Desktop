@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { ipcRenderer } from "electron";
 import { useSelector } from "react-redux";
@@ -57,14 +57,16 @@ const FolderTool: React.FC = () => {
   };
 
   return (
-    <IconButton
-      aria-label="select-folder"
-      color="secondary"
-      size="small"
-      onClick={selectFolder}
-    >
-      <FolderOpenIcon fontSize="small" />
-    </IconButton>
+    <Tooltip title="Open Folder" placement="bottom-start">
+      <IconButton
+        aria-label="select-folder"
+        color="secondary"
+        size="small"
+        onClick={selectFolder}
+      >
+        <FolderOpenIcon fontSize="small" />
+      </IconButton>
+    </Tooltip>
   );
 };
 
