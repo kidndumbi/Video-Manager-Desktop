@@ -111,14 +111,15 @@ const ManagePlaylistsDialog = ({
               </Tooltip>
             </Stack>
           </Box>
-          {playlists.map((playlist: PlaylistModel, index) => (
-            <PlaylistItem
-              key={playlist.id}
-              playlist={playlist}
-              expanded={expanded === index}
-              onChange={() => handleChange(index)}
-            ></PlaylistItem>
-          ))}
+          {Array.isArray(playlists) &&
+            playlists?.map((playlist: PlaylistModel, index) => (
+              <PlaylistItem
+                key={playlist.id}
+                playlist={playlist}
+                expanded={expanded === index}
+                onChange={() => handleChange(index)}
+              ></PlaylistItem>
+            ))}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>

@@ -1,4 +1,4 @@
-import { PlaylistModel } from "../models/playlist.model";
+import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
 import { VideoDataModel } from "../models/videoData.model";
 import { db } from "./lowdb-config";
 
@@ -12,7 +12,7 @@ export async function addPlaylistDb(playlist: PlaylistModel): Promise<void> {
   }
 }
 
-export async function findPlaylistByIdDb(
+export async function findPlaylist(
   id: number
 ): Promise<PlaylistModel | undefined> {
   try {
@@ -32,7 +32,7 @@ export async function getAllPlaylistsDb(): Promise<PlaylistModel[]> {
   }
 }
 
-export async function addVideoToPlaylistByIdDb(
+export async function addVideoToPlaylist(
   playlistId: number,
   newVideo: VideoDataModel
 ): Promise<void> {
@@ -60,7 +60,7 @@ export async function addVideoToPlaylistByIdDb(
   }
 }
 
-export async function deletePlaylistById(id: number): Promise<PlaylistModel[]> {
+export async function deletePlaylist(id: number): Promise<PlaylistModel[]> {
   try {
     // Find the index of the playlist with the given ID
     const playlistIndex = db.data.playlists.findIndex(
@@ -81,6 +81,42 @@ export async function deletePlaylistById(id: number): Promise<PlaylistModel[]> {
     return db.data.playlists;
   } catch (error) {
     console.error(`Error deleting playlist with ID ${id}:`, error);
+    throw error; // Re-throw the error to be caught in the calling function
+  }
+}
+
+export async function deletePlaylistVideo(
+  playlistId: number,
+  videoFilePath: string
+): Promise<PlaylistModel | undefined> {
+  try {
+    // Find the index of the playlist with the given ID
+    const playlistIndex = db.data.playlists.findIndex(
+      (p: PlaylistModel) => p.id === playlistId
+    );
+
+    if (playlistIndex === -1) {
+      throw new Error(`Playlist with ID ${playlistId} not found`);
+    }
+
+    // Find the index of the video with the given file path
+    const videoIndex = db.data.playlists[playlistIndex].videos.findIndex(
+      (v: PlaylistVideoModel) => v.filePath === videoFilePath
+    );
+
+    if (videoIndex === -1) {
+      throw new Error(`Video with file path ${videoFilePath} not found`);
+    }
+
+    // Remove the video from the playlist's videos array
+    db.data.playlists[playlistIndex].videos.splice(videoIndex, 1);
+
+    // Write the updated data back to the database
+    await db.write();
+
+    return db.data.playlists;
+  } catch (error) {
+    console.error(`Error deleting video from playlist:`, error);
     throw error; // Re-throw the error to be caught in the calling function
   }
 }

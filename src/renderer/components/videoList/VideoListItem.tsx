@@ -5,7 +5,6 @@ import ListItemText from "@mui/material/ListItemText";
 import FolderIcon from "@mui/icons-material/Folder";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import Checkbox from "@mui/material/Checkbox";
 import Badge from "@mui/material/Badge";
 import NotesIcon from "@mui/icons-material/Notes";
 import Typography from "@mui/material/Typography";
@@ -24,34 +23,10 @@ type VideoListItemProps = {
   secondsTohhmmss: (time: number) => string;
 };
 
-const renderIcon = (
-  video: VideoDataModel,
-  handleOnVideoSelected: VideoListItemProps["handleOnVideoSelected"]
-) => {
-  if (video.isDirectory) {
-    return (
-      <ListItemIcon sx={{ minWidth: "33px" }}>
-        <FolderIcon fontSize="small" />
-      </ListItemIcon>
-    );
-  } else {
-    return (
-      <Checkbox
-        onClick={(event) => event.stopPropagation()}
-        edge="start"
-        onChange={(event) => {
-          handleOnVideoSelected(event, video);
-        }}
-      />
-    );
-  }
-};
-
 const VideoListItem: React.FC<VideoListItemProps> = ({
   video,
   currentVideo,
   handleVideoSelect,
-  handleOnVideoSelected,
   convertMillisecondsToDate,
   secondsTohhmmss,
 }) => {
@@ -70,7 +45,11 @@ const VideoListItem: React.FC<VideoListItemProps> = ({
         }}
         onClick={() => handleVideoSelect(video)}
       >
-        {renderIcon(video, handleOnVideoSelected)}
+        {video.isDirectory && (
+          <ListItemIcon sx={{ minWidth: "33px" }}>
+            <FolderIcon fontSize="small" />
+          </ListItemIcon>
+        )}
         <ListItemText
           disableTypography
           primary={

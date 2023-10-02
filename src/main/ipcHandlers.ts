@@ -7,7 +7,11 @@ import {
   deleteVideo,
   openFileDialog,
 } from "./utilities";
-import { deletePlaylistById, getAllPlaylistsDb } from "./playlistOperations";
+import {
+  deletePlaylist,
+  deletePlaylistVideo,
+  getAllPlaylistsDb,
+} from "./playlistOperations";
 
 export function registerIpcHandlers() {
   ipcMain.handle("get:root-video-data", getRootVideoData);
@@ -16,11 +20,16 @@ export function registerIpcHandlers() {
   ipcMain.handle("save:lastWatch", saveLastWatch);
   ipcMain.handle("delete:video", deleteVideo);
   ipcMain.handle("open-file-dialog", openFileDialog);
-  ipcMain.handle("playlist:getAllPlaylistsDb", () => {
+  ipcMain.handle("playlist:getAllPlaylists", () => {
     return getAllPlaylistsDb();
   });
-  ipcMain.handle("playlist:deletePlaylistById", (_event: any, id: number) => {
-    console.log("playlist:deletePlaylistById ", id);
-    return deletePlaylistById(id);
+  ipcMain.handle("playlist:deletePlaylist", (_event: any, id: number) => {
+    return deletePlaylist(id);
   });
+  ipcMain.handle(
+    "playlist:deletePlaylistVideo",
+    (_event: any, playlistId: number, videoFilePath: string) => {
+      return deletePlaylistVideo(playlistId, videoFilePath);
+    }
+  );
 }
