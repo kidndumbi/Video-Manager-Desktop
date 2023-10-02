@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -8,6 +11,8 @@ import {
   DialogTitle,
   IconButton,
   Paper,
+  Stack,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
@@ -53,6 +58,11 @@ const ManagePlaylistsDialog = ({
     setExpanded(expanded === newExpanded ? null : newExpanded);
   };
 
+  const handleCreatePlaylist = () => {
+    // Your logic for creating a playlist goes here
+    console.log("Creating a new playlist...");
+  };
+
   return (
     <div>
       <BootstrapDialog
@@ -87,6 +97,20 @@ const ManagePlaylistsDialog = ({
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>
+          <Box>
+            <Stack direction="row">
+              <Tooltip title="create playlist" placement="bottom-start">
+                <IconButton
+                  aria-label="create-playlist"
+                  color="secondary"
+                  size="small"
+                  onClick={handleCreatePlaylist}
+                >
+                  <PlaylistAddIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Box>
           {playlists.map((playlist: PlaylistModel, index) => (
             <PlaylistItem
               key={playlist.id}

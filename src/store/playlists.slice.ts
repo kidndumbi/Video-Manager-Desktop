@@ -15,6 +15,10 @@ const playlistSlice = createSlice({
     builder.addCase(getAllPlaylists.fulfilled, (state, action) => {
       state.playlists = action.payload;
     });
+
+    builder.addCase(deletePlaylistById.fulfilled, (state, action) => {
+      state.playlists = action.payload;
+    });
   },
 });
 
@@ -26,8 +30,20 @@ const getAllPlaylists = createAsyncThunk(
   }
 );
 
+//deletePlaylistById
+const deletePlaylistById = createAsyncThunk(
+  "playlists/deletePlaylistById",
+  async (id: number) => {
+    const playlists = await ipcRenderer.invoke(
+      "playlist:deletePlaylistById",
+      id
+    );
+    return playlists;
+  }
+);
+
 // Export the actions
-const playlistsActions = { getAllPlaylists };
+const playlistsActions = { getAllPlaylists, deletePlaylistById };
 
 const selplaylists = (state: RootState) => state.playlists.playlists;
 

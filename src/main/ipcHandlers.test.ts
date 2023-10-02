@@ -2,6 +2,18 @@
 import { ipcMain } from "electron";
 import { registerIpcHandlers } from "./ipcHandlers";
 
+jest.mock("./lowdb-config", () => {
+  return {
+    db: {
+      data: {
+        playlists: [],
+      },
+      write: jest.fn(),
+    },
+    initializeDb: jest.fn(),
+  };
+});
+
 // Mocking ipcMain.handle
 jest.mock("electron", () => ({
   ipcMain: {
