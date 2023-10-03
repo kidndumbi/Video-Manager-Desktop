@@ -12,13 +12,15 @@ import {
   PlaylistVideoModel,
 } from "../../../models/playlist.model";
 import { Box, Divider, IconButton, List, Stack, Tooltip } from "@mui/material";
-import PlaylistVideo from "./PlaylistVideo";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
 import ConfirmationDialog from "../noteList/note/ConfirmationDialog";
 import { useDialog } from "../../../hooks/useDialog";
+import { RetrieveTextfieldValue } from "./RetrieveTextfieldValue";
+import { useState } from "react";
+import PlaylistVideoItem from "./PlaylistVideoItem";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -63,24 +65,20 @@ type PlaylistItemProps = {
 };
 
 const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
-  const { deletePlaylist, deletePlaylistVideo } = usePlaylistLogic();
+  const { deletePlaylist, deletePlaylistVideo, updatePlaylistName } =
+    usePlaylistLogic();
   const { isOpen, openDialog, closeDialog, message, setMessage } = useDialog();
+  const [playlistNameEditMode, setPlaylistNameEditMode] = useState(false);
 
   const handleDeletePlaylist = () => {
     setMessage("Are you sure you want to delete playlist?");
-    openDialog().then((dialogDecision) => {
+    openDialog().then((dialogDecision: string) => {
       if (dialogDecision === "Ok") {
         deletePlaylist(playlist.id);
       } else {
         console.log("Cancelled");
       }
     });
-  };
-
-  // Handler for renaming a playlist
-  const handleRenamePlaylist = () => {
-    // Your logic for renaming a playlist goes here
-    console.log(`Renaming playlist ${playlist.name}`);
   };
 
   // Handler for playing a playlist
@@ -92,7 +90,7 @@ const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
   // Handler for deleting a video from a playlist
   const onDelete = (video: PlaylistVideoModel) => {
     setMessage("Are you sure you want to delete video from playlist?");
-    openDialog().then((dialogDecision) => {
+    openDialog().then((dialogDecision: string) => {
       if (dialogDecision === "Ok") {
         deletePlaylistVideo(playlist.id, video.filePath);
       } else {
@@ -106,6 +104,13 @@ const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
     console.log("onPlay ", video);
   };
 
+  const handleRenamePlaylist = (newPlaylistName: string) => {
+    // Your save logic here
+    setPlaylistNameEditMode(false);
+    updatePlaylistName(playlist.id, newPlaylistName);
+    console.log("newPlaylistName", newPlaylistName);
+  };
+
   return (
     <>
       <Accordion expanded={expanded} onChange={onChange}>
@@ -114,43 +119,57 @@ const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
         </AccordionSummary>
         <AccordionDetails>
           <Box>
-            <Stack direction="row">
-              <Tooltip title="delete playlist" placement="bottom-start">
-                <IconButton
-                  aria-label="delete-playlist"
-                  color="secondary"
-                  size="small"
-                  onClick={handleDeletePlaylist}
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="rename-playlist" placement="bottom-start">
-                <IconButton
-                  aria-label="rename-playlist"
-                  color="secondary"
-                  size="small"
-                  onClick={handleRenamePlaylist}
-                >
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="play playlist" placement="bottom-start">
-                <IconButton
-                  aria-label="play-playlist"
-                  color="secondary"
-                  size="small"
-                  onClick={handlePlayPlaylist}
-                >
-                  <PlaylistPlayIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
+            {playlistNameEditMode ? (
+              <Box sx={{ marginBottom: "5px" }}>
+                <RetrieveTextfieldValue
+                  label="playlist name"
+                  value={playlist.name}
+                  onCancel={() => {
+                    setPlaylistNameEditMode(false);
+                  }}
+                  onSave={handleRenamePlaylist}
+                ></RetrieveTextfieldValue>
+              </Box>
+            ) : (
+              <Stack direction="row">
+                <Tooltip title="delete playlist" placement="bottom-start">
+                  <IconButton
+                    aria-label="delete-playlist"
+                    color="secondary"
+                    size="small"
+                    onClick={handleDeletePlaylist}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="rename-playlist" placement="bottom-start">
+                  <IconButton
+                    aria-label="rename-playlist"
+                    color="secondary"
+                    size="small"
+                    onClick={() => setPlaylistNameEditMode(true)} // You can set it to true when clicking on the rename button
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="play playlist" placement="bottom-start">
+                  <IconButton
+                    aria-label="play-playlist"
+                    color="secondary"
+                    size="small"
+                    onClick={handlePlayPlaylist}
+                  >
+                    <PlaylistPlayIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            )}
           </Box>
+
           <Divider></Divider>
           <List dense={false}>
             {playlist.videos.map((video: PlaylistVideoModel) => (
-              <PlaylistVideo
+              <PlaylistVideoItem
                 key={video.filePath}
                 video={video}
                 onDelete={onDelete}

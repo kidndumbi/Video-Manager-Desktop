@@ -1,8 +1,9 @@
 import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
 import { VideoDataModel } from "../models/videoData.model";
 import { db } from "./lowdb-config";
+import { v4 as uuidv4 } from "uuid";
 
-export async function addPlaylistDb(playlist: PlaylistModel): Promise<void> {
+export async function addPlaylist(playlist: PlaylistModel): Promise<void> {
   try {
     db.data.playlists.push({ ...playlist });
     await db.write();
@@ -13,7 +14,7 @@ export async function addPlaylistDb(playlist: PlaylistModel): Promise<void> {
 }
 
 export async function findPlaylist(
-  id: number
+  id: string
 ): Promise<PlaylistModel | undefined> {
   try {
     return db.data.playlists.find((p: PlaylistModel) => p.id === id);
@@ -23,7 +24,7 @@ export async function findPlaylist(
   }
 }
 
-export async function getAllPlaylistsDb(): Promise<PlaylistModel[]> {
+export async function getAllPlaylists(): Promise<PlaylistModel[]> {
   try {
     return db.data.playlists;
   } catch (error) {
@@ -33,7 +34,7 @@ export async function getAllPlaylistsDb(): Promise<PlaylistModel[]> {
 }
 
 export async function addVideoToPlaylist(
-  playlistId: number,
+  playlistId: string,
   newVideo: VideoDataModel
 ): Promise<void> {
   try {
@@ -60,7 +61,7 @@ export async function addVideoToPlaylist(
   }
 }
 
-export async function deletePlaylist(id: number): Promise<PlaylistModel[]> {
+export async function deletePlaylist(id: string): Promise<PlaylistModel[]> {
   try {
     // Find the index of the playlist with the given ID
     const playlistIndex = db.data.playlists.findIndex(
@@ -86,7 +87,7 @@ export async function deletePlaylist(id: number): Promise<PlaylistModel[]> {
 }
 
 export async function deletePlaylistVideo(
-  playlistId: number,
+  playlistId: string,
   videoFilePath: string
 ): Promise<PlaylistModel | undefined> {
   try {
@@ -117,6 +118,56 @@ export async function deletePlaylistVideo(
     return db.data.playlists;
   } catch (error) {
     console.error(`Error deleting video from playlist:`, error);
+    throw error; // Re-throw the error to be caught in the calling function
+  }
+}
+
+export async function updatePlaylistName(
+  playlistId: string,
+  newName: string
+): Promise<PlaylistModel[]> {
+  try {
+    // Find the index of the playlist with the given ID
+    const playlistIndex = db.data.playlists.findIndex(
+      (p: PlaylistModel) => p.id === playlistId
+    );
+
+    if (playlistIndex === -1) {
+      throw new Error(`Playlist with ID ${playlistId} not found`);
+    }
+
+    // Update the name of the playlist
+    db.data.playlists[playlistIndex].name = newName;
+
+    // Write the updated data back to the database
+    await db.write();
+
+    // Return the updated list of playlists
+    return db.data.playlists;
+  } catch (error) {
+    console.error(`Error updating playlist name:`, error);
+    throw error; // Re-throw the error to be caught in the calling function
+  }
+}
+
+export async function addNewPlaylist(name: string): Promise<PlaylistModel[]> {
+  try {
+    const newPlaylist: PlaylistModel = {
+      id: uuidv4(), // Generate a unique ID
+      name,
+      videos: [], // Empty array
+    };
+
+    // Add the new playlist
+    db.data.playlists.push(newPlaylist);
+
+    // Write the updated data back to the database
+    await db.write();
+
+    // Return the updated list of playlists
+    return db.data.playlists;
+  } catch (error) {
+    console.error("Error adding new playlist:", error);
     throw error; // Re-throw the error to be caught in the calling function
   }
 }

@@ -1,16 +1,16 @@
 import React from "react";
-import { ListItem, ListItemText, IconButton } from "@mui/material";
+import { ListItem, ListItemText, IconButton, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { PlaylistVideoModel } from "../../../models/playlist.model";
 
-type PlaylistVideoProps = {
+type PlaylistVideoItemProps = {
   video: PlaylistVideoModel;
   onDelete: (video: PlaylistVideoModel) => void;
   onPlay: (video: PlaylistVideoModel) => void;
 };
 
-const PlaylistVideo: React.FC<PlaylistVideoProps> = ({
+const PlaylistVideoItem: React.FC<PlaylistVideoItemProps> = ({
   video,
   onDelete,
   onPlay,
@@ -39,11 +39,13 @@ const PlaylistVideo: React.FC<PlaylistVideoProps> = ({
         </>
       }
     >
-      <ListItemText
-        primary={video.filePath.split("/").pop()?.replace(".mp4", "") ?? ""}
-      />
+      <Tooltip title={video.filePath} placement="bottom-start">
+        <ListItemText
+          primary={video.filePath.split("/").pop()?.replace(".mp4", "") ?? ""}
+        />
+      </Tooltip>
     </ListItem>
   );
 };
 
-export default PlaylistVideo;
+export default PlaylistVideoItem;

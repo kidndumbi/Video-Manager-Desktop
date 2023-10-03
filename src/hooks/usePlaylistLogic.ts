@@ -15,13 +15,27 @@ export const usePlaylistLogic = () => {
     dispatch(playlistsActions.getAllPlaylists());
   };
 
-  const deletePlaylist = (playListId: number) => {
+  const deletePlaylist = (playListId: string) => {
     dispatch(playlistsActions.deletePlaylist(playListId));
   };
 
-  const deletePlaylistVideo = (id: number, videoFilePath: string) => {
+  const deletePlaylistVideo = (id: string, videoFilePath: string) => {
     dispatch(playlistsActions.deletePlaylistVideo({ id, videoFilePath }));
   };
 
-  return { playlists, deletePlaylist, deletePlaylistVideo };
+  const updatePlaylistName = (id: string, newName: string) => {
+    dispatch(playlistsActions.updatePlaylistName({ id, newName }));
+  };
+
+  const addNewPlaylist = (name: string) => {
+    dispatch(playlistsActions.addNewPlaylist(name));
+  };
+
+  return {
+    playlists,
+    deletePlaylist,
+    deletePlaylistVideo,
+    updatePlaylistName,
+    addNewPlaylist,
+  };
 };

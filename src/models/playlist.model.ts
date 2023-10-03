@@ -1,6 +1,6 @@
 export interface PlaylistModel {
   name: string;
-  id: number;
+  id: string;
   videos: PlaylistVideoModel[];
 }
 

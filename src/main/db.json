@@ -1,8 +1,8 @@
 {
   "playlists": [
     {
-      "name": "Flight review 2 training",
-      "id": 23,
+      "name": "Flight review 2 training again test",
+      "id": "sjdfhaklhdklashd",
       "videos": [
         {
           "filePath": "/Users/Cassava/Videos/Advanced_JavaScript3.mp4"
@@ -38,12 +38,17 @@
     },
     {
       "name": "Flight review 2 training",
-      "id": 233,
+      "id": "asdhashdjkashdkj",
       "videos": [
         {
           "filePath": "/Users/Cassava/Videos/free.mp4"
         }
       ]
+    },
+    {
+      "id": "7ae78778-fdac-40ab-a70c-01ae5633d56f",
+      "name": "new playlist",
+      "videos": []
     }
   ]
 }

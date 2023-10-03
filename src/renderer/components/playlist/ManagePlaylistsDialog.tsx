@@ -20,6 +20,7 @@ import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
 import theme from "../../theme";
 import { PlaylistItem } from "./PlaylistItem";
 import { PlaylistModel } from "../../../models/playlist.model";
+import { RetrieveTextfieldValue } from "./RetrieveTextfieldValue";
 
 type ManagePlaylistsDialogProps = {
   showDialog: boolean;
@@ -47,8 +48,10 @@ const ManagePlaylistsDialog = ({
   showDialog,
   handleClose,
 }: ManagePlaylistsDialogProps) => {
-  const { playlists } = usePlaylistLogic();
+  const { playlists, addNewPlaylist } = usePlaylistLogic();
   const [expanded, setExpanded] = useState<number | null>(null);
+
+  const [playlistAddMode, setPlaylistAddMode] = useState(false);
 
   useEffect(() => {
     console.log("playlists", playlists);
@@ -58,9 +61,10 @@ const ManagePlaylistsDialog = ({
     setExpanded(expanded === newExpanded ? null : newExpanded);
   };
 
-  const handleCreatePlaylist = () => {
-    // Your logic for creating a playlist goes here
+  const handleCreatePlaylist = (newPlaylistname: string) => {
+    setPlaylistAddMode(true);
     console.log("Creating a new playlist...");
+    addNewPlaylist(newPlaylistname);
   };
 
   return (
@@ -99,16 +103,29 @@ const ManagePlaylistsDialog = ({
         <DialogContent dividers>
           <Box>
             <Stack direction="row">
-              <Tooltip title="create playlist" placement="bottom-start">
-                <IconButton
-                  aria-label="create-playlist"
-                  color="secondary"
-                  size="small"
-                  onClick={handleCreatePlaylist}
-                >
-                  <PlaylistAddIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
+              {playlistAddMode ? (
+                <Box sx={{ marginBottom: "5px" }}>
+                  <RetrieveTextfieldValue
+                    label="playlist name"
+                    value="test"
+                    onCancel={() => {
+                      setPlaylistAddMode(false);
+                    }}
+                    onSave={handleCreatePlaylist}
+                  ></RetrieveTextfieldValue>
+                </Box>
+              ) : (
+                <Tooltip title="create playlist" placement="bottom-start">
+                  <IconButton
+                    aria-label="create-playlist"
+                    color="secondary"
+                    size="small"
+                    onClick={() => setPlaylistAddMode(true)}
+                  >
+                    <PlaylistAddIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Stack>
           </Box>
           {Array.isArray(playlists) &&

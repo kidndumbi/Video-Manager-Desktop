@@ -8,9 +8,11 @@ import {
   openFileDialog,
 } from "./utilities";
 import {
+  addNewPlaylist,
   deletePlaylist,
   deletePlaylistVideo,
-  getAllPlaylistsDb,
+  getAllPlaylists,
+  updatePlaylistName,
 } from "./playlistOperations";
 
 export function registerIpcHandlers() {
@@ -21,15 +23,26 @@ export function registerIpcHandlers() {
   ipcMain.handle("delete:video", deleteVideo);
   ipcMain.handle("open-file-dialog", openFileDialog);
   ipcMain.handle("playlist:getAllPlaylists", () => {
-    return getAllPlaylistsDb();
+    return getAllPlaylists();
   });
-  ipcMain.handle("playlist:deletePlaylist", (_event: any, id: number) => {
+  ipcMain.handle("playlist:deletePlaylist", (_event: any, id: string) => {
     return deletePlaylist(id);
   });
   ipcMain.handle(
     "playlist:deletePlaylistVideo",
-    (_event: any, playlistId: number, videoFilePath: string) => {
+    (_event: any, playlistId: string, videoFilePath: string) => {
       return deletePlaylistVideo(playlistId, videoFilePath);
     }
   );
+  ipcMain.handle(
+    "playlist:updatePlaylistName",
+    (_event: any, playlistId: string, newName: string) => {
+      return updatePlaylistName(playlistId, newName);
+    }
+  );
+  ipcMain.handle("playlist:addNewPlaylist", (_event: any, name: string) => {
+    return addNewPlaylist(name);
+  });
 }
+
+//addNewPlaylist

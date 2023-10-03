@@ -23,6 +23,14 @@ const playlistSlice = createSlice({
     builder.addCase(deletePlaylistVideo.fulfilled, (state, action) => {
       state.playlists = action.payload;
     });
+
+    builder.addCase(updatePlaylistName.fulfilled, (state, action) => {
+      state.playlists = action.payload;
+    });
+
+    builder.addCase(addNewPlaylist.fulfilled, (state, action) => {
+      state.playlists = action.payload;
+    });
   },
 });
 
@@ -36,7 +44,7 @@ const getAllPlaylists = createAsyncThunk(
 
 const deletePlaylist = createAsyncThunk(
   "playlists/deletePlaylist",
-  async (id: number) => {
+  async (id: string) => {
     const playlists = await ipcRenderer.invoke("playlist:deletePlaylist", id);
     return playlists;
   }
@@ -44,7 +52,7 @@ const deletePlaylist = createAsyncThunk(
 
 const deletePlaylistVideo = createAsyncThunk(
   "playlists/deletePlaylistVideo",
-  async ({ id, videoFilePath }: { id: number; videoFilePath: string }) => {
+  async ({ id, videoFilePath }: { id: string; videoFilePath: string }) => {
     const playlists = await ipcRenderer.invoke(
       "playlist:deletePlaylistVideo",
       id,
@@ -54,14 +62,34 @@ const deletePlaylistVideo = createAsyncThunk(
   }
 );
 
-// Export the actions
+const updatePlaylistName = createAsyncThunk(
+  "playlists/updatePlaylistName",
+  async ({ id, newName }: { id: string; newName: string }) => {
+    const playlists = await ipcRenderer.invoke(
+      "playlist:updatePlaylistName",
+      id,
+      newName
+    );
+    return playlists;
+  }
+);
+
+const addNewPlaylist = createAsyncThunk(
+  "playlists/addNewPlaylist",
+  async (name: string) => {
+    const playlists = await ipcRenderer.invoke("playlist:addNewPlaylist", name);
+    return playlists;
+  }
+);
+
 const playlistsActions = {
   getAllPlaylists,
   deletePlaylist,
   deletePlaylistVideo,
+  updatePlaylistName,
+  addNewPlaylist,
 };
 
 const selplaylists = (state: RootState) => state.playlists.playlists;
 
-// Export the slice and selectors
 export { playlistSlice, playlistsActions, selplaylists };

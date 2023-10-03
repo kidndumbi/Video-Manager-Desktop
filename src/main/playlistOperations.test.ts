@@ -23,14 +23,14 @@ describe("Playlist Operations", () => {
       // Arrange
       const video: PlaylistVideoModel = { filePath: "path/to/video.mp4" };
       const playlist: PlaylistModel = {
-        id: 1,
+        id: "slice",
         name: "Test Playlist",
         videos: [video],
       };
       db.data.playlists.push(playlist);
 
       // Act
-      await deletePlaylist(1);
+      await deletePlaylist("slice");
 
       // Assert
       expect(db.data.playlists).toHaveLength(0);
@@ -39,8 +39,8 @@ describe("Playlist Operations", () => {
 
     it("should throw an error if the playlist is not found", async () => {
       // Act and Assert
-      await expect(deletePlaylist(1)).rejects.toThrow(
-        "Playlist with ID 1 not found"
+      await expect(deletePlaylist("slice")).rejects.toThrow(
+        "Playlist with ID slice not found"
       );
     });
   });
@@ -51,7 +51,7 @@ describe("Playlist Operations", () => {
       const video1: PlaylistVideoModel = { filePath: "path/to/video1.mp4" };
       const video2: PlaylistVideoModel = { filePath: "path/to/video2.mp4" };
       const playlist: PlaylistModel = {
-        id: 1,
+        id: "slice",
         name: "Test Playlist",
         videos: [video1, video2],
       };
@@ -59,13 +59,13 @@ describe("Playlist Operations", () => {
 
       // Act
       const updatedPlaylist = await deletePlaylistVideo(
-        1,
+        "slice",
         "path/to/video1.mp4"
       );
 
       // Assert
       expect(updatedPlaylist).toEqual({
-        id: 1,
+        id: "slice",
         name: "Test Playlist",
         videos: [video2],
       });
@@ -83,7 +83,7 @@ describe("Playlist Operations", () => {
       // Arrange
       const video: PlaylistVideoModel = { filePath: "path/to/video1.mp4" };
       const playlist: PlaylistModel = {
-        id: 1,
+        id: "slice",
         name: "Test Playlist",
         videos: [video],
       };
@@ -91,7 +91,7 @@ describe("Playlist Operations", () => {
 
       // Act and Assert
       await expect(
-        deletePlaylistVideo(1, "path/to/nonexistent.mp4")
+        deletePlaylistVideo("slice", "path/to/nonexistent.mp4")
       ).rejects.toThrow(
         "Video with file path path/to/nonexistent.mp4 not found"
       );
