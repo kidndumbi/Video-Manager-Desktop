@@ -1,11 +1,26 @@
 {
   "playlists": [
     {
-      "name": "Flight review 2 training again test",
+      "name": "Meteorology",
       "id": "sjdfhaklhdklashd",
       "videos": [
         {
-          "filePath": "/Users/Cassava/Videos/Advanced_JavaScript3.mp4"
+          "filePath": "D:/Private-pilot/Meteorology-I-Hayden.mp4"
+        },
+        {
+          "filePath": "D:/Private-pilot/Meteorology-II-Powell.mp4"
+        },
+        {
+          "filePath": "D:/Private-pilot/Meteorology-II-Chris.mp4"
+        },
+        {
+          "filePath": "D:/Private-pilot/Meteorology-II-Chris-Ryan.mp4"
+        },
+        {
+          "filePath": "D:/Private-pilot/Meteorology-I-Andi.mp4"
+        },
+        {
+          "filePath": "D:/Private-pilot/Meteorology-I-Derek.mp4"
         }
       ]
     },
@@ -15,9 +30,6 @@
       "videos": [
         {
           "filePath": "D:/Private-pilot/Intro-to-IFR-Ken.mp4"
-        },
-        {
-          "filePath": "D:/Private-pilot/Intro-to-IFR-Chris.mp4"
         },
         {
           "filePath": "D:/Private-pilot/Performance-PilotMath-Chris.mp4"

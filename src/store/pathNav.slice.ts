@@ -5,7 +5,7 @@ const localStoragePathNav = JSON.parse(localStorage.getItem("pathNav") || "[]");
 
 const pathNavSlice = createSlice({
   name: "pathNav",
-  initialState: { pathNav: localStoragePathNav },
+  initialState: { pathNav: localStoragePathNav } as { pathNav: string[] },
   reducers: {
     setPathNav: (state, action) => {
       state.pathNav = action.payload;

@@ -29,16 +29,13 @@ describe("Playlist Operations", () => {
       };
       db.data.playlists.push(playlist);
 
-      // Act
       await deletePlaylist("slice");
 
-      // Assert
       expect(db.data.playlists).toHaveLength(0);
       expect(db.write).toHaveBeenCalled();
     });
 
     it("should throw an error if the playlist is not found", async () => {
-      // Act and Assert
       await expect(deletePlaylist("slice")).rejects.toThrow(
         "Playlist with ID slice not found"
       );
@@ -47,7 +44,6 @@ describe("Playlist Operations", () => {
 
   describe("deletePlaylistVideo", () => {
     it("should delete a video by filePath in a playlist identified by id", async () => {
-      // Arrange
       const video1: PlaylistVideoModel = { filePath: "path/to/video1.mp4" };
       const video2: PlaylistVideoModel = { filePath: "path/to/video2.mp4" };
       const playlist: PlaylistModel = {
@@ -64,20 +60,15 @@ describe("Playlist Operations", () => {
       );
 
       // Assert
-      expect(updatedPlaylist).toEqual({
-        id: "slice",
-        name: "Test Playlist",
-        videos: [video2],
-      });
+      expect(updatedPlaylist).toEqual([
+        {
+          id: "slice",
+          name: "Test Playlist",
+          videos: [{ filePath: "path/to/video2.mp4" }],
+        },
+      ]);
       expect(db.write).toHaveBeenCalled();
     });
-
-    // it("should throw an error if the playlist is not found", async () => {
-    //   // Act and Assert
-    //   await expect(
-    //     deletePlaylistVideo(1, "path/to/video1.mp4")
-    //   ).rejects.toThrow("Playlist with ID 1 not found");
-    // });
 
     it("should throw an error if the video is not found in the playlist", async () => {
       // Arrange
