@@ -12,6 +12,7 @@ import VideoAlertDialog from "./videoList/VideoAlertDialog";
 import { useVideoListLogic } from "../../hooks/useVideoListLogic";
 import VideoListToolbar from "./videoList/VideoListToolbar";
 import VideoList from "./videoList/VideoList";
+import CurrentPlaylist from "./playlist/CurrentPlaylist";
 
 const VideoAppContainer = () => {
   const {
@@ -58,43 +59,6 @@ const VideoAppContainer = () => {
             onBackTriggered={onBackTriggered}
             currentRootPath={currentRootPath}
           />
-          {/* <List
-            sx={{
-              width: "100%",
-              bgcolor: "background.paper",
-              overflow: "auto",
-              height: "100vh",
-            }}
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            subheader={
-              <VideoListSubheader
-                pathNav={pathNav}
-                onBackTriggered={onBackTriggered}
-                currentRootPath={currentRootPath}
-              />
-            }
-          >
-            {folderVideosInfo && folderVideosInfo.length > 0 ? (
-              <div>
-                {folderVideosInfo.map((video: VideoDataModel) => {
-                  return (
-                    <div key={video.filePath}>
-                      <VideoListItem
-                        currentVideo={currentVideo}
-                        secondsTohhmmss={secondsTohhmmss}
-                        video={video}
-                        handleOnVideoSelected={handleOnVideoSelected}
-                        handleVideoSelect={handleVideoSelect}
-                        convertMillisecondsToDate={convertMillisecondsToDate}
-                      ></VideoListItem>
-                      <Divider />
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
-          </List> */}
         </Grid>
         <Grid xs={9} item>
           <Grid xs={12} item>
@@ -118,7 +82,7 @@ const VideoAppContainer = () => {
               <AppTabs currentVideoTime={currentVideoTime}></AppTabs>
             </Grid>
             <Grid xs={3} item>
-              Fear kills the mind
+              <CurrentPlaylist></CurrentPlaylist>
             </Grid>
           </Grid>
         </Grid>
