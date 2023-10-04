@@ -6,33 +6,6 @@
       "videos": [
         {
           "filePath": "/Users/Cassava/Videos/Advanced_JavaScript3.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/languish.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/french.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/furniture.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/pretense.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/romance.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/patrick.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/willfull.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/lipid.mp4"
-        },
-        {
-          "filePath": "/Users/Cassava/Videos/rollover.mp4"
         }
       ]
     },
@@ -41,14 +14,15 @@
       "id": "asdhashdjkashdkj",
       "videos": [
         {
-          "filePath": "/Users/Cassava/Videos/free.mp4"
+          "filePath": "D:/Private-pilot/Intro-to-IFR-Ken.mp4"
+        },
+        {
+          "filePath": "D:/Private-pilot/Intro-to-IFR-Chris.mp4"
+        },
+        {
+          "filePath": "D:/Private-pilot/Performance-PilotMath-Chris.mp4"
         }
       ]
-    },
-    {
-      "id": "7ae78778-fdac-40ab-a70c-01ae5633d56f",
-      "name": "new playlist",
-      "videos": []
     }
   ]
 }

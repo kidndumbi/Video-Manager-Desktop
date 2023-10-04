@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const useDialog = () => {
+export const useConfirmationDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("Are you sure");
   const [resolve, setResolve] =
