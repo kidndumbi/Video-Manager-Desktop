@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "./index";
-import { PlaylistModel } from "../models/playlist.model";
+import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
 import { ipcRenderer } from "electron";
+// import { VideoDataModel } from "../models/videoData.model";
 
 const initialState: { playlists: PlaylistModel[] } = {
   playlists: [],
@@ -29,6 +30,10 @@ const playlistSlice = createSlice({
     });
 
     builder.addCase(addNewPlaylist.fulfilled, (state, action) => {
+      state.playlists = action.payload;
+    });
+
+    builder.addCase(addVideoToPlaylist.fulfilled, (state, action) => {
       state.playlists = action.payload;
     });
   },
@@ -82,12 +87,31 @@ const addNewPlaylist = createAsyncThunk(
   }
 );
 
+const addVideoToPlaylist = createAsyncThunk(
+  "playlists/addVideoToPlaylist",
+  async ({
+    playlistId,
+    newVideo,
+  }: {
+    playlistId: string;
+    newVideo: PlaylistVideoModel;
+  }) => {
+    const playlists = await ipcRenderer.invoke(
+      "playlist:addVideoToPlaylist",
+      playlistId,
+      newVideo
+    );
+    return playlists;
+  }
+);
+
 const playlistsActions = {
   getAllPlaylists,
   deletePlaylist,
   deletePlaylistVideo,
   updatePlaylistName,
   addNewPlaylist,
+  addVideoToPlaylist,
 };
 
 const selplaylists = (state: RootState) => state.playlists.playlists;

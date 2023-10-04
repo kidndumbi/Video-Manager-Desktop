@@ -17,8 +17,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
 import ConfirmationDialog from "../noteList/note/ConfirmationDialog";
-import { useDialog } from "../../../hooks/useDialog";
-import { RetrieveTextfieldValue } from "./RetrieveTextfieldValue";
+import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
+import { RetrieveTextfieldValue } from "../tools-components/RetrieveTextfieldValue";
 import { useState } from "react";
 import PlaylistVideoItem from "./PlaylistVideoItem";
 
@@ -67,7 +67,8 @@ type PlaylistItemProps = {
 const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
   const { deletePlaylist, deletePlaylistVideo, updatePlaylistName } =
     usePlaylistLogic();
-  const { isOpen, openDialog, closeDialog, message, setMessage } = useDialog();
+  const { isOpen, openDialog, closeDialog, message, setMessage } =
+    useConfirmationDialog();
   const [playlistNameEditMode, setPlaylistNameEditMode] = useState(false);
 
   const handleDeletePlaylist = () => {

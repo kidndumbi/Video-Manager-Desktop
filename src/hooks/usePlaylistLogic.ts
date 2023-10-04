@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch } from "../store";
 import { playlistsActions, selplaylists } from "../store/playlists.slice";
 import { useSelector } from "react-redux";
+import { PlaylistVideoModel } from "../models/playlist.model";
 
 export const usePlaylistLogic = () => {
   const dispatch = useAppDispatch();
@@ -31,11 +32,24 @@ export const usePlaylistLogic = () => {
     dispatch(playlistsActions.addNewPlaylist(name));
   };
 
+  const addVideoToPlaylist = (
+    playlistId: string,
+    newVideo: PlaylistVideoModel
+  ) => {
+    dispatch(
+      playlistsActions.addVideoToPlaylist({
+        playlistId,
+        newVideo,
+      })
+    );
+  };
+
   return {
     playlists,
     deletePlaylist,
     deletePlaylistVideo,
     updatePlaylistName,
     addNewPlaylist,
+    addVideoToPlaylist,
   };
 };

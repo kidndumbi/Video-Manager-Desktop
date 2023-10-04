@@ -13,7 +13,9 @@ import {
   deletePlaylistVideo,
   getAllPlaylists,
   updatePlaylistName,
+  addVideoToPlaylist,
 } from "./playlistOperations";
+import { PlaylistVideoModel } from "../models/playlist.model";
 
 export function registerIpcHandlers() {
   ipcMain.handle("get:root-video-data", getRootVideoData);
@@ -43,6 +45,10 @@ export function registerIpcHandlers() {
   ipcMain.handle("playlist:addNewPlaylist", (_event: any, name: string) => {
     return addNewPlaylist(name);
   });
+  ipcMain.handle(
+    "playlist:addVideoToPlaylist",
+    (_event: any, playlistId: string, newVideo: PlaylistVideoModel) => {
+      return addVideoToPlaylist(playlistId, newVideo);
+    }
+  );
 }
-
-//addNewPlaylist

@@ -1,5 +1,5 @@
 import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
-import { VideoDataModel } from "../models/videoData.model";
+// import { VideoDataModel } from "../models/videoData.model";
 import { db } from "./lowdb-config";
 import { v4 as uuidv4 } from "uuid";
 
@@ -35,7 +35,7 @@ export async function getAllPlaylists(): Promise<PlaylistModel[]> {
 
 export async function addVideoToPlaylist(
   playlistId: string,
-  newVideo: VideoDataModel
+  newVideo: PlaylistVideoModel
 ): Promise<void> {
   try {
     // Find the index of the playlist with the given ID
@@ -52,6 +52,7 @@ export async function addVideoToPlaylist(
 
     // Write the updated data back to the database
     await db.write();
+    return db.data.playlists;
   } catch (error) {
     console.error(
       `Error adding video to playlist with ID ${playlistId}:`,

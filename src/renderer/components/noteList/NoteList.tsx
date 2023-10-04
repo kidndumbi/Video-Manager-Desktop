@@ -9,7 +9,7 @@ import { Note } from "./note/Note";
 import CreateNewNote from "./CreateNewNote";
 import { useNoteListLogic } from "../../../hooks/useNoteListLogic";
 import ConfirmationDialog from "./note/ConfirmationDialog";
-import { useDialog } from "../../../hooks/useDialog";
+import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 
 interface NoteListProps {
   notesData?: NoteModel[];
@@ -28,7 +28,8 @@ const NoteList: React.FC<NoteListProps> = ({ notesData, currentVideoTime }) => {
     handleCancelClick,
   } = useNoteListLogic(currentVideoTime);
 
-  const { isOpen, openDialog, closeDialog, message, setMessage } = useDialog();
+  const { isOpen, openDialog, closeDialog, message, setMessage } =
+    useConfirmationDialog();
 
   const noteMessage = "Are you sure you want to delete note";
 

@@ -20,7 +20,7 @@ import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
 import theme from "../../theme";
 import { PlaylistItem } from "./PlaylistItem";
 import { PlaylistModel } from "../../../models/playlist.model";
-import { RetrieveTextfieldValue } from "./RetrieveTextfieldValue";
+import { RetrieveTextfieldValue } from "../tools-components/RetrieveTextfieldValue";
 
 type ManagePlaylistsDialogProps = {
   showDialog: boolean;
