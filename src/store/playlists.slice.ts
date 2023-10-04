@@ -1,89 +1,67 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./index";
 import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
 import { ipcRenderer } from "electron";
-// import { VideoDataModel } from "../models/videoData.model";
 
 const initialState: { playlists: PlaylistModel[] } = {
   playlists: [],
 };
 
-const playlistSlice = createSlice({
-  name: "playlists",
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(getAllPlaylists.fulfilled, (state, action) => {
-      state.playlists = action.payload;
-    });
-
-    builder.addCase(deletePlaylist.fulfilled, (state, action) => {
-      state.playlists = action.payload;
-    });
-
-    builder.addCase(deletePlaylistVideo.fulfilled, (state, action) => {
-      state.playlists = action.payload;
-    });
-
-    builder.addCase(updatePlaylistName.fulfilled, (state, action) => {
-      state.playlists = action.payload;
-    });
-
-    builder.addCase(addNewPlaylist.fulfilled, (state, action) => {
-      state.playlists = action.payload;
-    });
-
-    builder.addCase(addVideoToPlaylist.fulfilled, (state, action) => {
-      state.playlists = action.payload;
-    });
-  },
-});
+const handleFulfilled = (
+  state: typeof initialState,
+  action: PayloadAction<PlaylistModel[]>
+) => {
+  state.playlists = action.payload;
+};
 
 const getAllPlaylists = createAsyncThunk(
   "playlists/getAllPlaylists",
-  async () => {
-    const playlists = await ipcRenderer.invoke("playlist:getAllPlaylists");
-    return playlists;
+  async (): Promise<PlaylistModel[]> => {
+    return await ipcRenderer.invoke("playlist:getAllPlaylists");
   }
 );
 
 const deletePlaylist = createAsyncThunk(
   "playlists/deletePlaylist",
-  async (id: string) => {
-    const playlists = await ipcRenderer.invoke("playlist:deletePlaylist", id);
-    return playlists;
+  async (id: string): Promise<PlaylistModel[]> => {
+    return await ipcRenderer.invoke("playlist:deletePlaylist", id);
   }
 );
 
 const deletePlaylistVideo = createAsyncThunk(
   "playlists/deletePlaylistVideo",
-  async ({ id, videoFilePath }: { id: string; videoFilePath: string }) => {
-    const playlists = await ipcRenderer.invoke(
+  async ({
+    id,
+    videoFilePath,
+  }: {
+    id: string;
+    videoFilePath: string;
+  }): Promise<PlaylistModel[]> => {
+    return await ipcRenderer.invoke(
       "playlist:deletePlaylistVideo",
       id,
       videoFilePath
     );
-    return playlists;
   }
 );
 
 const updatePlaylistName = createAsyncThunk(
   "playlists/updatePlaylistName",
-  async ({ id, newName }: { id: string; newName: string }) => {
-    const playlists = await ipcRenderer.invoke(
-      "playlist:updatePlaylistName",
-      id,
-      newName
-    );
-    return playlists;
+  async ({
+    id,
+    newName,
+  }: {
+    id: string;
+    newName: string;
+  }): Promise<PlaylistModel[]> => {
+    return await ipcRenderer.invoke("playlist:updatePlaylistName", id, newName);
   }
 );
 
 const addNewPlaylist = createAsyncThunk(
   "playlists/addNewPlaylist",
-  async (name: string) => {
-    const playlists = await ipcRenderer.invoke("playlist:addNewPlaylist", name);
-    return playlists;
+  async (name: string): Promise<PlaylistModel[]> => {
+    return await ipcRenderer.invoke("playlist:addNewPlaylist", name);
   }
 );
 
@@ -95,16 +73,31 @@ const addVideoToPlaylist = createAsyncThunk(
   }: {
     playlistId: string;
     newVideo: PlaylistVideoModel;
-  }) => {
-    const playlists = await ipcRenderer.invoke(
+  }): Promise<PlaylistModel[]> => {
+    return await ipcRenderer.invoke(
       "playlist:addVideoToPlaylist",
       playlistId,
       newVideo
     );
-    return playlists;
   }
 );
 
+const playlistSlice = createSlice({
+  name: "playlists",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllPlaylists.fulfilled, handleFulfilled)
+      .addCase(deletePlaylist.fulfilled, handleFulfilled)
+      .addCase(deletePlaylistVideo.fulfilled, handleFulfilled)
+      .addCase(updatePlaylistName.fulfilled, handleFulfilled)
+      .addCase(addNewPlaylist.fulfilled, handleFulfilled)
+      .addCase(addVideoToPlaylist.fulfilled, handleFulfilled);
+  },
+});
+
+// Export the thunks and selectors
 const playlistsActions = {
   getAllPlaylists,
   deletePlaylist,

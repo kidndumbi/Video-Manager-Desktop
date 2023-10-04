@@ -39,9 +39,17 @@ export const getRootVideoData = async (
 
     await Promise.all(fileProcessingPromises);
 
-    return videoData
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .sort((a, b) => Number(b.isDirectory) - Number(a.isDirectory));
+    return videoData.sort((a, b) => {
+      // Sort by directory first
+      const directoryDifference = Number(b.isDirectory) - Number(a.isDirectory);
+
+      // If both are either directories or files, sort by createdAt
+      if (directoryDifference === 0) {
+        return b.createdAt - a.createdAt;
+      }
+
+      return directoryDifference;
+    });
   } catch (error) {
     throw new Error("An error occurred while fetching root video data.");
   }
