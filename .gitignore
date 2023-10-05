@@ -157,3 +157,7 @@ packages
 
 # Local History for Visual Studio Code
 .history/
+
+
+# db.json for Lowdb
+/src/main/db.json
