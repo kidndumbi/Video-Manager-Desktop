@@ -11,8 +11,10 @@ import { Search } from "./Search";
 import VideoAlertDialog from "./videoList/VideoAlertDialog";
 import { useVideoListLogic } from "../../hooks/useVideoListLogic";
 import VideoListToolbar from "./videoList/VideoListToolbar";
-import VideoList from "./videoList/VideoList";
+import { VideoList } from "./videoList/VideoList";
 import CurrentPlaylist from "./playlist/CurrentPlaylist";
+import { usePlaylistLogic } from "../../hooks/usePlaylistLogic";
+import _ from "lodash";
 
 const VideoAppContainer = () => {
   const {
@@ -38,9 +40,12 @@ const VideoAppContainer = () => {
     fetchFolderVideosInfo,
   } = useVideoListLogic();
 
+  const { currentPlaylist } = usePlaylistLogic();
+
   return (
     <>
-      <Grid container data-testid="video-list">
+      <Grid container data-testid="video-list" style={{ height: "100vh" }}>
+        <Box></Box>
         <Grid xs={3} item>
           <Search onSearchClick={onSearchClick}></Search>
           <VideoListToolbar
@@ -77,13 +82,29 @@ const VideoAppContainer = () => {
               videoData={currentVideo}
             ></AppVideoPlayer>
           </Grid>
-          <Grid xs={12} item container>
-            <Grid xs={9} item>
-              <AppTabs currentVideoTime={currentVideoTime}></AppTabs>
+          <Grid xs={12} item container style={{ height: "100vh" }}>
+            <Grid
+              xs={
+                _.isUndefined(currentPlaylist) || _.isEmpty(currentPlaylist)
+                  ? 12
+                  : 9
+              }
+              item
+              style={{ height: "100vh" }}
+            >
+              <Box>
+                <AppTabs currentVideoTime={currentVideoTime}></AppTabs>
+              </Box>
             </Grid>
-            <Grid xs={3} item>
-              <CurrentPlaylist></CurrentPlaylist>
-            </Grid>
+            {!(
+              _.isUndefined(currentPlaylist) || _.isEmpty(currentPlaylist)
+            ) && (
+              <Grid xs={3} item>
+                <Box>
+                  <CurrentPlaylist></CurrentPlaylist>
+                </Box>
+              </Grid>
+            )}
           </Grid>
         </Grid>
         <VideoSettingsDialog

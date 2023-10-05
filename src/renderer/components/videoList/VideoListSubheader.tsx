@@ -1,8 +1,8 @@
 import React from "react";
-import ListSubheader from "@mui/material/ListSubheader";
-import Button from "@mui/material/Button";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+// import ListSubheader from "@mui/material/ListSubheader";
 import Typography from "@mui/material/Typography";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Box, IconButton } from "@mui/material";
 
 interface VideoListSubheaderProps {
   pathNav: string[];
@@ -16,7 +16,7 @@ const VideoListSubheader: React.FC<VideoListSubheaderProps> = ({
   currentRootPath,
 }) => {
   return (
-    <ListSubheader
+    <Box
       sx={{
         fontSize: "14px",
         lineHeight: "19px",
@@ -25,26 +25,23 @@ const VideoListSubheader: React.FC<VideoListSubheaderProps> = ({
         alignItems: "center",
         flexDirection: "row",
       }}
-      component="div"
       id="nested-list-subheader"
     >
       {pathNav.length > 0 ? (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onBackTriggered}
-          startIcon={<ArrowBackIosNewIcon />}
+        <IconButton
+          aria-label="back"
+          color="secondary"
           size="small"
-          sx={{ marginBottom: "10px" }}
+          onClick={onBackTriggered}
         >
-          Back
-        </Button>
+          <ArrowBackIosNewIcon fontSize="small" />
+        </IconButton>
       ) : null}
 
       <div style={{ display: "flex", alignItems: "center" }}>
         <Typography variant="body1">{currentRootPath}</Typography>
       </div>
-    </ListSubheader>
+    </Box>
   );
 };
 

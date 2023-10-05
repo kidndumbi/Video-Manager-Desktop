@@ -24,4 +24,8 @@ function convertMillisecondsToDate(milliseconds: number): string {
   return formattedDate + " " + formattedTime;
 }
 
-export { secondsTohhmmss, convertMillisecondsToDate };
+function extractFileName(filePath: string): string {
+  return filePath.split("/").pop()?.replace(".mp4", "") ?? "";
+}
+
+export { secondsTohhmmss, convertMillisecondsToDate, extractFileName };

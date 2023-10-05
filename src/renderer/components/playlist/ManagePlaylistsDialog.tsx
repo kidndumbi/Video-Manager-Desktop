@@ -25,6 +25,7 @@ import { RetrieveTextfieldValue } from "../tools-components/RetrieveTextfieldVal
 type ManagePlaylistsDialogProps = {
   showDialog: boolean;
   handleClose: () => void;
+  playPlaylistTriggered: () => void;
 };
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -47,6 +48,7 @@ const DraggablePaper = (props: any) => {
 const ManagePlaylistsDialog = ({
   showDialog,
   handleClose,
+  playPlaylistTriggered,
 }: ManagePlaylistsDialogProps) => {
   const { playlists, addNewPlaylist } = usePlaylistLogic();
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -131,6 +133,7 @@ const ManagePlaylistsDialog = ({
           {Array.isArray(playlists) &&
             playlists?.map((playlist: PlaylistModel, index) => (
               <PlaylistItem
+                playPlaylistTriggered={playPlaylistTriggered}
                 key={playlist.id}
                 playlist={playlist}
                 expanded={expanded === index}

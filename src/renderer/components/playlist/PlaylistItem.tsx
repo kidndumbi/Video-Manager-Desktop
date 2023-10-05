@@ -62,11 +62,21 @@ type PlaylistItemProps = {
   playlist: PlaylistModel;
   expanded: boolean;
   onChange: () => void;
+  playPlaylistTriggered: () => void;
 };
 
-const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
-  const { deletePlaylist, deletePlaylistVideo, updatePlaylistName } =
-    usePlaylistLogic();
+const PlaylistItem = ({
+  playlist,
+  expanded,
+  onChange,
+  playPlaylistTriggered,
+}: PlaylistItemProps) => {
+  const {
+    deletePlaylist,
+    deletePlaylistVideo,
+    updatePlaylistName,
+    setCurrentPlaylist,
+  } = usePlaylistLogic();
   const { isOpen, openDialog, closeDialog, message, setMessage } =
     useConfirmationDialog();
   const [playlistNameEditMode, setPlaylistNameEditMode] = useState(false);
@@ -86,6 +96,8 @@ const PlaylistItem = ({ playlist, expanded, onChange }: PlaylistItemProps) => {
   const handlePlayPlaylist = () => {
     // Your logic for playing a playlist goes here
     console.log(`Playing playlist ${playlist.name}`);
+    setCurrentPlaylist(playlist);
+    playPlaylistTriggered();
   };
 
   // Handler for deleting a video from a playlist

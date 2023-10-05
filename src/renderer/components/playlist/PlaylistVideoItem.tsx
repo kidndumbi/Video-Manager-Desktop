@@ -3,6 +3,7 @@ import { ListItem, ListItemText, IconButton, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { PlaylistVideoModel } from "../../../models/playlist.model";
+import { extractFileName } from "../../../util/helperFunctions";
 
 type PlaylistVideoItemProps = {
   video: PlaylistVideoModel;
@@ -40,9 +41,7 @@ const PlaylistVideoItem: React.FC<PlaylistVideoItemProps> = ({
       }
     >
       <Tooltip title={video.filePath} placement="bottom-start">
-        <ListItemText
-          primary={video.filePath.split("/").pop()?.replace(".mp4", "") ?? ""}
-        />
+        <ListItemText primary={extractFileName(video.filePath)} />
       </Tooltip>
     </ListItem>
   );
