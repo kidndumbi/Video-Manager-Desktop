@@ -7,6 +7,7 @@ import { pathNavSlice } from "./pathNav.slice";
 import { videoJsonSlice } from "./videoJson.slice";
 import { videoPlayerSlice } from "./videoPlaye.slice";
 import { playlistSlice } from "./playlists.slice";
+import { currentPlaylistSlice } from "./currentPlaylist.slice";
 
 const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ const store = configureStore({
     currentVideo: currentVideoSlice.reducer,
     videoPlayer: videoPlayerSlice.reducer,
     playlists: playlistSlice.reducer,
+    currentPlaylist: currentPlaylistSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

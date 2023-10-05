@@ -89,7 +89,7 @@ const NoteCreationArea: React.FC<NoteCreationAreaProps> = ({
   return (
     <Box>
       {showTextEditor ? (
-        <Box>
+        <Box sx={{ height: "150px" }}>
           New note at:
           <Chip
             label={secondsTohhmmss(staticCurrentTime)}
@@ -128,7 +128,7 @@ const NoteDisplayArea: React.FC<NoteDisplayAreaProps> = ({
   deleteNote,
 }) => {
   return (
-    <Box>
+    <Box sx={{ height: "100%" }}>
       {notesData?.map((note) => (
         <Note
           key={note.id}

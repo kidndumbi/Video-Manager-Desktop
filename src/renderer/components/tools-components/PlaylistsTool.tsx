@@ -20,6 +20,7 @@ const PlaylistsTool = () => {
         </IconButton>
       </Tooltip>
       <ManagePlaylistsDialog
+        playPlaylistTriggered={() => setShowDialog(false)}
         showDialog={showDialog}
         handleClose={() => setShowDialog(false)}
       ></ManagePlaylistsDialog>

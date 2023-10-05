@@ -2,11 +2,16 @@ import { useEffect } from "react";
 import { useAppDispatch } from "../store";
 import { playlistsActions, selplaylists } from "../store/playlists.slice";
 import { useSelector } from "react-redux";
-import { PlaylistVideoModel } from "../models/playlist.model";
+import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
+import {
+  currentPlaylistActions,
+  selCurrentPlaylist,
+} from "../store/currentPlaylist.slice";
 
 export const usePlaylistLogic = () => {
   const dispatch = useAppDispatch();
   const playlists = useSelector(selplaylists);
+  const currentPlaylist = useSelector(selCurrentPlaylist);
 
   useEffect(() => {
     fetchPlalists();
@@ -44,6 +49,10 @@ export const usePlaylistLogic = () => {
     );
   };
 
+  const setCurrentPlaylist = (newCurrentPlalist: PlaylistModel) => {
+    dispatch(currentPlaylistActions.setPlaylist(newCurrentPlalist));
+  };
+
   return {
     playlists,
     deletePlaylist,
@@ -51,5 +60,7 @@ export const usePlaylistLogic = () => {
     updatePlaylistName,
     addNewPlaylist,
     addVideoToPlaylist,
+    currentPlaylist,
+    setCurrentPlaylist,
   };
 };

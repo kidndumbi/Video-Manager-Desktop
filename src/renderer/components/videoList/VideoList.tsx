@@ -32,42 +32,43 @@ const VideoList: React.FC<VideoListProps> = ({
   currentRootPath,
 }) => {
   return (
-    <List
-      sx={{
-        width: "100%",
-        bgcolor: "background.paper",
-        overflow: "auto",
-        height: "100vh",
-      }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      subheader={
-        <VideoListSubheader
-          pathNav={pathNav}
-          onBackTriggered={onBackTriggered}
-          currentRootPath={currentRootPath}
-        />
-      }
-    >
-      {folderVideosInfo && folderVideosInfo.length > 0 ? (
-        <div>
-          {folderVideosInfo.map((video) => (
-            <div key={video.filePath}>
-              <VideoListItem
-                currentVideo={currentVideo}
-                secondsTohhmmss={secondsTohhmmss}
-                video={video}
-                handleOnVideoSelected={handleOnVideoSelected}
-                handleVideoSelect={handleVideoSelect}
-                convertMillisecondsToDate={convertMillisecondsToDate}
-              />
-              <Divider />
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </List>
+    <>
+      <VideoListSubheader
+        pathNav={pathNav}
+        onBackTriggered={onBackTriggered}
+        currentRootPath={currentRootPath}
+      />
+
+      <List
+        sx={{
+          width: "100%",
+          bgcolor: "background.paper",
+          overflow: "auto",
+          height: "100%",
+        }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+      >
+        {folderVideosInfo && folderVideosInfo.length > 0 ? (
+          <div>
+            {folderVideosInfo.map((video) => (
+              <div key={video.filePath}>
+                <VideoListItem
+                  currentVideo={currentVideo}
+                  secondsTohhmmss={secondsTohhmmss}
+                  video={video}
+                  handleOnVideoSelected={handleOnVideoSelected}
+                  handleVideoSelect={handleVideoSelect}
+                  convertMillisecondsToDate={convertMillisecondsToDate}
+                />
+                <Divider />
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </List>
+    </>
   );
 };
 
-export default VideoList;
+export { VideoList };
