@@ -6,13 +6,13 @@ const currentPlaylistSlice = createSlice({
   name: "currentPlaylist",
   initialState: {
     currentPlaylist: {},
-    shuffle: false,
-    continuous: true,
+    shufflePlaylist: false,
+    loopPlaylist: true,
     startVideo: "",
   } as {
     currentPlaylist: PlaylistModel;
-    shuffle: boolean;
-    continuous: boolean;
+    shufflePlaylist: boolean;
+    loopPlaylist: boolean;
     startVideo: string;
   },
   reducers: {
@@ -22,6 +22,12 @@ const currentPlaylistSlice = createSlice({
     setStartVideo: (state, action) => {
       state.startVideo = action.payload;
     },
+    setShufflePlaylist: (state, action) => {
+      state.shufflePlaylist = action.payload;
+    },
+    setLoopPlaylist: (state, action) => {
+      state.loopPlaylist = action.payload;
+    },
   },
 });
 
@@ -29,10 +35,16 @@ const currentPlaylistActions = currentPlaylistSlice.actions;
 const selCurrentPlaylist = (state: RootState) =>
   state.currentPlaylist.currentPlaylist;
 const selStartVideo = (state: RootState) => state.currentPlaylist.startVideo;
+const selShufflePlaylist = (state: RootState) =>
+  state.currentPlaylist.shufflePlaylist;
+const selLoopPlaylist = (state: RootState) =>
+  state.currentPlaylist.loopPlaylist;
 
 export {
   currentPlaylistSlice,
   currentPlaylistActions,
   selCurrentPlaylist,
   selStartVideo,
+  selShufflePlaylist,
+  selLoopPlaylist,
 };

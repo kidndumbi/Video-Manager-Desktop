@@ -6,6 +6,8 @@ import {
   Box,
   ListItemButton,
   ListItemText,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import theme from "../../theme";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
@@ -13,10 +15,17 @@ import { extractFileName } from "../../../util/helperFunctions";
 import { PlaylistVideoModel } from "../../../models/playlist.model";
 import { useVideoListLogic } from "../../../hooks/useVideoListLogic";
 import { useVideoPlayerLogic } from "../../../hooks/useVideoPlayerLogic";
+import LoopIcon from "@mui/icons-material/Loop";
 
 const CurrentPlaylist = () => {
-  const { currentPlaylist, setCurrentVideoFromDb, startVideo, setStartVideo } =
-    usePlaylistLogic();
+  const {
+    currentPlaylist,
+    setCurrentVideoFromDb,
+    startVideo,
+    setStartVideo,
+    loopPlaylist,
+    setLoopPlaylist,
+  } = usePlaylistLogic();
   const { player } = useVideoListLogic();
   const { videoEnded, setVideoEnded } = useVideoPlayerLogic();
 
@@ -35,7 +44,7 @@ const CurrentPlaylist = () => {
   }, [currentPlaylist]);
 
   useEffect(() => {
-    if (videoEnded) {
+    if (videoEnded && loopPlaylist) {
       playNextVideo();
     }
   }, [videoEnded]);
@@ -63,6 +72,10 @@ const CurrentPlaylist = () => {
     playVideo(video.filePath);
   };
 
+  const toggleLoopPlalist = () => {
+    setLoopPlaylist(!loopPlaylist);
+  };
+
   return (
     <Box>
       {/* Title */}
@@ -72,9 +85,25 @@ const CurrentPlaylist = () => {
           color: "white",
           padding: 1,
           height: "49px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Typography variant="h6">{currentPlaylist?.name}</Typography>
+        <Tooltip
+          title={loopPlaylist ? "Turn of fLoop" : "loop playlist"}
+          placement="bottom-start"
+        >
+          <IconButton
+            aria-label="add-to-playlist"
+            size="small"
+            sx={{ color: loopPlaylist ? "white" : undefined }}
+            onClick={toggleLoopPlalist}
+          >
+            <LoopIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </Box>
 
       {/* List */}
