@@ -11,8 +11,8 @@ export const useVideoPlayerLogic = () => {
   const player = useSelector(selVideoPlayer);
   const videoEnded = useSelector(selVideoEnded);
 
-  const setVideoEnded = () => {
-    dispatch(videoPlayerActions.setVideoEnded(true));
+  const setVideoEnded = (isVideoEnded: boolean) => {
+    dispatch(videoPlayerActions.setVideoEnded(isVideoEnded));
   };
 
   return {

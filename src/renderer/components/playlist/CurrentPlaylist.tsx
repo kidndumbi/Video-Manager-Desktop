@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   List,
   ListItem,
@@ -17,22 +17,44 @@ import { useVideoPlayerLogic } from "../../../hooks/useVideoPlayerLogic";
 const CurrentPlaylist = () => {
   const { currentPlaylist, setCurrentVideoFromDb } = usePlaylistLogic();
   const { player } = useVideoListLogic();
-  const { videoEnded } = useVideoPlayerLogic();
+  const { videoEnded, setVideoEnded } = useVideoPlayerLogic();
+
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
   useEffect(() => {
-    console.log("currentPlaylist  ", currentPlaylist);
+    if (currentPlaylist.videos.length > 0) {
+      setCurrentVideoIndex(0);
+      playVideo(currentPlaylist.videos[0].filePath);
+    }
   }, [currentPlaylist]);
 
   useEffect(() => {
     if (videoEnded) {
-      console.log("video ended ", videoEnded);
+      playNextVideo();
     }
   }, [videoEnded]);
 
-  const handleItemClick = (video: PlaylistVideoModel) => {
-    setCurrentVideoFromDb(video.filePath, () => {
+  const playNextVideo = () => {
+    const nextIndex = currentVideoIndex + 1;
+    if (nextIndex < currentPlaylist.videos.length) {
+      setCurrentVideoIndex(nextIndex);
+      playVideo(currentPlaylist.videos[nextIndex].filePath);
+    }
+    setVideoEnded(false);
+  };
+
+  const playVideo = (filePath: string) => {
+    setCurrentVideoFromDb(filePath, () => {
       player.play();
     });
+  };
+
+  const handleItemClick = (video: PlaylistVideoModel) => {
+    const videoIndex = currentPlaylist.videos.findIndex(
+      (v) => v.filePath === video.filePath
+    );
+    setCurrentVideoIndex(videoIndex);
+    playVideo(video.filePath);
   };
 
   return (
