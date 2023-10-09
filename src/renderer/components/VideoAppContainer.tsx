@@ -89,7 +89,9 @@ const VideoAppContainer = () => {
           <Grid xs={12} item container style={{ height: "100vh" }}>
             <Grid
               xs={
-                _.isUndefined(currentPlaylist) || _.isEmpty(currentPlaylist)
+                _.isUndefined(currentPlaylist) ||
+                _.isEmpty(currentPlaylist) ||
+                currentPlaylist.videos.length === 0
                   ? 12
                   : 9
               }
@@ -101,7 +103,9 @@ const VideoAppContainer = () => {
               </Box>
             </Grid>
             {!(
-              _.isUndefined(currentPlaylist) || _.isEmpty(currentPlaylist)
+              _.isUndefined(currentPlaylist) ||
+              _.isEmpty(currentPlaylist) ||
+              currentPlaylist.videos.length === 0
             ) && (
               <Grid xs={3} item>
                 <Box>

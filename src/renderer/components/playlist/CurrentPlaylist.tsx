@@ -75,7 +75,15 @@ const CurrentPlaylist = () => {
       <List sx={{ height: "100%" }}>
         {currentPlaylist?.videos?.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton onClick={() => handleItemClick(item)}>
+            <ListItemButton
+              onClick={() => handleItemClick(item)}
+              sx={{
+                backgroundColor:
+                  index === currentVideoIndex
+                    ? "rgba(0, 0, 0, 0.08)"
+                    : "transparent",
+              }}
+            >
               <ListItemText primary={extractFileName(item.filePath)} />
             </ListItemButton>
           </ListItem>
