@@ -63,18 +63,16 @@ export const getVideoJsonData = async (
     // Constant for reusable value
     const EMPTY_JSON_RESPONSE: VideoJsonModel = { notes: [], overview: {} };
     //Validate the input data
-    if (!currentVideo || !currentVideo.rootPath || !currentVideo.fileName) {
+    if (!currentVideo || !currentVideo.filePath) {
       console.warn(
-        "Warning: Received undefined or invalid currentVideo.rootPath or currentVideo.fileName."
+        "Warning: Received undefined or invalid currentVideo.filepath."
       );
       return EMPTY_JSON_RESPONSE;
       //throw new Error("Invalid input data");
     }
 
     // Construct the new file path using template literals
-    const newFilePath = `${currentVideo.rootPath}/${
-      path.parse(currentVideo.fileName).name
-    }.json`;
+    const newFilePath = currentVideo.filePath.replace(".mp4", ".json");
 
     // Check if the file exists
     if (await fileExists(newFilePath)) {
