@@ -4,10 +4,23 @@ import { PlaylistModel } from "../models/playlist.model";
 
 const currentPlaylistSlice = createSlice({
   name: "currentPlaylist",
-  initialState: { currentPlaylist: {} } as { currentPlaylist: PlaylistModel },
+  initialState: {
+    currentPlaylist: {},
+    shuffle: false,
+    continuous: true,
+    startVideo: "",
+  } as {
+    currentPlaylist: PlaylistModel;
+    shuffle: boolean;
+    continuous: boolean;
+    startVideo: string;
+  },
   reducers: {
     setPlaylist: (state, action) => {
       state.currentPlaylist = action.payload;
+    },
+    setStartVideo: (state, action) => {
+      state.startVideo = action.payload;
     },
   },
 });
@@ -15,5 +28,11 @@ const currentPlaylistSlice = createSlice({
 const currentPlaylistActions = currentPlaylistSlice.actions;
 const selCurrentPlaylist = (state: RootState) =>
   state.currentPlaylist.currentPlaylist;
+const selStartVideo = (state: RootState) => state.currentPlaylist.startVideo;
 
-export { currentPlaylistSlice, currentPlaylistActions, selCurrentPlaylist };
+export {
+  currentPlaylistSlice,
+  currentPlaylistActions,
+  selCurrentPlaylist,
+  selStartVideo,
+};

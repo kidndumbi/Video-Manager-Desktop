@@ -15,7 +15,8 @@ import { useVideoListLogic } from "../../../hooks/useVideoListLogic";
 import { useVideoPlayerLogic } from "../../../hooks/useVideoPlayerLogic";
 
 const CurrentPlaylist = () => {
-  const { currentPlaylist, setCurrentVideoFromDb } = usePlaylistLogic();
+  const { currentPlaylist, setCurrentVideoFromDb, startVideo, setStartVideo } =
+    usePlaylistLogic();
   const { player } = useVideoListLogic();
   const { videoEnded, setVideoEnded } = useVideoPlayerLogic();
 
@@ -23,8 +24,13 @@ const CurrentPlaylist = () => {
 
   useEffect(() => {
     if (currentPlaylist.videos.length > 0) {
-      setCurrentVideoIndex(0);
-      playVideo(currentPlaylist.videos[0].filePath);
+      if (!startVideo) {
+        setCurrentVideoIndex(0);
+        playVideo(currentPlaylist.videos[0].filePath);
+      } else {
+        handleItemClick({ filePath: startVideo });
+        setStartVideo("");
+      }
     }
   }, [currentPlaylist]);
 
