@@ -6,6 +6,7 @@ import {
   saveLastWatch,
   deleteVideo,
   openFileDialog,
+  getVideoData,
 } from "./utilities";
 import {
   addNewPlaylist,
@@ -51,4 +52,7 @@ export function registerIpcHandlers() {
       return addVideoToPlaylist(playlistId, newVideo);
     }
   );
+  ipcMain.handle("playlist:getVideoData", (_event: any, filePath: string) => {
+    return getVideoData(filePath);
+  });
 }

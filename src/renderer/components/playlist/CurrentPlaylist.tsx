@@ -11,17 +11,28 @@ import theme from "../../theme";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
 import { extractFileName } from "../../../util/helperFunctions";
 import { PlaylistVideoModel } from "../../../models/playlist.model";
+import { useVideoListLogic } from "../../../hooks/useVideoListLogic";
+import { useVideoPlayerLogic } from "../../../hooks/useVideoPlayerLogic";
 
 const CurrentPlaylist = () => {
-  const { currentPlaylist } = usePlaylistLogic();
+  const { currentPlaylist, setCurrentVideoFromDb } = usePlaylistLogic();
+  const { player } = useVideoListLogic();
+  const { videoEnded } = useVideoPlayerLogic();
 
   useEffect(() => {
-    console.log("currentPlaylist ", currentPlaylist);
+    console.log("currentPlaylist  ", currentPlaylist);
   }, [currentPlaylist]);
 
+  useEffect(() => {
+    if (videoEnded) {
+      console.log("video ended ", videoEnded);
+    }
+  }, [videoEnded]);
+
   const handleItemClick = (video: PlaylistVideoModel) => {
-    console.log("You clicked on:", video);
-    // Perform further actions here
+    setCurrentVideoFromDb(video.filePath, () => {
+      player.play();
+    });
   };
 
   return (

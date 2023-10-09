@@ -228,40 +228,90 @@ const shouldProcessFile = (file: string, stats: Stats, searchText?: string) => {
     : true;
 };
 
+const readJsonData = async (jsonPath: string) => {
+  const exists = await fileExists(jsonPath);
+  if (exists) {
+    const jsonFile = await fm.readFile(jsonPath);
+    return JSON.parse(jsonFile || "") as VideoJsonModel;
+  }
+  return null;
+};
+
+const calculateDuration = async (file: string) => {
+  let duration = 0;
+  if (path.extname(file).toLocaleLowerCase() === ".mp4") {
+    const maybeDuration = await getVideoDuration(file);
+    if (typeof maybeDuration === "number") {
+      duration = maybeDuration;
+    }
+  }
+  return duration;
+};
+
+const createVideoDataObject = (
+  fileName: string,
+  filePath: string,
+  isDirectory: boolean,
+  createdAt: number,
+  rootPath: string,
+  duration: number,
+  jsonFileContents: VideoJsonModel | null
+) => ({
+  fileName,
+  filePath,
+  isDirectory,
+  createdAt,
+  rootPath,
+  duration,
+  mustWatch: jsonFileContents?.mustWatch || false,
+  notesCount: jsonFileContents?.notes?.length || 0,
+  watched: jsonFileContents?.watched || false,
+  like: jsonFileContents?.like || false,
+});
+
+export const getVideoData = async (filePath: string) => {
+  try {
+    const stats = await stat(filePath);
+    const jsonFileContents = await readJsonData(
+      filePath.replace(".mp4", ".json")
+    );
+    const duration = await calculateDuration(filePath);
+    return createVideoDataObject(
+      path.basename(filePath),
+      filePath,
+      stats.isDirectory(),
+      stats.birthtimeMs,
+      filePath,
+      duration,
+      jsonFileContents
+    );
+  } catch (error: any) {
+    if (error.code === "ENOENT") {
+      return null;
+    }
+    throw error;
+  }
+};
+
 export const populateVideoData = async (
   file: string,
   filePath: string,
   stats: Stats
 ) => {
-  const dataJsonPath = `${filePath}/${path.parse(file).name}.json`;
-  const jsonFileExists = await fileExists(dataJsonPath);
-  let jsonFileContents: VideoJsonModel | null = null;
-
-  if (jsonFileExists) {
-    const jsonFile = await fm.readFile(dataJsonPath);
-    jsonFileContents = JSON.parse(jsonFile || "") as VideoJsonModel;
-  }
-
-  let duration = 0;
-  if (path.extname(file).toLocaleLowerCase() === ".mp4") {
-    const maybeDuration = await getVideoDuration(`${filePath}/${file}`);
-    if (typeof maybeDuration === "number") {
-      duration = maybeDuration;
-    }
-  }
-
-  return {
-    fileName: file,
-    filePath: `${filePath}/${file}`,
-    isDirectory: stats.isDirectory(),
-    createdAt: stats.birthtimeMs,
-    rootPath: filePath,
+  const fullFilePath = `${filePath}/${file}`;
+  const jsonFileContents = await readJsonData(
+    `${filePath}/${path.parse(file).name}.json`
+  );
+  const duration = await calculateDuration(fullFilePath);
+  return createVideoDataObject(
+    file,
+    fullFilePath,
+    stats.isDirectory(),
+    stats.birthtimeMs,
+    filePath,
     duration,
-    mustWatch: jsonFileContents?.mustWatch || false,
-    notesCount: jsonFileContents?.notes?.length || 0,
-    watched: jsonFileContents?.watched || false,
-    like: jsonFileContents?.like || false,
-  };
+    jsonFileContents
+  );
 };
 
 export const fileExists = async (filePath: string): Promise<boolean> => {
