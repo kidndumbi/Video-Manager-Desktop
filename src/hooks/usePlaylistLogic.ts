@@ -7,6 +7,7 @@ import {
   currentPlaylistActions,
   selCurrentPlaylist,
 } from "../store/currentPlaylist.slice";
+import { currentVideoActions } from "../store/currentVideo.slice";
 
 export const usePlaylistLogic = () => {
   const dispatch = useAppDispatch();
@@ -53,6 +54,15 @@ export const usePlaylistLogic = () => {
     dispatch(currentPlaylistActions.setPlaylist(newCurrentPlalist));
   };
 
+  const setCurrentVideoFromDb = (filePath: string, onVideoSet?: () => void) => {
+    dispatch(
+      currentVideoActions.setCurrentVideoFromDb({
+        filePath,
+        callback: onVideoSet,
+      })
+    );
+  };
+
   return {
     playlists,
     deletePlaylist,
@@ -62,5 +72,6 @@ export const usePlaylistLogic = () => {
     addVideoToPlaylist,
     currentPlaylist,
     setCurrentPlaylist,
+    setCurrentVideoFromDb,
   };
 };

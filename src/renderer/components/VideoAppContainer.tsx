@@ -15,6 +15,7 @@ import { VideoList } from "./videoList/VideoList";
 import CurrentPlaylist from "./playlist/CurrentPlaylist";
 import { usePlaylistLogic } from "../../hooks/usePlaylistLogic";
 import _ from "lodash";
+import { useVideoPlayerLogic } from "../../hooks/useVideoPlayerLogic";
 
 const VideoAppContainer = () => {
   const {
@@ -39,6 +40,8 @@ const VideoAppContainer = () => {
     selectedVideos,
     fetchFolderVideosInfo,
   } = useVideoListLogic();
+
+  const { setVideoEnded } = useVideoPlayerLogic();
 
   const { currentPlaylist } = usePlaylistLogic();
 
@@ -80,6 +83,7 @@ const VideoAppContainer = () => {
               setPlayer={setPlayer}
               onCurrentTime={onCurrentTime}
               videoData={currentVideo}
+              videoEnded={() => setVideoEnded()}
             ></AppVideoPlayer>
           </Grid>
           <Grid xs={12} item container style={{ height: "100vh" }}>
