@@ -20,6 +20,7 @@ import { selVideoJson, videoJsonActions } from "../store/videoJson.slice";
 import { VideoDataModel } from "../models/videoData.model";
 import { VideoJsonModel } from "../models/videoJSON.model";
 import { PlayerReference } from "video-react";
+import { usePlaylistLogic } from "./usePlaylistLogic";
 
 export const useVideoListLogic = () => {
   const dispatch = useAppDispatch();
@@ -34,6 +35,8 @@ export const useVideoListLogic = () => {
   const pathNav = useSelector(selPathNav);
   const currentRootPath = useSelector(selCurrentRootPath);
   const videoJsonData = useSelector(selVideoJson);
+
+  const { setCurrentPlaylist } = usePlaylistLogic();
 
   useEffect(() => {
     fetchFolderVideosInfo({ currentRootPath });
@@ -67,6 +70,7 @@ export const useVideoListLogic = () => {
     updateLastWatched();
     if (!video.isDirectory) {
       dispatch(currentVideoActions.setCurrentVideo(video));
+      setCurrentPlaylist({ id: "", videos: [], name: "" });
     } else {
       dispatch(currentRootPathActions.setCurrentRootPath(video.filePath));
       dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
