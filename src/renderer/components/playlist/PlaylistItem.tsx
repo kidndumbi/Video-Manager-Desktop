@@ -76,6 +76,7 @@ const PlaylistItem = ({
     deletePlaylistVideo,
     updatePlaylistName,
     setCurrentPlaylist,
+    setStartVideo,
   } = usePlaylistLogic();
   const { isOpen, openDialog, closeDialog, message, setMessage } =
     useConfirmationDialog();
@@ -115,6 +116,9 @@ const PlaylistItem = ({
   // Handler for playing a video from a playlist
   const onPlay = (video: PlaylistVideoModel) => {
     console.log("onPlay ", video);
+    setStartVideo(video.filePath);
+    setCurrentPlaylist(playlist);
+    playPlaylistTriggered();
   };
 
   const handleRenamePlaylist = (newPlaylistName: string) => {
