@@ -83,7 +83,7 @@ const VideoAppContainer = () => {
               setPlayer={setPlayer}
               onCurrentTime={onCurrentTime}
               videoData={currentVideo}
-              videoEnded={() => setVideoEnded()}
+              videoEnded={() => setVideoEnded(true)}
             ></AppVideoPlayer>
           </Grid>
           <Grid xs={12} item container style={{ height: "100vh" }}>

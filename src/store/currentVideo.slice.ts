@@ -31,7 +31,6 @@ const setCurrentVideoFromDb = createAsyncThunk(
       "playlist:getVideoData",
       filePath
     );
-    console.log("setCurrentVideoFromDb ", setCurrentVideoFromDb);
     setTimeout(() => {
       callback?.();
     }, 500);
