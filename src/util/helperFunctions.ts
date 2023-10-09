@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 const secondsTohhmmss = (valueInseconds: number) => {
   let totalSeconds = Math.round(valueInseconds);
   const hours = Math.floor(totalSeconds / 3600);
@@ -28,4 +30,20 @@ function extractFileName(filePath: string): string {
   return filePath.split("/").pop()?.replace(".mp4", "") ?? "";
 }
 
-export { secondsTohhmmss, convertMillisecondsToDate, extractFileName };
+function shuffleArrayDeep<T>(originalArray: T[]): T[] {
+  const array = _.cloneDeep(originalArray);
+
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+}
+
+export {
+  secondsTohhmmss,
+  convertMillisecondsToDate,
+  extractFileName,
+  shuffleArrayDeep,
+};

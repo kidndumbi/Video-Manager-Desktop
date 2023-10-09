@@ -1,6 +1,7 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import ShuffleIcon from "@mui/icons-material/Shuffle";
 import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
 import MuiAccordionSummary, {
   AccordionSummaryProps,
@@ -21,6 +22,7 @@ import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { RetrieveTextfieldValue } from "../tools-components/RetrieveTextfieldValue";
 import { useState } from "react";
 import PlaylistVideoItem from "./PlaylistVideoItem";
+import { shuffleArrayDeep } from "../../../util/helperFunctions";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -115,17 +117,24 @@ const PlaylistItem = ({
 
   // Handler for playing a video from a playlist
   const onPlay = (video: PlaylistVideoModel) => {
-    console.log("onPlay ", video);
     setStartVideo(video.filePath);
     setCurrentPlaylist(playlist);
     playPlaylistTriggered();
   };
 
   const handleRenamePlaylist = (newPlaylistName: string) => {
-    // Your save logic here
     setPlaylistNameEditMode(false);
     updatePlaylistName(playlist.id, newPlaylistName);
     console.log("newPlaylistName", newPlaylistName);
+  };
+
+  const handleShufflePlaylist = () => {
+    const shuffledPlaylist: PlaylistModel = {
+      ...playlist,
+      videos: shuffleArrayDeep(playlist.videos),
+    };
+    setCurrentPlaylist(shuffledPlaylist);
+    playPlaylistTriggered();
   };
 
   return (
@@ -177,6 +186,16 @@ const PlaylistItem = ({
                     onClick={handlePlayPlaylist}
                   >
                     <PlaylistPlayIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="shuffle playlist" placement="bottom-start">
+                  <IconButton
+                    aria-label="shuffle-playlist"
+                    color="secondary"
+                    size="small"
+                    onClick={handleShufflePlaylist}
+                  >
+                    <ShuffleIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </Stack>
