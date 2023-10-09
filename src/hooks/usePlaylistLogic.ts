@@ -6,6 +6,8 @@ import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
 import {
   currentPlaylistActions,
   selCurrentPlaylist,
+  selLoopPlaylist,
+  selShufflePlaylist,
   selStartVideo,
 } from "../store/currentPlaylist.slice";
 import { currentVideoActions } from "../store/currentVideo.slice";
@@ -15,6 +17,8 @@ export const usePlaylistLogic = () => {
   const playlists = useSelector(selplaylists);
   const currentPlaylist = useSelector(selCurrentPlaylist);
   const startVideo = useSelector(selStartVideo);
+  const shufflePlaylist = useSelector(selShufflePlaylist);
+  const loopPlaylist = useSelector(selLoopPlaylist);
 
   useEffect(() => {
     fetchPlalists();
@@ -60,6 +64,14 @@ export const usePlaylistLogic = () => {
     dispatch(currentPlaylistActions.setStartVideo(filePath));
   };
 
+  const setShufflePlaylist = (shuffle: boolean) => {
+    dispatch(currentPlaylistActions.setShufflePlaylist(shuffle));
+  };
+
+  const setLoopPlaylist = (loop: boolean) => {
+    dispatch(currentPlaylistActions.setLoopPlaylist(loop));
+  };
+
   const setCurrentVideoFromDb = (filePath: string, onVideoSet?: () => void) => {
     dispatch(
       currentVideoActions.setCurrentVideoFromDb({
@@ -81,5 +93,9 @@ export const usePlaylistLogic = () => {
     setCurrentVideoFromDb,
     setStartVideo,
     startVideo,
+    setShufflePlaylist,
+    setLoopPlaylist,
+    shufflePlaylist,
+    loopPlaylist,
   };
 };
