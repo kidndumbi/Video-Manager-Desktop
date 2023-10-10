@@ -7,4 +7,5 @@ export interface VideoJsonModel {
   lastWatched?: number;
   watched?: boolean;
   like?: boolean;
+  youtubeId?: string;
 }
