@@ -7,6 +7,8 @@ import {
   deleteVideo,
   openFileDialog,
   getVideoData,
+  downloadYouTubeVideo,
+  getYouTubeVideoDetails,
 } from "./utilities";
 import {
   addNewPlaylist,
@@ -54,5 +56,15 @@ export function registerIpcHandlers() {
   );
   ipcMain.handle("playlist:getVideoData", (_event: any, filePath: string) => {
     return getVideoData(filePath);
+  });
+  ipcMain.handle(
+    "youtube:videoDownload",
+    (_event: any, url: string, filePath: string) => {
+      return downloadYouTubeVideo(url, filePath);
+    }
+  );
+
+  ipcMain.handle("youtube:videoDetails", (_event: any, url: string) => {
+    return getYouTubeVideoDetails(url);
   });
 }

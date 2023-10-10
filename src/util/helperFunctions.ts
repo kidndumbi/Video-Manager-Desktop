@@ -41,9 +41,28 @@ function shuffleArrayDeep<T>(originalArray: T[]): T[] {
   return array;
 }
 
+function toValidFilename(title: string): string {
+  // Remove or replace invalid characters
+  let validTitle = title.replace(/[:*?"<>|]/g, "-");
+
+  // Remove apostrophes
+  validTitle = validTitle.replace(/[’']/g, "");
+
+  // Optionally, replace spaces with underscores or hyphens
+  validTitle = validTitle.replace(/ /g, "_");
+
+  // Limit the string to 60 characters
+  if (validTitle.length > 60) {
+    validTitle = validTitle.substring(0, 60);
+  }
+
+  return validTitle;
+}
+
 export {
   secondsTohhmmss,
   convertMillisecondsToDate,
   extractFileName,
   shuffleArrayDeep,
+  toValidFilename,
 };
