@@ -1,15 +1,5 @@
 import { ipcMain } from "electron";
-// import {
-//   getRootVideoData,
-//   getVideoJsonData,
-//   saveVideoJsonData,
-//   saveLastWatch,
-//   deleteVideo,
-//   openFileDialog,
-//   getVideoData,
-//   downloadYouTubeVideo,
-//   getYouTubeVideoDetails,
-// } from "./utilities";
+
 import {
   addNewPlaylist,
   deletePlaylist,

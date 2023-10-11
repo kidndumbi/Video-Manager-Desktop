@@ -1,49 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IconButton, Tooltip } from "@mui/material";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { ipcRenderer } from "electron";
-import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../../store";
-import {
-  currentRootPathActions,
-  selCurrentRootPath,
-} from "../../../store/currentRootpath.slice";
-import { pathNavActions, selPathNav } from "../../../store/pathNav.slice";
-import { folderVideosInfoActions } from "../../../store/folderVideosInfo.slice";
+import { IPCChannels } from "../../../enums/IPCChannels";
+import { CustomRendererEvents } from "../../../enums/CustomRendererEvents";
+import { useFolderManagement } from "../../../hooks/useFolderManagement";
 
 const FolderTool: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const pathNav = useSelector(selPathNav);
-  const currentRootPath = useSelector(selCurrentRootPath);
+  const { updateState } = useFolderManagement();
 
-  const setCurrentRootPath = (path: string) => {
-    dispatch(currentRootPathActions.setCurrentRootPath(path));
-  };
+  useEffect(() => {
+    const handleFolderSelected = (event: any, newFolderPath: string) => {
+      updateState(newFolderPath);
+    };
 
-  const updatePathNav = (newRootPath: string) => {
-    if (newRootPath !== currentRootPath) {
-      dispatch(pathNavActions.setPathNav([...pathNav, currentRootPath]));
-    }
-  };
+    ipcRenderer.on(CustomRendererEvents.FolderSelected, handleFolderSelected);
 
-  const fetchFolderVideos = (newRootPath: string) => {
-    dispatch(
-      folderVideosInfoActions.fetchFolderVideosInfo({
-        currentRootPath: newRootPath,
-      })
-    );
-  };
-
-  const updateState = (newFolderPath: string) => {
-    setCurrentRootPath(newFolderPath);
-    updatePathNav(newFolderPath);
-    fetchFolderVideos(newFolderPath);
-  };
+    return () => {
+      ipcRenderer.removeListener(
+        CustomRendererEvents.FolderSelected,
+        handleFolderSelected
+      );
+    };
+  }, [updateState]);
 
   const selectFolder = async () => {
     try {
       const folderPath: string | null = await ipcRenderer.invoke(
-        "open-file-dialog"
+        IPCChannels.OpenFileDialog
       );
       if (folderPath) {
         console.log(`You selected: ${folderPath}`);
