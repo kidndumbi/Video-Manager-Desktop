@@ -3,6 +3,7 @@ import { VideoJsonModel } from "./../models/videoJSON.model";
 import { VideoDataModel } from "./../models/videoData.model";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ipcRenderer } from "electron";
+import { IPCChannels } from "../enums/IPCChannels";
 
 const videoJsonSlice = createSlice({
   name: "videoJson",
@@ -23,7 +24,7 @@ const getVideoJson = createAsyncThunk(
   "videoJson/getVideoJson",
   async (currentVideo: VideoDataModel | undefined) => {
     const response = await ipcRenderer.invoke(
-      "get:video-json-data",
+      IPCChannels.GetVideoJsonData,
       currentVideo
     );
     return response;
@@ -39,7 +40,7 @@ const postVideoJason = createAsyncThunk(
     currentVideo: VideoDataModel | undefined;
     newVideoJsonData: VideoJsonModel | undefined;
   }) => {
-    const response = await ipcRenderer.invoke("save:video-json-data", {
+    const response = await ipcRenderer.invoke(IPCChannels.SaveVideoJsonData, {
       currentVideo,
       newVideoJsonData,
     });

@@ -2,6 +2,7 @@ import { VideoDataModel } from "./../models/videoData.model";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./index";
 import { ipcRenderer } from "electron";
+import { IPCChannels } from "../enums/IPCChannels";
 
 const currentVideoSlice = createSlice({
   name: "currentVideo",
@@ -28,7 +29,7 @@ const setCurrentVideoFromDb = createAsyncThunk(
     callback?: () => void;
   }) => {
     const response = await ipcRenderer.invoke(
-      "playlist:getVideoData",
+      IPCChannels.GetVideoData,
       filePath
     );
     setTimeout(() => {

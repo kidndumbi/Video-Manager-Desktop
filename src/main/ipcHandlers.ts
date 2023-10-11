@@ -1,15 +1,15 @@
 import { ipcMain } from "electron";
-import {
-  getRootVideoData,
-  getVideoJsonData,
-  saveVideoJsonData,
-  saveLastWatch,
-  deleteVideo,
-  openFileDialog,
-  getVideoData,
-  downloadYouTubeVideo,
-  getYouTubeVideoDetails,
-} from "./utilities";
+// import {
+//   getRootVideoData,
+//   getVideoJsonData,
+//   saveVideoJsonData,
+//   saveLastWatch,
+//   deleteVideo,
+//   openFileDialog,
+//   getVideoData,
+//   downloadYouTubeVideo,
+//   getYouTubeVideoDetails,
+// } from "./utilities";
 import {
   addNewPlaylist,
   deletePlaylist,
@@ -19,52 +19,59 @@ import {
   addVideoToPlaylist,
 } from "./playlistOperations";
 import { PlaylistVideoModel } from "../models/playlist.model";
+import { IPCChannels } from "../enums/IPCChannels";
+import {
+  deleteVideo,
+  getRootVideoData,
+  getVideoData,
+  getVideoJsonData,
+  saveLastWatch,
+  saveVideoJsonData,
+} from "./backend-services/videoDataManagement";
+import { openFileDialog } from "./backend-services/dialogsAndUI";
+import {
+  downloadYouTubeVideo,
+  getYouTubeVideoDetails,
+} from "./backend-services/videoProcessing";
 
 export function registerIpcHandlers() {
-  ipcMain.handle("get:root-video-data", getRootVideoData);
-  ipcMain.handle("get:video-json-data", getVideoJsonData);
-  ipcMain.handle("save:video-json-data", saveVideoJsonData);
-  ipcMain.handle("save:lastWatch", saveLastWatch);
-  ipcMain.handle("delete:video", deleteVideo);
-  ipcMain.handle("open-file-dialog", openFileDialog);
-  ipcMain.handle("playlist:getAllPlaylists", () => {
-    return getAllPlaylists();
-  });
-  ipcMain.handle("playlist:deletePlaylist", (_event: any, id: string) => {
-    return deletePlaylist(id);
-  });
-  ipcMain.handle(
-    "playlist:deletePlaylistVideo",
-    (_event: any, playlistId: string, videoFilePath: string) => {
-      return deletePlaylistVideo(playlistId, videoFilePath);
-    }
+  ipcMain.handle(IPCChannels.GetRootVideoData, getRootVideoData);
+  ipcMain.handle(IPCChannels.GetVideoJsonData, getVideoJsonData);
+  ipcMain.handle(IPCChannels.SaveVideoJsonData, saveVideoJsonData);
+  ipcMain.handle(IPCChannels.SaveLastWatch, saveLastWatch);
+  ipcMain.handle(IPCChannels.DeleteVideo, deleteVideo);
+  ipcMain.handle(IPCChannels.OpenFileDialog, openFileDialog);
+  ipcMain.handle(IPCChannels.GetAllPlaylists, () => getAllPlaylists());
+  ipcMain.handle(IPCChannels.DeletePlaylist, (_event: any, id: string) =>
+    deletePlaylist(id)
   );
   ipcMain.handle(
-    "playlist:updatePlaylistName",
-    (_event: any, playlistId: string, newName: string) => {
-      return updatePlaylistName(playlistId, newName);
-    }
+    IPCChannels.DeletePlaylistVideo,
+    (_event: any, playlistId: string, videoFilePath: string) =>
+      deletePlaylistVideo(playlistId, videoFilePath)
   );
-  ipcMain.handle("playlist:addNewPlaylist", (_event: any, name: string) => {
-    return addNewPlaylist(name);
-  });
   ipcMain.handle(
-    "playlist:addVideoToPlaylist",
-    (_event: any, playlistId: string, newVideo: PlaylistVideoModel) => {
-      return addVideoToPlaylist(playlistId, newVideo);
-    }
+    IPCChannels.UpdatePlaylistName,
+    (_event: any, playlistId: string, newName: string) =>
+      updatePlaylistName(playlistId, newName)
   );
-  ipcMain.handle("playlist:getVideoData", (_event: any, filePath: string) => {
-    return getVideoData(filePath);
-  });
+  ipcMain.handle(IPCChannels.AddNewPlaylist, (_event: any, name: string) =>
+    addNewPlaylist(name)
+  );
   ipcMain.handle(
-    "youtube:videoDownload",
-    (_event: any, url: string, filePath: string) => {
-      return downloadYouTubeVideo(url, filePath);
-    }
+    IPCChannels.AddVideoToPlaylist,
+    (_event: any, playlistId: string, newVideo: PlaylistVideoModel) =>
+      addVideoToPlaylist(playlistId, newVideo)
   );
-
-  ipcMain.handle("youtube:videoDetails", (_event: any, url: string) => {
-    return getYouTubeVideoDetails(url);
-  });
+  ipcMain.handle(IPCChannels.GetVideoData, (_event: any, filePath: string) =>
+    getVideoData(filePath)
+  );
+  ipcMain.handle(
+    IPCChannels.YoutubeVideoDownload,
+    (_event: any, url: string, filePath: string) =>
+      downloadYouTubeVideo(url, filePath)
+  );
+  ipcMain.handle(IPCChannels.YoutubeVideoDetails, (_event: any, url: string) =>
+    getYouTubeVideoDetails(url)
+  );
 }
