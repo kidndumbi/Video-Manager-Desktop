@@ -1,11 +1,10 @@
 import * as path from "path";
 import { VideoDataModel } from "../../models/videoData.model";
 import { VideoJsonModel } from "../../models/videoJSON.model";
-import { FileManager } from "../../util/FileManager";
-import { writeFile } from "fs/promises";
-
-const fm = new FileManager();
-
+import { readFile } from "fs/promises";
+import { writeFile, access, unlink } from "fs/promises";
+//const fm = new FileManager();
+//import { FileManager } from "../../util/FileManager";
 export const getNewFilePath = (video: VideoDataModel): string => {
   if (!video.rootPath) {
     throw new Error("video.rootPath is undefined!");
@@ -17,7 +16,7 @@ export const getNewFilePath = (video: VideoDataModel): string => {
 export const readJsonFile = async (
   filePath: string
 ): Promise<VideoJsonModel | null> => {
-  const jsonFile = await fm.readFile(filePath);
+  const jsonFile = await readFileData(filePath);
   return jsonFile ? (JSON.parse(jsonFile) as VideoJsonModel) : null;
 };
 
@@ -39,5 +38,32 @@ export const writeJsonToFile = async (
 };
 
 export const fileExists = async (filePath: string): Promise<boolean> => {
-  return await fm.exists(filePath);
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const readFileData = async (
+  filePath: string
+): Promise<string | undefined> => {
+  try {
+    const jsonFile = await readFile(filePath);
+    return jsonFile?.toString();
+  } catch (error) {
+    console.log("error::: readFile() ", error);
+  }
+};
+
+export const deleteFiles = async (filePaths: string[]) => {
+  for (const filePath of filePaths) {
+    try {
+      await unlink(filePath);
+      console.log(`Successfully deleted ${filePath}`);
+    } catch (err) {
+      console.error(`Error deleting ${filePath}: ${err}`);
+    }
+  }
 };
