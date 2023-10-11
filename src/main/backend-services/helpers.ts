@@ -1,11 +1,8 @@
 import { Stats } from "fs";
 import * as path from "path";
-import { FileManager } from "../../util/FileManager";
-import { fileExists } from "./fileManagement";
+import { fileExists, readFileData } from "./fileManagement";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import { getVideoDuration } from "./videoProcessing";
-
-const fm = new FileManager();
 
 export const shouldProcessFile = (
   file: string,
@@ -22,7 +19,7 @@ export const shouldProcessFile = (
 export const readJsonData = async (jsonPath: string) => {
   const exists = await fileExists(jsonPath);
   if (exists) {
-    const jsonFile = await fm.readFile(jsonPath);
+    const jsonFile = await readFileData(jsonPath);
     return JSON.parse(jsonFile || "") as VideoJsonModel;
   }
   return null;

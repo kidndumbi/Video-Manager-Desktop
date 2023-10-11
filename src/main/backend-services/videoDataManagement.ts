@@ -3,13 +3,14 @@ import { stat, readdir } from "fs/promises";
 import * as path from "path";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import {
+  deleteFiles,
   fileExists,
   getNewFilePath,
+  readFileData,
   readJsonFile,
   updateJsonContent,
   writeJsonToFile,
 } from "./fileManagement";
-import { FileManager } from "../../util/FileManager";
 import { Stats } from "fs";
 import {
   calculateDuration,
@@ -17,8 +18,6 @@ import {
   readJsonData,
   shouldProcessFile,
 } from "./helpers";
-
-const fm = new FileManager();
 
 export const getRootVideoData = async (
   event: any,
@@ -86,7 +85,7 @@ export const getVideoJsonData = async (
 
     // Check if the file exists
     if (await fileExists(newFilePath)) {
-      const file = await fm.readFile(newFilePath);
+      const file = await readFileData(newFilePath);
       return file ? JSON.parse(file) : EMPTY_JSON_RESPONSE;
     } else {
       return EMPTY_JSON_RESPONSE;
@@ -171,7 +170,7 @@ export const deleteVideo = async (event: any, videoData: VideoDataModel[]) => {
       }
     }
 
-    await fm.deleteFiles(filepathsToDelete);
+    await deleteFiles(filepathsToDelete);
 
     return "deletion complete";
   } catch (error: unknown) {
