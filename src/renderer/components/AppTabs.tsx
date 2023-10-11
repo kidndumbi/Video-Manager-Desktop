@@ -9,6 +9,7 @@ import { selVideoJson, videoJsonActions } from "../../store/videoJson.slice";
 import { useSelector } from "react-redux";
 import { selCurrentVideo } from "../../store/currentVideo.slice";
 import { Overview } from "./overview/Overview";
+import { YoutubeTab } from "./youtube/YoutubeTab";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -71,6 +72,7 @@ function AppTabs({ currentVideoTime }: { currentVideoTime: number }) {
         >
           <Tab label="Overview" {...a11yProps(0)} />
           <Tab label="Notes" {...a11yProps(1)} />
+          {videoJsonData.youtubeId && <Tab label="Youtube" {...a11yProps(1)} />}
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -82,6 +84,11 @@ function AppTabs({ currentVideoTime }: { currentVideoTime: number }) {
           notesData={videoJsonData?.notes}
         ></NoteList>
       </TabPanel>
+      {videoJsonData.youtubeId && (
+        <TabPanel value={value} index={2}>
+          <YoutubeTab youtubeId={videoJsonData.youtubeId}></YoutubeTab>
+        </TabPanel>
+      )}
     </Box>
   );
 }

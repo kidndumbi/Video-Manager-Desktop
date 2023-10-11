@@ -58,8 +58,8 @@ export function registerIpcHandlers() {
   );
   ipcMain.handle(
     IPCChannels.YoutubeVideoDownload,
-    (_event: any, url: string, filePath: string) =>
-      downloadYouTubeVideo(url, filePath)
+    (_event: any, url: string, filePath: string, youtubeId: string) =>
+      downloadYouTubeVideo(url, filePath, youtubeId)
   );
   ipcMain.handle(IPCChannels.YoutubeVideoDetails, (_event: any, url: string) =>
     getYouTubeVideoDetails(url)
