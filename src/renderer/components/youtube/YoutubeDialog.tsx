@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -48,7 +49,8 @@ const DraggablePaper = (props: any) => {
 const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
   const [url, setUrl] = useState("");
   const { videoDetails, isVideoDetailsLoading } = useYoutubeDetails(url);
-  const { isVideoDownloading, downloadVideo } = useYoutubeDownload();
+  const { isVideoDownloading, downloadVideo, videoDownloadError } =
+    useYoutubeDownload();
   const [textFieldValue, setTextFieldValue] = useState("");
 
   const handleTextFieldChange = (
@@ -69,6 +71,10 @@ const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
       );
     }
   };
+
+  useEffect(() => {
+    console.log("videoDownloadError", videoDownloadError);
+  }, [videoDownloadError]);
 
   return (
     <div>
@@ -179,6 +185,18 @@ const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
               Download
             </LoadingButton>
           </Box>
+          {videoDownloadError && (
+            <Box sx={{ marginTop: "7px" }}>
+              {videoDownloadError.message.includes("FileExistsError") ? (
+                <Alert severity="error">
+                  The file already exists. Please choose a different name or
+                  location!
+                </Alert>
+              ) : (
+                <Alert severity="error">{videoDownloadError.message}</Alert>
+              )}
+            </Box>
+          )}
         </DialogContent>
 
         <DialogActions>
