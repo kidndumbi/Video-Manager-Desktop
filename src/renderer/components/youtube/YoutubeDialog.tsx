@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import {
-  Alert,
   Avatar,
   Box,
   Button,
@@ -23,6 +22,8 @@ import { useYoutubeDetails } from "../../../hooks/useYoutubeDetails";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useYoutubeDownload } from "../../../hooks/useYoutubeDownload";
 import { toValidFilename } from "../../../util/helperFunctions";
+import { useAppDispatch } from "../../../store";
+import { notificationActions } from "../../../store/notification.slice";
 
 type YoutubeDialogProps = {
   showDialog: boolean;
@@ -51,6 +52,7 @@ const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
   const { videoDetails, isVideoDetailsLoading } = useYoutubeDetails(url);
   const { isVideoDownloading, downloadVideo, videoDownloadError } =
     useYoutubeDownload();
+  const dispatch = useAppDispatch();
   const [textFieldValue, setTextFieldValue] = useState("");
 
   const handleTextFieldChange = (
@@ -67,7 +69,27 @@ const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
     if (videoDetails?.title) {
       downloadVideo(
         url,
-        `D:/youtube/${toValidFilename(videoDetails?.title)}.mp4`
+        `D:/youtube/${toValidFilename(videoDetails?.title)}.mp4`,
+        () => {
+          dispatch(
+            notificationActions.setOptions({
+              message: "Video Downloaded successfully",
+              severity: "success",
+            })
+          );
+          dispatch(notificationActions.setOpen(true));
+        },
+        (err) => {
+          dispatch(
+            notificationActions.setOptions({
+              message: err?.message?.includes("FileExistsError")
+                ? "The file already exists. Please choose a different name or location!"
+                : err?.message || "An unknown error occurred",
+              severity: "error",
+            })
+          );
+          dispatch(notificationActions.setOpen(true));
+        }
       );
     }
   };
@@ -185,18 +207,6 @@ const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
               Download
             </LoadingButton>
           </Box>
-          {videoDownloadError && (
-            <Box sx={{ marginTop: "7px" }}>
-              {videoDownloadError.message.includes("FileExistsError") ? (
-                <Alert severity="error">
-                  The file already exists. Please choose a different name or
-                  location!
-                </Alert>
-              ) : (
-                <Alert severity="error">{videoDownloadError.message}</Alert>
-              )}
-            </Box>
-          )}
         </DialogContent>
 
         <DialogActions>

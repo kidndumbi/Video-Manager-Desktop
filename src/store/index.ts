@@ -8,6 +8,7 @@ import { videoJsonSlice } from "./videoJson.slice";
 import { videoPlayerSlice } from "./videoPlaye.slice";
 import { playlistSlice } from "./playlists.slice";
 import { currentPlaylistSlice } from "./currentPlaylist.slice";
+import { notificationSlice } from "./notification.slice";
 
 const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ const store = configureStore({
     videoPlayer: videoPlayerSlice.reducer,
     playlists: playlistSlice.reducer,
     currentPlaylist: currentPlaylistSlice.reducer,
+    notification: notificationSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
