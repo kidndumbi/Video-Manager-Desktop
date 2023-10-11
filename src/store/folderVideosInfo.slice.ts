@@ -2,6 +2,7 @@ import { VideoDataModel } from "./../models/videoData.model";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ipcRenderer } from "electron";
 import { RootState } from "./index";
+import { IPCChannels } from "../enums/IPCChannels";
 
 const folderVideosInfoSlice = createSlice({
   name: "folderVideosInfo",
@@ -26,7 +27,7 @@ const fetchFolderVideosInfo = createAsyncThunk(
     searchText?: string;
   }) => {
     const response = await ipcRenderer.invoke(
-      "get:root-video-data",
+      IPCChannels.GetRootVideoData,
       currentRootPath,
       searchText
     );

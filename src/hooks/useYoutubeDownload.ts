@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ipcRenderer } from "electron";
+import { IPCChannels } from "../enums/IPCChannels";
 
 type UseYoutubeDownloadResult = {
   isVideoDownloading: boolean;
@@ -17,7 +18,7 @@ const useYoutubeDownload = (): UseYoutubeDownloadResult => {
     setIsVideoDownloading(true);
 
     ipcRenderer
-      .invoke("youtube:videoDownload", url, filePath)
+      .invoke(IPCChannels.YoutubeVideoDownload, url, filePath)
       .then(() => {
         setIsVideoDownloading(false);
       })

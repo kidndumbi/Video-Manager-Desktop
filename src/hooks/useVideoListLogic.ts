@@ -21,6 +21,7 @@ import { VideoDataModel } from "../models/videoData.model";
 import { VideoJsonModel } from "../models/videoJSON.model";
 import { PlayerReference } from "video-react";
 import { usePlaylistLogic } from "./usePlaylistLogic";
+import { IPCChannels } from "../enums/IPCChannels";
 
 export const useVideoListLogic = () => {
   const dispatch = useAppDispatch();
@@ -49,7 +50,7 @@ export const useVideoListLogic = () => {
   }, [player, videoJsonData.lastWatched]);
 
   const updateLastWatched = async () => {
-    await ipcRenderer.invoke("save:lastWatch", {
+    await ipcRenderer.invoke(IPCChannels.SaveLastWatch, {
       currentVideo,
       lastWatched: currentVideoTime,
     });
@@ -115,7 +116,7 @@ export const useVideoListLogic = () => {
 
   const deleteVideos = async () => {
     if (selectedVideos.length > 0) {
-      await ipcRenderer.invoke("delete:video", selectedVideos);
+      await ipcRenderer.invoke(IPCChannels.DeleteVideo, selectedVideos);
       setSelectedVideos([]);
       fetchFolderVideosInfo({ currentRootPath });
     }

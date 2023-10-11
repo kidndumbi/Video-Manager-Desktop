@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ipcRenderer } from "electron";
 import { videoInfo } from "ytdl-core";
+import { IPCChannels } from "../enums/IPCChannels";
 
 type UseYoutubeResult = {
   videoDetails: videoInfo["videoDetails"] | null;
@@ -21,7 +22,7 @@ const useYoutubeDetails = (url: string): UseYoutubeResult => {
   useEffect(() => {
     setIsVideoDetailsLoading(true);
     ipcRenderer
-      .invoke("youtube:videoDetails", url)
+      .invoke(IPCChannels.YoutubeVideoDetails, url)
       .then((details: videoInfo["videoDetails"]) => {
         setVideoDetails(details);
         setIsVideoDetailsLoading(false);

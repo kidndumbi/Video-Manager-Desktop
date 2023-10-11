@@ -1,14 +1,22 @@
-// Import all your dependencies at the top
-import { FileManager } from "../util/FileManager";
-import { stat, writeFile, readdir } from "fs/promises";
-import { Stats } from "fs";
-import { VideoDataModel } from "../models/videoData.model";
-import { VideoJsonModel } from "../models/videoJSON.model";
-import { dialog } from "electron";
-import { exec } from "child_process";
+import { VideoDataModel } from "../../models/videoData.model";
+import { stat, readdir } from "fs/promises";
 import * as path from "path";
-import fs, { WriteStream } from "fs";
-import ytdl, { videoInfo } from "ytdl-core";
+import { VideoJsonModel } from "../../models/videoJSON.model";
+import {
+  fileExists,
+  getNewFilePath,
+  readJsonFile,
+  updateJsonContent,
+  writeJsonToFile,
+} from "./fileManagement";
+import { FileManager } from "../../util/FileManager";
+import { Stats } from "fs";
+import {
+  calculateDuration,
+  createVideoDataObject,
+  readJsonData,
+  shouldProcessFile,
+} from "./helpers";
 
 const fm = new FileManager();
 
@@ -176,99 +184,6 @@ export const deleteVideo = async (event: any, videoData: VideoDataModel[]) => {
   }
 };
 
-export const openFileDialog = async (_event: any) => {
-  const result = await dialog.showOpenDialog({
-    properties: ["openDirectory"],
-  });
-
-  if (!result.canceled) {
-    return result.filePaths[0];
-  }
-
-  return null;
-};
-
-export const getNewFilePath = (video: VideoDataModel): string => {
-  if (!video.rootPath) {
-    throw new Error("video.rootPath is undefined!");
-  }
-  const fileNameWithoutExtension = path.parse(video.fileName).name;
-  return path.join(video.rootPath, `${fileNameWithoutExtension}.json`);
-};
-
-const readJsonFile = async (
-  filePath: string
-): Promise<VideoJsonModel | null> => {
-  const jsonFile = await fm.readFile(filePath);
-  return jsonFile ? (JSON.parse(jsonFile) as VideoJsonModel) : null;
-};
-
-const updateJsonContent = (
-  jsonContent: VideoJsonModel,
-  lastWatched: number
-): VideoJsonModel => {
-  jsonContent.lastWatched = lastWatched;
-  jsonContent.watched = lastWatched !== 0;
-  return jsonContent;
-};
-
-const writeJsonToFile = async (
-  filePath: string,
-  jsonData: VideoJsonModel
-): Promise<VideoJsonModel> => {
-  await writeFile(filePath, JSON.stringify(jsonData));
-  return jsonData;
-};
-
-const shouldProcessFile = (file: string, stats: Stats, searchText?: string) => {
-  return searchText &&
-    !file.toLowerCase().includes(searchText.toLowerCase()) &&
-    !stats.isDirectory()
-    ? false
-    : true;
-};
-
-const readJsonData = async (jsonPath: string) => {
-  const exists = await fileExists(jsonPath);
-  if (exists) {
-    const jsonFile = await fm.readFile(jsonPath);
-    return JSON.parse(jsonFile || "") as VideoJsonModel;
-  }
-  return null;
-};
-
-const calculateDuration = async (file: string) => {
-  let duration = 0;
-  if (path.extname(file).toLocaleLowerCase() === ".mp4") {
-    const maybeDuration = await getVideoDuration(file);
-    if (typeof maybeDuration === "number") {
-      duration = maybeDuration;
-    }
-  }
-  return duration;
-};
-
-const createVideoDataObject = (
-  fileName: string,
-  filePath: string,
-  isDirectory: boolean,
-  createdAt: number,
-  rootPath: string,
-  duration: number,
-  jsonFileContents: VideoJsonModel | null
-) => ({
-  fileName,
-  filePath,
-  isDirectory,
-  createdAt,
-  rootPath,
-  duration,
-  mustWatch: jsonFileContents?.mustWatch || false,
-  notesCount: jsonFileContents?.notes?.length || 0,
-  watched: jsonFileContents?.watched || false,
-  like: jsonFileContents?.like || false,
-});
-
 export const getVideoData = async (filePath: string) => {
   try {
     const stats = await stat(filePath);
@@ -313,88 +228,3 @@ export const populateVideoData = async (
     jsonFileContents
   );
 };
-
-export const fileExists = async (filePath: string): Promise<boolean> => {
-  return await fm.exists(filePath);
-};
-
-export function getVideoDuration(
-  filePath: string
-): Promise<number | "unknown"> {
-  return new Promise((resolve, reject) => {
-    exec(
-      `ffprobe -i "${filePath}" -show_entries format=duration -v quiet -of csv="p=0"`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error("Exec error:", error);
-          console.error("Stderr:", stderr);
-          return reject(error);
-        }
-        resolve(parseFloat(stdout));
-      }
-    );
-  });
-}
-
-export async function downloadYouTubeVideo(
-  url: string,
-  filePath: string
-): Promise<void> {
-  try {
-    // Create a writable stream for the file
-    const fileStream: WriteStream = fs.createWriteStream(filePath);
-
-    // Get the video stream from ytdl-core
-    const videoStream = ytdl(url, {
-      filter: "audioandvideo",
-      quality: "highest",
-    });
-
-    // Pipe the incoming data into the file
-    videoStream.pipe(fileStream);
-
-    return new Promise<void>((resolve, reject) => {
-      fileStream.on("finish", () => resolve());
-      fileStream.on("error", (error) => reject(error));
-      videoStream.on("error", (error) => reject(error));
-    });
-  } catch (error) {
-    console.error(`Failed to download video: ${error}`);
-  }
-}
-
-export function getYouTubeVideoDetails(
-  url: string
-): Promise<videoInfo["videoDetails"]> {
-  return new Promise<videoInfo["videoDetails"]>((resolve, reject) => {
-    const videoID = extractVideoID(url);
-
-    // Check if videoID is null and handle it
-    if (videoID === null) {
-      const errorMsg = "Could not extract video ID from the provided URL";
-      console.error(errorMsg);
-      return reject(new Error(errorMsg));
-    }
-
-    ytdl
-      .getInfo(videoID)
-      .then((info) => {
-        resolve(info.videoDetails);
-      })
-      .catch((error) => {
-        console.error(`Failed to get video details: ${error}`);
-        reject(error);
-      });
-  });
-}
-
-function extractVideoID(url: string): string | null {
-  try {
-    const urlObj = new URL(url);
-    const params = new URLSearchParams(urlObj.search);
-    return params.get("v");
-  } catch (error) {
-    console.error(`Invalid URL: ${error}`);
-    return null;
-  }
-}

@@ -20,7 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import theme from "../../theme";
 import { useYoutubeDetails } from "../../../hooks/useYoutubeDetails";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useYoutubeDownload } from "../../../hooks/useYoutubeDownload ";
+import { useYoutubeDownload } from "../../../hooks/useYoutubeDownload";
 import { toValidFilename } from "../../../util/helperFunctions";
 
 type YoutubeDialogProps = {
