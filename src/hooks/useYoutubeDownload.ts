@@ -8,6 +8,7 @@ type UseYoutubeDownloadResult = {
   downloadVideo: (
     url: string,
     filePath: string,
+    youtubeId: string,
     onSuccess?: () => void,
     onFailure?: (err: Error) => void
   ) => void;
@@ -22,6 +23,7 @@ const useYoutubeDownload = (): UseYoutubeDownloadResult => {
   const downloadVideo = (
     url: string,
     filePath: string,
+    youtubeId: string,
     onSuccess?: () => void,
     onFailure?: (err: Error) => void
   ) => {
@@ -29,7 +31,7 @@ const useYoutubeDownload = (): UseYoutubeDownloadResult => {
     setVideoDownloadError(null);
 
     ipcRenderer
-      .invoke(IPCChannels.YoutubeVideoDownload, url, filePath)
+      .invoke(IPCChannels.YoutubeVideoDownload, url, filePath, youtubeId)
       .then(() => {
         setIsVideoDownloading(false);
         if (onSuccess) {

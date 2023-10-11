@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import {
-  Avatar,
   Box,
   Button,
   Dialog,
@@ -9,11 +8,8 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  List,
-  ListItem,
   Paper,
   TextField,
-  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,6 +20,7 @@ import { useYoutubeDownload } from "../../../hooks/useYoutubeDownload";
 import { toValidFilename } from "../../../util/helperFunctions";
 import { useAppDispatch } from "../../../store";
 import { notificationActions } from "../../../store/notification.slice";
+import YoutubeDetails from "./YoutubeDetails";
 
 type YoutubeDialogProps = {
   showDialog: boolean;
@@ -70,6 +67,7 @@ const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
       downloadVideo(
         url,
         `D:/youtube/${toValidFilename(videoDetails?.title)}.mp4`,
+        videoDetails.videoId,
         () => {
           dispatch(
             notificationActions.setOptions({
@@ -151,52 +149,7 @@ const YoutubeDialog = ({ showDialog, handleClose }: YoutubeDialogProps) => {
               Get Details
             </LoadingButton>
           </Box>
-          {videoDetails && (
-            <Paper elevation={3} sx={{ padding: 2, marginTop: 2 }}>
-              <Avatar
-                src={videoDetails?.author?.thumbnails?.[0]?.url || ""}
-                alt="Video Thumbnail"
-                sx={{
-                  width: videoDetails?.author?.thumbnails?.[0]?.width || 88,
-                  height: videoDetails?.author?.thumbnails?.[0]?.height || 88,
-                  margin: "0 auto",
-                }}
-              />
-
-              <Typography variant="h6" gutterBottom>
-                Video Details
-              </Typography>
-              <List>
-                <ListItem>
-                  <Typography variant="subtitle1">
-                    Channel Name: {videoDetails.ownerChannelName}
-                  </Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="subtitle1">
-                    Title: {videoDetails.title}
-                  </Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="subtitle1">
-                    Upload Date: {videoDetails.uploadDate}
-                  </Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography variant="subtitle1">Description</Typography>
-                </ListItem>
-                <ListItem>
-                  <Typography
-                    variant="body1"
-                    component="div"
-                    sx={{ whiteSpace: "pre-line" }}
-                  >
-                    {videoDetails.description}
-                  </Typography>
-                </ListItem>
-              </List>
-            </Paper>
-          )}
+          {videoDetails && <YoutubeDetails videoDetails={videoDetails} />}
           <Box sx={{ marginTop: "7px" }}>
             <LoadingButton
               variant="contained"

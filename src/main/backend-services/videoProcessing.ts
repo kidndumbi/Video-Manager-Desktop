@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import { WriteStream, createWriteStream } from "fs";
 import ytdl, { videoInfo } from "ytdl-core";
-import { fileExists } from "./fileManagement";
+import { fileExists, getJsonFilePath, writeJsonToFile } from "./fileManagement";
 import { FileExistsError } from "../../errors/FileExistsError";
 
 export function getVideoDuration(
@@ -24,7 +24,8 @@ export function getVideoDuration(
 
 export function downloadYouTubeVideo(
   url: string,
-  filePath: string
+  filePath: string,
+  youtubeId: string
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     // Check if file already exists
@@ -47,7 +48,15 @@ export function downloadYouTubeVideo(
         // Pipe the incoming data into the file
         videoStream.pipe(fileStream);
 
-        fileStream.on("finish", () => resolve());
+        fileStream.on("finish", async () => {
+          const jsonFilePath = getJsonFilePath(filePath);
+          await writeJsonToFile(jsonFilePath, {
+            youtubeId,
+            overview: {},
+            notes: [],
+          });
+          resolve();
+        });
         fileStream.on("error", (error) => reject(error));
         videoStream.on("error", (error) => reject(error));
       })

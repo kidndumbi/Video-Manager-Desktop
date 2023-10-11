@@ -1,16 +1,12 @@
-import * as path from "path";
-import { VideoDataModel } from "../../models/videoData.model";
 import { VideoJsonModel } from "../../models/videoJSON.model";
 import { readFile } from "fs/promises";
 import { writeFile, access, unlink } from "fs/promises";
-//const fm = new FileManager();
-//import { FileManager } from "../../util/FileManager";
-export const getNewFilePath = (video: VideoDataModel): string => {
-  if (!video.rootPath) {
-    throw new Error("video.rootPath is undefined!");
+
+export const getJsonFilePath = (filePath: string): string => {
+  if (!filePath) {
+    throw new Error("filePath is undefined!");
   }
-  const fileNameWithoutExtension = path.parse(video.fileName).name;
-  return path.join(video.rootPath, `${fileNameWithoutExtension}.json`);
+  return filePath.replace(".mp4", ".json");
 };
 
 export const readJsonFile = async (

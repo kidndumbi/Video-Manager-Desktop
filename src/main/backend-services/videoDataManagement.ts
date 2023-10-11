@@ -5,7 +5,7 @@ import { VideoJsonModel } from "../../models/videoJSON.model";
 import {
   deleteFiles,
   fileExists,
-  getNewFilePath,
+  getJsonFilePath,
   readFileData,
   readJsonFile,
   updateJsonContent,
@@ -105,7 +105,7 @@ export const saveVideoJsonData = async (
   }: { currentVideo: VideoDataModel; newVideoJsonData: VideoJsonModel }
 ) => {
   try {
-    const newFilePath = getNewFilePath(currentVideo);
+    const newFilePath = getJsonFilePath(currentVideo.filePath);
     return await writeJsonToFile(newFilePath, newVideoJsonData);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -125,7 +125,7 @@ export const saveLastWatch = async (
   }: { currentVideo: VideoDataModel; lastWatched: number }
 ) => {
   try {
-    const jsonFilePath = getNewFilePath(currentVideo);
+    const jsonFilePath = getJsonFilePath(currentVideo.filePath);
 
     if (await fileExists(jsonFilePath)) {
       let jsonFileContents = await readJsonFile(jsonFilePath);
@@ -163,7 +163,7 @@ export const deleteVideo = async (event: any, videoData: VideoDataModel[]) => {
     for (const video of videoData) {
       filepathsToDelete.push(video.filePath);
 
-      const jsonFilePath = getNewFilePath(video);
+      const jsonFilePath = getJsonFilePath(video.filePath);
 
       if (await fileExists(jsonFilePath)) {
         filepathsToDelete.push(jsonFilePath);
