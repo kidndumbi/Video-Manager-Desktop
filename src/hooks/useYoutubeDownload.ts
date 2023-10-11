@@ -5,7 +5,12 @@ import { IPCChannels } from "../enums/IPCChannels";
 type UseYoutubeDownloadResult = {
   isVideoDownloading: boolean;
   videoDownloadError: Error | null;
-  downloadVideo: (url: string, filePath: string) => void;
+  downloadVideo: (
+    url: string,
+    filePath: string,
+    onSuccess?: () => void,
+    onFailure?: (err: Error) => void
+  ) => void;
 };
 
 const useYoutubeDownload = (): UseYoutubeDownloadResult => {
@@ -14,7 +19,12 @@ const useYoutubeDownload = (): UseYoutubeDownloadResult => {
     null
   );
 
-  const downloadVideo = (url: string, filePath: string) => {
+  const downloadVideo = (
+    url: string,
+    filePath: string,
+    onSuccess?: () => void,
+    onFailure?: (err: Error) => void
+  ) => {
     setIsVideoDownloading(true);
     setVideoDownloadError(null);
 
@@ -22,10 +32,16 @@ const useYoutubeDownload = (): UseYoutubeDownloadResult => {
       .invoke(IPCChannels.YoutubeVideoDownload, url, filePath)
       .then(() => {
         setIsVideoDownloading(false);
+        if (onSuccess) {
+          onSuccess();
+        }
       })
       .catch((err: Error) => {
         setVideoDownloadError(err);
         setIsVideoDownloading(false);
+        if (onFailure) {
+          onFailure(err);
+        }
       });
   };
 

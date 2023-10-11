@@ -16,6 +16,7 @@ import CurrentPlaylist from "./playlist/CurrentPlaylist";
 import { usePlaylistLogic } from "../../hooks/usePlaylistLogic";
 import _ from "lodash";
 import { useVideoPlayerLogic } from "../../hooks/useVideoPlayerLogic";
+import AppNotifications from "./AppNotifications";
 
 const VideoAppContainer = () => {
   const {
@@ -130,6 +131,9 @@ const VideoAppContainer = () => {
           onClose={() => setShowDialog(false)}
           deleteVideos={deleteVideos}
         />
+      </Box>
+      <Box>
+        <AppNotifications></AppNotifications>
       </Box>
     </>
   );
