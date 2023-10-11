@@ -1,6 +1,8 @@
 import { exec } from "child_process";
-import fs, { WriteStream } from "fs";
+import { WriteStream, createWriteStream } from "fs";
 import ytdl, { videoInfo } from "ytdl-core";
+import { fileExists } from "./fileManagement";
+import { FileExistsError } from "../../errors/FileExistsError";
 
 export function getVideoDuration(
   filePath: string
@@ -20,31 +22,40 @@ export function getVideoDuration(
   });
 }
 
-export async function downloadYouTubeVideo(
+export function downloadYouTubeVideo(
   url: string,
   filePath: string
 ): Promise<void> {
-  try {
-    // Create a writable stream for the file
-    const fileStream: WriteStream = fs.createWriteStream(filePath);
+  return new Promise<void>((resolve, reject) => {
+    // Check if file already exists
+    fileExists(filePath)
+      .then((exists) => {
+        if (exists) {
+          reject(new FileExistsError());
+          return;
+        }
 
-    // Get the video stream from ytdl-core
-    const videoStream = ytdl(url, {
-      filter: "audioandvideo",
-      quality: "highest",
-    });
+        // Create a writable stream for the file
+        const fileStream: WriteStream = createWriteStream(filePath);
 
-    // Pipe the incoming data into the file
-    videoStream.pipe(fileStream);
+        // Get the video stream from ytdl-core
+        const videoStream = ytdl(url, {
+          filter: "audioandvideo",
+          quality: "highest",
+        });
 
-    return new Promise<void>((resolve, reject) => {
-      fileStream.on("finish", () => resolve());
-      fileStream.on("error", (error) => reject(error));
-      videoStream.on("error", (error) => reject(error));
-    });
-  } catch (error) {
-    console.error(`Failed to download video: ${error}`);
-  }
+        // Pipe the incoming data into the file
+        videoStream.pipe(fileStream);
+
+        fileStream.on("finish", () => resolve());
+        fileStream.on("error", (error) => reject(error));
+        videoStream.on("error", (error) => reject(error));
+      })
+      .catch((error) => {
+        console.error(`Failed to download video: ${error}`);
+        reject(error);
+      });
+  });
 }
 
 export function getYouTubeVideoDetails(

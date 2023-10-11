@@ -16,6 +16,7 @@ const useYoutubeDownload = (): UseYoutubeDownloadResult => {
 
   const downloadVideo = (url: string, filePath: string) => {
     setIsVideoDownloading(true);
+    setVideoDownloadError(null);
 
     ipcRenderer
       .invoke(IPCChannels.YoutubeVideoDownload, url, filePath)
