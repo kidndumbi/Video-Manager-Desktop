@@ -38,6 +38,7 @@ type NoteTextEditorProps = {
   onSaveNoteClick: (value: string) => void;
   text?: string;
   btnText?: string;
+  height?: string;
 };
 
 const NoteTextEditor = ({
@@ -45,11 +46,12 @@ const NoteTextEditor = ({
   onSaveNoteClick,
   text = "",
   btnText = "Save Note",
+  height,
 }: NoteTextEditorProps) => {
   const [value, setValue] = useState(text);
 
   return (
-    <>
+    <Box sx={{ height }}>
       <Box>
         <Editor value={value} onChange={setValue} />
       </Box>
@@ -58,7 +60,7 @@ const NoteTextEditor = ({
         onSave={() => onSaveNoteClick(value)}
         saveBtnText={btnText}
       />
-    </>
+    </Box>
   );
 };
 

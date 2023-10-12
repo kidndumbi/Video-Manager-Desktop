@@ -13,6 +13,7 @@ type NoteChipProps = {
 const NoteChip: FC<NoteChipProps> = ({ note, onClick }) => (
   <Box>
     <Chip
+      sx={{ marginRight: 1 }}
       label={secondsTohhmmss(note.videoTimeStamp)}
       icon={<AccessTimeIcon />}
       color="secondary"

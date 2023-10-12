@@ -10,6 +10,7 @@ import CreateNewNote from "./CreateNewNote";
 import { useNoteListLogic } from "../../../hooks/useNoteListLogic";
 import ConfirmationDialog from "./note/ConfirmationDialog";
 import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
+import { Paper } from "@mui/material";
 
 interface NoteListProps {
   notesData?: NoteModel[];
@@ -89,21 +90,27 @@ const NoteCreationArea: React.FC<NoteCreationAreaProps> = ({
   return (
     <Box>
       {showTextEditor ? (
-        <Box sx={{ height: "150px" }}>
-          New note at:
-          <Chip
-            label={secondsTohhmmss(staticCurrentTime)}
-            icon={<AccessTimeIcon />}
-            color="secondary"
-            variant="filled"
-            size="small"
-          />
-          <NoteTextEditor
-            onSaveNoteClick={handleCreateNote}
-            onCancelClick={handleCancelClick}
-            btnText="Save New Note"
-          />
-        </Box>
+        <Paper sx={{ padding: 1, marginBottom: 1 }}>
+          <Box sx={{ height: "320px" }}>
+            <Box sx={{ marginBottom: 1 }}>
+              New note at:
+              <Chip
+                label={secondsTohhmmss(staticCurrentTime)}
+                icon={<AccessTimeIcon />}
+                color="secondary"
+                variant="filled"
+                size="small"
+              />
+            </Box>
+
+            <NoteTextEditor
+              onSaveNoteClick={handleCreateNote}
+              onCancelClick={handleCancelClick}
+              btnText="Save New Note"
+              height="200px"
+            />
+          </Box>
+        </Paper>
       ) : (
         <CreateNewNote
           currentVideoTime={currentVideoTime}
@@ -130,13 +137,14 @@ const NoteDisplayArea: React.FC<NoteDisplayAreaProps> = ({
   return (
     <Box sx={{ height: "100%" }}>
       {notesData?.map((note) => (
-        <Note
-          key={note.id}
-          note={note}
-          onVideoSeek={handleVideoSeek}
-          onNoteSave={handleNoteSave}
-          onNoteDelete={deleteNote}
-        />
+        <Paper key={note.id} sx={{ padding: 1, marginBottom: 1 }}>
+          <Note
+            note={note}
+            onVideoSeek={handleVideoSeek}
+            onNoteSave={handleNoteSave}
+            onNoteDelete={deleteNote}
+          />
+        </Paper>
       ))}
     </Box>
   );

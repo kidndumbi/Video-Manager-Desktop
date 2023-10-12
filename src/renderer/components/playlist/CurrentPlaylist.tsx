@@ -8,6 +8,7 @@ import {
   ListItemText,
   IconButton,
   Tooltip,
+  Paper,
 } from "@mui/material";
 import theme from "../../theme";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
@@ -78,52 +79,63 @@ const CurrentPlaylist = () => {
 
   return (
     <Box>
-      {/* Title */}
-      <Box
-        sx={{
-          backgroundColor: theme.palette.secondary.main,
-          color: "white",
-          padding: 1,
-          height: "49px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography variant="h6">{currentPlaylist?.name}</Typography>
-        <Tooltip
-          title={loopPlaylist ? "Turn of fLoop" : "loop playlist"}
-          placement="bottom-start"
+      <Paper elevation={3} sx={{ padding: 2, marginTop: 2, marginRight: 1 }}>
+        <Box
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            color: "white",
+            padding: 1,
+            height: "49px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
-          <IconButton
-            aria-label="add-to-playlist"
-            size="small"
-            sx={{ color: loopPlaylist ? "white" : undefined }}
-            onClick={toggleLoopPlalist}
+          <Typography variant="h6">{currentPlaylist?.name}</Typography>
+          <Tooltip
+            title={loopPlaylist ? "Turn of fLoop" : "loop playlist"}
+            placement="bottom-start"
           >
-            <LoopIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      </Box>
-
-      {/* List */}
-      <List sx={{ height: "100%" }}>
-        {currentPlaylist?.videos?.map((item, index) => (
-          <ListItem key={index} disablePadding>
-            <ListItemButton
-              onClick={() => handleItemClick(item)}
-              sx={{
-                backgroundColor:
-                  index === currentVideoIndex
-                    ? "rgba(0, 0, 0, 0.08)"
-                    : "transparent",
-              }}
+            <IconButton
+              aria-label="add-to-playlist"
+              size="small"
+              sx={{ color: loopPlaylist ? "white" : undefined }}
+              onClick={toggleLoopPlalist}
             >
-              <ListItemText primary={extractFileName(item.filePath)} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+              <LoopIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        <List sx={{ height: "100%" }}>
+          {currentPlaylist?.videos?.map((item, index) => (
+            <Paper key={index} sx={{ marginBottom: 1 }}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => handleItemClick(item)}
+                  sx={{
+                    backgroundColor:
+                      index === currentVideoIndex
+                        ? "rgba(0, 0, 0, 0.08)"
+                        : "transparent",
+                  }}
+                >
+                  <ListItemText
+                    sx={{
+                      whiteSpace: "normal",
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    <Typography variant="body2">
+                      {extractFileName(item.filePath)}
+                    </Typography>
+                  </ListItemText>
+                </ListItemButton>
+              </ListItem>
+            </Paper>
+          ))}
+        </List>
+      </Paper>
     </Box>
   );
 };
