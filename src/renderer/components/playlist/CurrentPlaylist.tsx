@@ -17,6 +17,7 @@ import { PlaylistVideoModel } from "../../../models/playlist.model";
 import { useVideoListLogic } from "../../../hooks/useVideoListLogic";
 import { useVideoPlayerLogic } from "../../../hooks/useVideoPlayerLogic";
 import LoopIcon from "@mui/icons-material/Loop";
+import { VideoProgressBar } from "../VideoProgressBar";
 
 const CurrentPlaylist = () => {
   const {
@@ -129,6 +130,12 @@ const CurrentPlaylist = () => {
                     <Typography variant="body2">
                       {extractFileName(item.filePath)}
                     </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <VideoProgressBar
+                        current={item.lastWatched || 0}
+                        total={item.duration || 0}
+                      />
+                    </Box>
                   </ListItemText>
                 </ListItemButton>
               </ListItem>
