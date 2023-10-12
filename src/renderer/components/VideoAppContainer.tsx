@@ -40,11 +40,16 @@ const VideoAppContainer = () => {
     videoJsonData,
     selectedVideos,
     fetchFolderVideosInfo,
+    updateLastWatched,
   } = useVideoListLogic();
 
   const { setVideoEnded } = useVideoPlayerLogic();
 
   const { currentPlaylist } = usePlaylistLogic();
+
+  const onVideoPaused = () => {
+    updateLastWatched();
+  };
 
   return (
     <>
@@ -81,6 +86,7 @@ const VideoAppContainer = () => {
           </Grid>
           <Grid xs={12} item>
             <AppVideoPlayer
+              onVideoPaused={onVideoPaused}
               setPlayer={setPlayer}
               onCurrentTime={onCurrentTime}
               videoData={currentVideo}

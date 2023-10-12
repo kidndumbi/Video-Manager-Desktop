@@ -74,7 +74,10 @@ const ManagePlaylistsDialog = ({
       <BootstrapDialog
         maxWidth="md" // 'sm', 'md', 'lg', 'xl'
         fullWidth={true}
-        onClose={handleClose}
+        onClose={() => {
+          setPlaylistAddMode(false);
+          handleClose();
+        }}
         aria-labelledby="customized-dialog-title"
         open={showDialog}
         PaperComponent={DraggablePaper}
@@ -109,7 +112,7 @@ const ManagePlaylistsDialog = ({
                 <Box sx={{ marginBottom: "5px" }}>
                   <RetrieveTextfieldValue
                     label="playlist name"
-                    value="test"
+                    value=""
                     onCancel={() => {
                       setPlaylistAddMode(false);
                     }}

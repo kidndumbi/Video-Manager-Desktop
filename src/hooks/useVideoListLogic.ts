@@ -155,5 +155,6 @@ export const useVideoListLogic = () => {
     videoJsonData,
     setPlayer,
     fetchFolderVideosInfo,
+    updateLastWatched,
   };
 };
