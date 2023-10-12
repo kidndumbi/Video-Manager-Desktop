@@ -3,13 +3,13 @@ import { Tooltip, IconButton } from "@mui/material";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import CheckboxListDialog, { CheckboxListModel } from "./CheckboxListDialog";
 import { usePlaylistLogic } from "../../../hooks/usePlaylistLogic";
-import { useVideoListLogic } from "../../../hooks/useVideoListLogic";
 import _ from "lodash";
+import { useVideoPlayerLogic } from "../../../hooks/useVideoPlayerLogic";
 
 const AddVideoToPlaylist: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const { playlists, addVideoToPlaylist } = usePlaylistLogic();
-  const { currentVideo } = useVideoListLogic();
+  const { currentVideo } = useVideoPlayerLogic();
   const [playlistData, setPlaylistData] = useState<CheckboxListModel[]>([]);
 
   // Update the playlist data based on the current video and available playlists

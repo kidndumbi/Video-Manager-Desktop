@@ -22,10 +22,10 @@ import { VideoJsonModel } from "../models/videoJSON.model";
 import { PlayerReference } from "video-react";
 import { usePlaylistLogic } from "./usePlaylistLogic";
 import { IPCChannels } from "../enums/IPCChannels";
+import { useVideoPlayerLogic } from "./useVideoPlayerLogic";
 
 export const useVideoListLogic = () => {
   const dispatch = useAppDispatch();
-  const [currentVideoTime, setCurrentVideoTime] = useState(0);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [selectedVideos, setSelectedVideos] = useState<VideoDataModel[]>([]);
@@ -38,6 +38,7 @@ export const useVideoListLogic = () => {
   const videoJsonData = useSelector(selVideoJson);
 
   const { setCurrentPlaylist } = usePlaylistLogic();
+  const { updateLastWatched } = useVideoPlayerLogic();
 
   useEffect(() => {
     fetchFolderVideosInfo({ currentRootPath });
@@ -48,13 +49,6 @@ export const useVideoListLogic = () => {
       player.seek(videoJsonData.lastWatched);
     }
   }, [player, videoJsonData.lastWatched]);
-
-  const updateLastWatched = async () => {
-    await ipcRenderer.invoke(IPCChannels.SaveLastWatch, {
-      currentVideo,
-      lastWatched: currentVideoTime,
-    });
-  };
 
   const fetchFolderVideosInfo = (args: {
     currentRootPath: string;
@@ -88,10 +82,6 @@ export const useVideoListLogic = () => {
       });
       dispatch(pathNavActions.setPathNav(pathNav.slice(0, -1)));
     }
-  };
-
-  const onCurrentTime = (time: number) => {
-    setCurrentVideoTime(time);
   };
 
   const saveVideoSettings = (value: { [key: string]: boolean }) => {
@@ -134,7 +124,6 @@ export const useVideoListLogic = () => {
   };
 
   return {
-    currentVideoTime,
     showSettingsDialog,
     setShowSettingsDialog,
     showDialog,
@@ -143,18 +132,15 @@ export const useVideoListLogic = () => {
     folderVideosInfo,
     handleVideoSelect,
     onBackTriggered,
-    onCurrentTime,
     saveVideoSettings,
     handleOnVideoSelected,
     deleteVideos,
     onSearchClick,
-    currentVideo,
     player,
     pathNav,
     currentRootPath,
     videoJsonData,
     setPlayer,
     fetchFolderVideosInfo,
-    updateLastWatched,
   };
 };
