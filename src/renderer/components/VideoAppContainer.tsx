@@ -20,7 +20,6 @@ import AppNotifications from "./AppNotifications";
 
 const VideoAppContainer = () => {
   const {
-    currentVideoTime,
     showSettingsDialog,
     setShowSettingsDialog,
     showDialog,
@@ -28,20 +27,20 @@ const VideoAppContainer = () => {
     folderVideosInfo,
     handleVideoSelect,
     onBackTriggered,
-    onCurrentTime,
     saveVideoSettings,
     handleOnVideoSelected,
     deleteVideos,
     onSearchClick,
-    currentVideo,
     setPlayer,
     pathNav,
     currentRootPath,
     videoJsonData,
     selectedVideos,
     fetchFolderVideosInfo,
-    updateLastWatched,
   } = useVideoListLogic();
+
+  const { updateLastWatched, currentVideo, onCurrentTime, currentVideoTime } =
+    useVideoPlayerLogic();
 
   const { setVideoEnded } = useVideoPlayerLogic();
 
