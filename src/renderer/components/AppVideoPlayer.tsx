@@ -21,6 +21,8 @@ type AppVideoPlayerProps = {
   onCurrentTime: (time: number) => void;
   setPlayer: (player: PlayerReference) => void;
   videoEnded: () => void;
+
+  onVideoPaused: () => void;
 };
 
 export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
@@ -31,6 +33,8 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
   }
 
   initPlayer() {
+    let prevPausedState = false; // Keep track of the previous paused state
+
     this.player.playbackRate = 2;
     this.forceUpdate();
     this.props.setPlayer(this.player);
@@ -39,6 +43,16 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
       this.props.onCurrentTime(state.currentTime);
       if (state.ended) {
         this.props.videoEnded();
+      }
+
+      // Notify when the video is paused, but only if the state actually changed
+      if (state.paused !== prevPausedState) {
+        prevPausedState = state.paused;
+        if (state.paused) {
+          console.log("The video is paused.");
+          this.props.onVideoPaused();
+          // You can trigger any other action or function here
+        }
       }
     });
   }

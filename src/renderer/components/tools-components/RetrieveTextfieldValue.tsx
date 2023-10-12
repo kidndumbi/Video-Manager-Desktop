@@ -36,6 +36,7 @@ const RetrieveTextfieldValue = ({
             color="secondary"
             size="small"
             onClick={() => {
+              setTextValue("");
               onSave(textValue);
             }}
           >
