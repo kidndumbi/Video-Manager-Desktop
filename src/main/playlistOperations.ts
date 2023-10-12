@@ -1,5 +1,5 @@
 import { PlaylistModel, PlaylistVideoModel } from "../models/playlist.model";
-// import { VideoDataModel } from "../models/videoData.model";
+import { calculateDuration, readJsonData } from "./backend-services/helpers";
 import { db } from "./lowdb-config";
 import { v4 as uuidv4 } from "uuid";
 
@@ -24,12 +24,37 @@ export async function findPlaylist(
   }
 }
 
-export async function getAllPlaylists(): Promise<PlaylistModel[]> {
+export async function getAllPlaylists() {
   try {
-    return db.data.playlists;
+    const playlists: PlaylistModel[] = db.data.playlists; // Replace this with your actual database call
+
+    // Create an array of promises to populate the duration and lastWatched properties
+    const populatePromises = playlists.map(async (playlist) => {
+      const videoPromises = playlist.videos.map(async (video) => {
+        // Call your function to calculate the duration
+        const duration = await calculateDuration(video.filePath);
+        video.duration = duration;
+
+        // Call your function to read the JSON data
+        const videoJsonData = await readJsonData(
+          video.filePath.replace(".mp4", ".json")
+        );
+        if (videoJsonData && videoJsonData.lastWatched) {
+          video.lastWatched = videoJsonData.lastWatched;
+        }
+      });
+
+      // Wait for all videos in the current playlist to be processed
+      await Promise.all(videoPromises);
+    });
+
+    // Wait for all playlists to be populated
+    await Promise.all(populatePromises);
+
+    return playlists;
   } catch (error) {
     console.error("Error getting all playlists:", error);
-    throw error; // Re-throw the error to be caught in the calling function
+    throw error;
   }
 }
 

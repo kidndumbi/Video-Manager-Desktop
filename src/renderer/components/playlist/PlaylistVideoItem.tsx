@@ -1,9 +1,16 @@
 import React from "react";
-import { ListItem, ListItemText, IconButton, Tooltip } from "@mui/material";
+import {
+  ListItem,
+  ListItemText,
+  IconButton,
+  Tooltip,
+  Box,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { PlaylistVideoModel } from "../../../models/playlist.model";
 import { extractFileName } from "../../../util/helperFunctions";
+import { VideoProgressBar } from "../VideoProgressBar";
 
 type PlaylistVideoItemProps = {
   video: PlaylistVideoModel;
@@ -40,9 +47,17 @@ const PlaylistVideoItem: React.FC<PlaylistVideoItemProps> = ({
         </>
       }
     >
-      <Tooltip title={video.filePath} placement="bottom-start">
-        <ListItemText primary={extractFileName(video.filePath)} />
-      </Tooltip>
+      <Box sx={{ width: "100%" }}>
+        <Tooltip title={video.filePath} placement="bottom-start">
+          <ListItemText primary={extractFileName(video.filePath)} />
+        </Tooltip>
+        <Box sx={{ mt: 2 }}>
+          <VideoProgressBar
+            current={video.lastWatched || 0}
+            total={video.duration || 0}
+          />
+        </Box>
+      </Box>
     </ListItem>
   );
 };

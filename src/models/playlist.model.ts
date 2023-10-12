@@ -6,4 +6,6 @@ export interface PlaylistModel {
 
 export interface PlaylistVideoModel {
   filePath: string;
+  duration?: number;
+  lastWatched?: number;
 }

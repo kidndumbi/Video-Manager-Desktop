@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { useAppDispatch } from "../store";
 import { playlistsActions, selplaylists } from "../store/playlists.slice";
 import { useSelector } from "react-redux";
@@ -19,10 +19,6 @@ export const usePlaylistLogic = () => {
   const startVideo = useSelector(selStartVideo);
   const shufflePlaylist = useSelector(selShufflePlaylist);
   const loopPlaylist = useSelector(selLoopPlaylist);
-
-  useEffect(() => {
-    fetchPlalists();
-  }, []);
 
   const fetchPlalists = () => {
     dispatch(playlistsActions.getAllPlaylists());
@@ -97,5 +93,6 @@ export const usePlaylistLogic = () => {
     setLoopPlaylist,
     shufflePlaylist,
     loopPlaylist,
+    fetchPlalists,
   };
 };

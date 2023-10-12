@@ -17,12 +17,19 @@ export const shouldProcessFile = (
 };
 
 export const readJsonData = async (jsonPath: string) => {
-  const exists = await fileExists(jsonPath);
-  if (exists) {
-    const jsonFile = await readFileData(jsonPath);
-    return JSON.parse(jsonFile || "") as VideoJsonModel;
+  try {
+    const exists = await fileExists(jsonPath);
+    if (exists) {
+      const jsonFile = await readFileData(jsonPath);
+      const parsedData = JSON.parse(jsonFile || "");
+      return parsedData;
+    }
+    console.log("File does not exist:", jsonPath);
+    return null;
+  } catch (error) {
+    console.error("Error in readJsonData:", error);
+    throw error;
   }
-  return null;
 };
 
 export const calculateDuration = async (file: string) => {
