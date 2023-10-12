@@ -33,10 +33,10 @@ export async function getAllPlaylists(): Promise<PlaylistModel[]> {
   }
 }
 
-export async function addVideoToPlaylist(
+export async function addOrRemoveVideoFromPlaylist(
   playlistId: string,
   newVideo: PlaylistVideoModel
-): Promise<void> {
+): Promise<PlaylistModel[]> {
   try {
     // Find the index of the playlist with the given ID
     const playlistIndex = db.data.playlists.findIndex(
@@ -47,15 +47,27 @@ export async function addVideoToPlaylist(
       throw new Error(`Playlist with ID ${playlistId} not found`);
     }
 
-    // Add the new video to the playlist's videos array
-    db.data.playlists[playlistIndex].videos.push(newVideo);
+    // Check if video string 'newVideo' is already in the playlist of playlistIndex
+    const videoIndex = db.data.playlists[playlistIndex].videos.findIndex(
+      (v: PlaylistVideoModel) => v.filePath === newVideo.filePath
+    );
+
+    if (videoIndex !== -1) {
+      // Video is already in the playlist, remove it
+      db.data.playlists[playlistIndex].videos.splice(videoIndex, 1);
+    } else {
+      // Video is not in the playlist, add it
+      db.data.playlists[playlistIndex].videos.push(newVideo);
+    }
 
     // Write the updated data back to the database
     await db.write();
+
+    // Return the updated playlists
     return db.data.playlists;
   } catch (error) {
     console.error(
-      `Error adding video to playlist with ID ${playlistId}:`,
+      `Error adding or removing video from playlist with ID ${playlistId}:`,
       error
     );
     throw error; // Re-throw the error to be caught in the calling function
