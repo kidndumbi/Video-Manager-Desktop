@@ -49,7 +49,6 @@ export default class AppVideoPlayer extends Component<AppVideoPlayerProps> {
       if (state.paused !== prevPausedState) {
         prevPausedState = state.paused;
         if (state.paused) {
-          console.log("The video is paused.");
           this.props.onVideoPaused();
           // You can trigger any other action or function here
         }

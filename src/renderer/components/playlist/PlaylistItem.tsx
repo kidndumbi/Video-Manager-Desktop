@@ -173,31 +173,35 @@ const PlaylistItem = ({
                     aria-label="rename-playlist"
                     color="secondary"
                     size="small"
-                    onClick={() => setPlaylistNameEditMode(true)} // You can set it to true when clicking on the rename button
+                    onClick={() => setPlaylistNameEditMode(true)}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="play playlist" placement="bottom-start">
-                  <IconButton
-                    aria-label="play-playlist"
-                    color="secondary"
-                    size="small"
-                    onClick={handlePlayPlaylist}
-                  >
-                    <PlaylistPlayIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="shuffle playlist" placement="bottom-start">
-                  <IconButton
-                    aria-label="shuffle-playlist"
-                    color="secondary"
-                    size="small"
-                    onClick={handleShufflePlaylist}
-                  >
-                    <ShuffleIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+                {playlist.videos.length > 0 && (
+                  <>
+                    <Tooltip title="play playlist" placement="bottom-start">
+                      <IconButton
+                        aria-label="play-playlist"
+                        color="secondary"
+                        size="small"
+                        onClick={handlePlayPlaylist}
+                      >
+                        <PlaylistPlayIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="shuffle playlist" placement="bottom-start">
+                      <IconButton
+                        aria-label="shuffle-playlist"
+                        color="secondary"
+                        size="small"
+                        onClick={handleShufflePlaylist}
+                      >
+                        <ShuffleIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )}
               </Stack>
             )}
           </Box>
@@ -223,5 +227,4 @@ const PlaylistItem = ({
     </>
   );
 };
-
 export { PlaylistItem };

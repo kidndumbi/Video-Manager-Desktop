@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import AppVideoPlayer from "./AppVideoPlayer";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -41,6 +41,12 @@ const VideoAppContainer = () => {
 
   const { updateLastWatched, currentVideo, onCurrentTime, currentVideoTime } =
     useVideoPlayerLogic();
+
+  const { fetchPlalists } = usePlaylistLogic();
+
+  useEffect(() => {
+    fetchPlalists();
+  }, []);
 
   const { setVideoEnded } = useVideoPlayerLogic();
 
