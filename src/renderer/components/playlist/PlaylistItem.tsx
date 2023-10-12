@@ -12,7 +12,15 @@ import {
   PlaylistModel,
   PlaylistVideoModel,
 } from "../../../models/playlist.model";
-import { Box, Divider, IconButton, List, Stack, Tooltip } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  List,
+  Paper,
+  Stack,
+  Tooltip,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import PlaylistPlayIcon from "@mui/icons-material/PlaylistPlay";
@@ -209,12 +217,13 @@ const PlaylistItem = ({
           <Divider></Divider>
           <List dense={false}>
             {playlist.videos.map((video: PlaylistVideoModel) => (
-              <PlaylistVideoItem
-                key={video.filePath}
-                video={video}
-                onDelete={onDelete}
-                onPlay={onPlay}
-              />
+              <Paper key={video.filePath} sx={{ marginBottom: 1 }}>
+                <PlaylistVideoItem
+                  video={video}
+                  onDelete={onDelete}
+                  onPlay={onPlay}
+                />
+              </Paper>
             ))}
           </List>
         </AccordionDetails>

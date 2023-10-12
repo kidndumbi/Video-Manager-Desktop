@@ -105,7 +105,7 @@ const VideoAppContainer = () => {
                 _.isEmpty(currentPlaylist) ||
                 currentPlaylist.videos.length === 0
                   ? 12
-                  : 9
+                  : 7
               }
               item
               style={{ height: "100vh" }}
@@ -119,7 +119,7 @@ const VideoAppContainer = () => {
               _.isEmpty(currentPlaylist) ||
               currentPlaylist.videos.length === 0
             ) && (
-              <Grid xs={3} item>
+              <Grid xs={5} item>
                 <Box>
                   <CurrentPlaylist></CurrentPlaylist>
                 </Box>
