@@ -6,7 +6,7 @@ import {
   deletePlaylistVideo,
   getAllPlaylists,
   updatePlaylistName,
-  addVideoToPlaylist,
+  addOrRemoveVideoFromPlaylist,
 } from "./playlistOperations";
 import { PlaylistVideoModel } from "../models/playlist.model";
 import { IPCChannels } from "../enums/IPCChannels";
@@ -49,9 +49,9 @@ export function registerIpcHandlers() {
     addNewPlaylist(name)
   );
   ipcMain.handle(
-    IPCChannels.AddVideoToPlaylist,
+    IPCChannels.addOrRemoveVideoFromPlaylist,
     (_event: any, playlistId: string, newVideo: PlaylistVideoModel) =>
-      addVideoToPlaylist(playlistId, newVideo)
+      addOrRemoveVideoFromPlaylist(playlistId, newVideo)
   );
   ipcMain.handle(IPCChannels.GetVideoData, (_event: any, filePath: string) =>
     getVideoData(filePath)

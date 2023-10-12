@@ -10,7 +10,7 @@ export enum IPCChannels {
   DeletePlaylistVideo = "playlist:deletePlaylistVideo",
   UpdatePlaylistName = "playlist:updatePlaylistName",
   AddNewPlaylist = "playlist:addNewPlaylist",
-  AddVideoToPlaylist = "playlist:addVideoToPlaylist",
+  addOrRemoveVideoFromPlaylist = "playlist:addOrRemoveVideoFromPlaylist",
   GetVideoData = "playlist:getVideoData",
   YoutubeVideoDownload = "youtube:videoDownload",
   YoutubeVideoDetails = "youtube:videoDetails",

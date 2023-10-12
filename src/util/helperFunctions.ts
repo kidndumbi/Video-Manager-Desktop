@@ -43,7 +43,7 @@ function shuffleArrayDeep<T>(originalArray: T[]): T[] {
 
 function toValidFilename(title: string): string {
   // Remove or replace invalid characters
-  let validTitle = title.replace(/[:*?"<>|]/g, "-");
+  let validTitle = title.replace(/[:*?"<>|!/]/g, "-");
 
   // Remove apostrophes
   validTitle = validTitle.replace(/[’']/g, "");

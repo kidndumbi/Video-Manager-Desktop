@@ -80,7 +80,7 @@ const addVideoToPlaylist = createAsyncThunk(
     newVideo: PlaylistVideoModel;
   }): Promise<PlaylistModel[]> => {
     return await ipcRenderer.invoke(
-      IPCChannels.AddVideoToPlaylist,
+      IPCChannels.addOrRemoveVideoFromPlaylist,
       playlistId,
       newVideo
     );
